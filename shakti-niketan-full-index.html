@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Shakti Niketan Play Group — School Portal</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--p:#6535a8;--p2:#7b43c4;--soft:#f0e7ff;--bg:#faf8ff;--ink:#27222d;--muted:#777;--card:#fff;--line:#e8e2ee;--ok:#25864e;--bad:#a12e2e}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:#fff;padding:14px 6%;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 15px #0001;position:sticky;top:0;z-index:20}
+.logo{font-weight:900;color:var(--p);font-size:23px}.logo small{display:block;color:#ef776b;font-size:10px;letter-spacing:3px}
+nav a{margin-left:14px;color:#333;text-decoration:none;font-weight:700;font-size:13px}
+.hero{padding:48px 7%;display:grid;grid-template-columns:1fr 1fr;gap:25px;align-items:center;background:linear-gradient(135deg,#eee2ff,#fff1dc,#def8ef)}
+.hero h1{font-size:46px;color:#3c2364;margin:10px 0}.hero-art{height:250px;border-radius:30px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:80px;box-shadow:0 20px 50px #6535a822}
+section{padding:42px 7%}.title{text-align:center;margin-bottom:24px}.title h2{color:#3c2364}
+.panel,.card{background:#fff;padding:20px;border-radius:18px;box-shadow:0 7px 25px #0000000d}
+.roles{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:15px}.role{border:0;padding:12px;border-radius:9px;background:var(--soft);font-weight:800;cursor:pointer}.role.active{background:var(--p);color:#fff}
+input,select,textarea{width:100%;padding:12px;border:1px solid #ddd;border-radius:9px;margin:5px 0 12px;font:inherit;background:#fff}
+.btn{border:0;border-radius:10px;padding:12px 17px;background:var(--p);color:#fff;font-weight:800;cursor:pointer}.btn:hover{background:var(--p2)}.btn:disabled{opacity:.55}
+.btn.red{background:var(--bad)}.btn.green{background:var(--ok)}.btn.gray{background:#777}
+.row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1;min-width:180px}
+.msg{padding:10px;border-radius:9px;background:#eef8f1;margin:10px 0}.err{background:#fff0f0;color:#8b2424}
+.hidden{display:none!important}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.statgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.stat{background:var(--soft);padding:15px;border-radius:12px;text-align:center}.stat b{display:block;font-size:22px;color:var(--p);margin-bottom:5px}
+.appbar{display:flex;gap:8px;overflow:auto;margin:16px 0;padding-bottom:4px}.tab{white-space:nowrap;border:1px solid #ddd;background:#fff;padding:10px 14px;border-radius:9px;font-weight:800;cursor:pointer}.tab.active{background:var(--p);color:#fff;border-color:var(--p)}
+.tablewrap{overflow:auto}.table{width:100%;border-collapse:collapse;min-width:650px}.table th,.table td{padding:11px;border-bottom:1px solid var(--line);text-align:left}.table th{background:#f7f3fb}
+.badge{display:inline-block;padding:5px 8px;border-radius:20px;background:var(--soft);color:#51318a;font-size:12px;font-weight:800}
+.item{padding:13px;border:1px solid var(--line);border-radius:12px;margin:8px 0;background:#fff}.empty{text-align:center;color:var(--muted);padding:25px}
+footer{background:#241534;color:#fff;text-align:center;padding:25px}
+@media(max-width:800px){nav{display:none}.hero{grid-template-columns:1fr}.hero h1{font-size:36px}.hero-art{height:180px;font-size:60px}.roles,.cards,.statgrid{grid-template-columns:1fr}.row>*{min-width:100%}}
+</style>
+</head>
+<body>
+<header><div class="logo">Shakti Niketan<small>PLAY GROUP</small></div><nav><a href="#home">Home</a><a href="#portal">🔐 Portal</a><a href="#about">About</a><a href="#admission">Admission</a></nav></header>
+
+<section class="hero" id="home"><div><h1>A Happy Place for Little Minds 💜</h1><p>Learn • Play • Grow — a joyful beginning for every child.</p><button class="btn" onclick="location.hash='portal'">Open School Portal</button></div><div class="hero-art">🧒🎨📚🌱</div></section>
+
+<section id="portal">
+<div class="title"><h2>Secure School Portal 🔐</h2><p>Owner • Admin • Teacher • Parent</p></div>
+<div class="panel" style="max-width:1100px;margin:auto">
+<div id="loginBox">
+<div class="roles">
+<button class="role active" data-role="owner">👑 Owner</button><button class="role" data-role="admin">🛡️ Admin</button><button class="role" data-role="teacher">👩‍🏫 Teacher</button><button class="role" data-role="parent">👨‍👩‍👧 Parent</button>
+</div>
+<label>Login ID / Email</label><input id="loginId" placeholder="Enter Login ID or Email">
+<label>Password</label><input id="password" type="password" placeholder="Enter Password">
+<div class="row"><button class="btn" id="loginBtn">Login</button><button class="btn gray" id="demoBtn">Demo Dashboard</button></div>
+<div id="loginMsg"></div>
+</div>
+
+<div id="app" class="hidden">
+<div class="row" style="align-items:center"><div><h2 id="welcome" style="margin-bottom:4px"></h2><span id="roleBadge" class="badge"></span></div><button class="btn red" id="logoutBtn" style="flex:0 0 auto">Logout</button></div>
+<div class="appbar" id="tabs"></div>
+<div id="view"></div>
+</div>
+</div>
+</section>
+
+<section id="about"><div class="title"><h2>About Our School</h2><p>A caring, safe and joyful environment for early learning.</p></div><div class="cards">
+<div class="card">❤️<h3>Care & Safety</h3><p>Child-friendly care and a warm learning atmosphere.</p></div>
+<div class="card">🎨<h3>Fun Learning</h3><p>Stories, art, music, games and hands-on activities.</p></div>
+<div class="card">🌱<h3>Overall Growth</h3><p>Creativity, communication, confidence and social skills.</p></div>
+</div></section>
+
+<section id="admission"><div class="title"><h2>Admission Enquiry</h2></div><div class="panel" style="max-width:750px;margin:auto">
+<div class="row"><input id="parentName" placeholder="Parent Name"><input id="phone" placeholder="Mobile Number"></div>
+<div class="row"><input id="childName" placeholder="Child Name"><select id="className"><option>Play Group</option><option>Nursery</option><option>LKG</option><option>UKG</option></select></div>
+<textarea id="message" placeholder="Message"></textarea><button class="btn" id="enquiryBtn">Submit Enquiry</button><div id="enquiryMsg"></div>
+</div></section>
+<footer>Shakti Niketan Play Group • Secure School Portal</footer>
+
+<script>
+const SUPABASE_URL="https://fmyuhiohjyvetzbrbayk.supabase.co";
+const SUPABASE_KEY="sb_publishable_5zXKwEf_v9RcLOxGbSuAog_O7WU_hKQ";
+const LOGIN_FUNCTION=SUPABASE_URL+"/functions/v1/school-login";
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+let selectedRole="owner", currentUser=null, demo=false, activeTab="dashboard";
+const $=id=>document.getElementById(id);
+const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function msg(id,text,error=false){$(id).innerHTML='<div class="msg '+(error?'err':'')+'">'+esc(text)+'</div>'}
+
+document.querySelectorAll(".role").forEach(b=>b.onclick=()=>{document.querySelectorAll(".role").forEach(x=>x.classList.remove("active"));b.classList.add("active");selectedRole=b.dataset.role});
+$("loginBtn").onclick=login;
+$("demoBtn").onclick=()=>{demo=true;currentUser={role:selectedRole,full_name:"Demo "+selectedRole};openApp()};
+$("logoutBtn").onclick=logout;
+
+async function login(){
+ const username=$("loginId").value.trim(), password=$("password").value;
+ if(!username||!password){msg("loginMsg","Login ID and password are required.",true);return}
+ $("loginBtn").disabled=true;$("loginBtn").textContent="Logging in...";
+ try{
+  const r=await fetch(LOGIN_FUNCTION,{method:"POST",headers:{"Content-Type":"application/json","apikey":SUPABASE_KEY},body:JSON.stringify({username,password})});
+  const t=await r.text();let d;try{d=JSON.parse(t)}catch(e){throw Error("Invalid login server response")}
+  if(!r.ok)throw Error(d.error||"Login failed");
+  if(!d.session?.access_token)throw Error("No valid session returned");
+  const s=await db.auth.setSession({access_token:d.session.access_token,refresh_token:d.session.refresh_token});
+  if(s.error)throw s.error;
+  if(d.user?.role && d.user.role!==selectedRole)throw Error("Please select the correct portal");
+  currentUser=d.user||{role:selectedRole};demo=false;openApp();
+ }catch(e){msg("loginMsg",e.message||"Login failed",true)}
+ finally{$("loginBtn").disabled=false;$("loginBtn").textContent="Login"}
+}
+function openApp(){
+ $("loginBox").classList.add("hidden");$("app").classList.remove("hidden");
+ const role=currentUser?.role||selectedRole;$("welcome").textContent="Welcome, "+(currentUser?.full_name||currentUser?.username||"User")+" 👋";$("roleBadge").textContent=role.toUpperCase();
+ buildTabs(role);showTab("dashboard");
+}
+function buildTabs(role){
+ const base=[["dashboard","🏠 Dashboard"],["students","👧 Students"],["attendance","✅ Attendance"],["homework","📚 Homework"],["notices","📢 Notices"],["fees","💰 Fees"]];
+ if(role==="owner"||role==="admin")base.push(["enquiries","📩 Enquiries"]);
+ if(role==="owner")base.push(["staff","👥 Staff"]);
+ if(role==="parent")base.splice(2,1); // parent does not mark attendance
+ $("tabs").innerHTML=base.map(x=>'<button class="tab" data-tab="'+x[0]+'">'+x[1]+"</button>").join("");
+ document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
+}
+function showTab(tab){
+ activeTab=tab;document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));
+ const role=currentUser?.role||selectedRole;
+ if(tab==="dashboard")dashboard(role);else if(tab==="students")students(role);else if(tab==="attendance")attendance(role);else if(tab==="homework")homework(role);else if(tab==="notices")notices(role);else if(tab==="fees")fees(role);else if(tab==="enquiries")enquiries();else if(tab==="staff")staff();
+}
+function dashboard(role){
+ $("view").innerHTML='<div class="statgrid"><div class="stat"><b>👧</b>Students</div><div class="stat"><b>👩‍🏫</b>Teachers</div><div class="stat"><b>📅</b>Attendance</div><div class="stat"><b>📢</b>Notices</div></div><br><div class="cards"><div class="card"><h3>Welcome to the '+esc(role)+' dashboard</h3><p>Use the tabs above to manage the school portal.</p></div><div class="card"><h3>🔒 Secure</h3><p>Authentication is handled through Supabase.</p></div><div class="card"><h3>☁️ Online</h3><p>School records can be stored in your Supabase database.</p></div></div>';
+}
+function students(role){
+ $("view").innerHTML='<div class="card"><h3>👧 Student Management</h3><div class="row"><input id="sn" placeholder="Student name"><input id="sc" placeholder="Class"><input id="sp" placeholder="Parent name"><input id="sph" placeholder="Parent phone"></div><button class="btn" onclick="addStudent()">Add Student</button><div id="studentList"><div class="empty">Loading students...</div></div></div>';loadStudents();
+}
+async function loadStudents(){
+ if(demo){$("studentList").innerHTML='<div class="item"><b>Demo Student</b> <span class="badge">Play Group</span><br>Parent: Demo Parent</div>';return}
+ try{let {data,error}=await db.from("students").select("*").order("created_at",{ascending:false});if(error)throw error;
+ $("studentList").innerHTML=(data||[]).map(x=>'<div class="item"><b>'+esc(x.name)+'</b> <span class="badge">'+esc(x.class_name)+'</span><br>Parent: '+esc(x.parent_name||"—")+' • '+esc(x.parent_phone||"—")+'</div>').join("")||'<div class="empty">No students yet.</div>';
+ }catch(e){$("studentList").innerHTML='<div class="msg err">Students table not ready: '+esc(e.message)+'</div>'}
+}
+async function addStudent(){
+ const row={name:$("sn").value.trim(),class_name:$("sc").value.trim(),parent_name:$("sp").value.trim(),parent_phone:$("sph").value.trim()};
+ if(!row.name){alert("Student name required");return}
+ if(demo){msg("studentList","Demo mode: student added visually only.");return}
+ try{const {error}=await db.from("students").insert(row);if(error)throw error;students();}catch(e){msg("studentList",e.message,true)}
+}
+function attendance(role){
+ $("view").innerHTML='<div class="card"><h3>✅ Attendance</h3><p>Mark daily attendance.</p><div class="row"><input id="adate" type="date"><input id="astudent" placeholder="Student name"><select id="astatus"><option>Present</option><option>Absent</option><option>Late</option></select></div><button class="btn" onclick="addAttendance()">Save Attendance</button><div id="attList"></div></div>';$("adate").value=new Date().toISOString().slice(0,10);loadAttendance();
+}
+async function loadAttendance(){if(demo){$("attList").innerHTML='<div class="item">Demo Student — Present</div>';return}try{let {data,error}=await db.from("attendance").select("*").order("date",{ascending:false}).limit(50);if(error)throw error;$("attList").innerHTML=(data||[]).map(x=>'<div class="item"><b>'+esc(x.student_name)+'</b> — '+esc(x.status)+'<br>'+esc(x.date)+'</div>').join("")||'<div class="empty">No attendance records.</div>'}catch(e){$("attList").innerHTML='<div class="msg err">Attendance table not ready: '+esc(e.message)+'</div>'}}
+async function addAttendance(){const row={date:$("adate").value,student_name:$("astudent").value.trim(),status:$("astatus").value};if(!row.student_name)return alert("Student name required");if(demo){loadAttendance();return}try{const {error}=await db.from("attendance").insert(row);if(error)throw error;attendance()}catch(e){alert(e.message)}}
+function homework(role){
+ $("view").innerHTML='<div class="card"><h3>📚 Homework</h3><div class="row"><input id="htitle" placeholder="Homework title"><input id="hclass" placeholder="Class"><input id="hdue" type="date"></div><textarea id="hdesc" placeholder="Details"></textarea><button class="btn" onclick="addHomework()">Add Homework</button><div id="hwList"></div></div>';loadHomework();
+}
+async function loadHomework(){if(demo){$("hwList").innerHTML='<div class="item"><b>Demo Homework</b> — Draw a flower 🌸</div>';return}try{let {data,error}=await db.from("homework").select("*").order("created_at",{ascending:false});if(error)throw error;$("hwList").innerHTML=(data||[]).map(x=>'<div class="item"><b>'+esc(x.title)+'</b> <span class="badge">'+esc(x.class_name||"All")+'</span><br>'+esc(x.description||"")+'<br>Due: '+esc(x.due_date||"—")+'</div>').join("")||'<div class="empty">No homework.</div>'}catch(e){$("hwList").innerHTML='<div class="msg err">Homework table not ready: '+esc(e.message)+'</div>'}}
+async function addHomework(){const row={title:$("htitle").value.trim(),class_name:$("hclass").value.trim(),due_date:$("hdue").value||null,description:$("hdesc").value.trim()};if(!row.title)return alert("Title required");if(demo){loadHomework();return}try{const {error}=await db.from("homework").insert(row);if(error)throw error;homework()}catch(e){alert(e.message)}}
+function notices(role){
+ $("view").innerHTML='<div class="card"><h3>📢 School Notices</h3><div class="row"><input id="ntitle" placeholder="Notice title"><input id="nfor" placeholder="For (All/Parents/Teachers)"></div><textarea id="nmsg" placeholder="Notice"></textarea><button class="btn" onclick="addNotice()">Publish Notice</button><div id="noticeList"></div></div>';loadNotices();
+}
+async function loadNotices(){if(demo){$("noticeList").innerHTML='<div class="item"><b>Welcome</b><br>School portal is active.</div>';return}try{let {data,error}=await db.from("notices").select("*").order("created_at",{ascending:false});if(error)throw error;$("noticeList").innerHTML=(data||[]).map(x=>'<div class="item"><b>'+esc(x.title)+'</b> <span class="badge">'+esc(x.audience||"All")+'</span><br>'+esc(x.message||"")+'</div>').join("")||'<div class="empty">No notices.</div>'}catch(e){$("noticeList").innerHTML='<div class="msg err">Notices table not ready: '+esc(e.message)+'</div>'}}
+async function addNotice(){const row={title:$("ntitle").value.trim(),audience:$("nfor").value.trim()||"All",message:$("nmsg").value.trim()};if(!row.title||!row.message)return alert("Title and notice required");if(demo){loadNotices();return}try{const {error}=await db.from("notices").insert(row);if(error)throw error;notices()}catch(e){alert(e.message)}}
+function fees(role){
+ $("view").innerHTML='<div class="card"><h3>💰 Fees</h3><div class="row"><input id="fn" placeholder="Student name"><input id="famt" type="number" placeholder="Amount"><select id="fstatus"><option>Paid</option><option>Pending</option><option>Partial</option></select></div><button class="btn" onclick="addFee()">Save Fee</button><div id="feeList"></div></div>';loadFees();
+}
+async function loadFees(){if(demo){$("feeList").innerHTML='<div class="item">Demo Student — ₹2500 — <b>Pending</b></div>';return}try{let {data,error}=await db.from("fees").select("*").order("created_at",{ascending:false});if(error)throw error;$("feeList").innerHTML=(data||[]).map(x=>'<div class="item"><b>'+esc(x.student_name)+'</b> — ₹'+esc(x.amount)+' <span class="badge">'+esc(x.status)+'</span></div>').join("")||'<div class="empty">No fee records.</div>'}catch(e){$("feeList").innerHTML='<div class="msg err">Fees table not ready: '+esc(e.message)+'</div>'}}
+async function addFee(){const row={student_name:$("fn").value.trim(),amount:Number($("famt").value),status:$("fstatus").value};if(!row.student_name||!row.amount)return alert("Student and amount required");if(demo){loadFees();return}try{const {error}=await db.from("fees").insert(row);if(error)throw error;fees()}catch(e){alert(e.message)}}
+function enquiries(){ $("view").innerHTML='<div class="card"><h3>📩 Admission Enquiries</h3><div id="enqList">Loading...</div></div>';loadEnquiries()}
+async function loadEnquiries(){if(demo){$("enqList").innerHTML='<div class="item"><b>Demo Parent</b> — Demo Child<br>9876543210<br>Interested in Play Group.</div>';return}try{let {data,error}=await db.from("enquiries").select("*").order("created_at",{ascending:false});if(error)throw error;$("enqList").innerHTML=(data||[]).map(x=>'<div class="item"><b>'+esc(x.parent_name)+'</b> — '+esc(x.child_name)+'<br>'+esc(x.phone)+' • '+esc(x.class_name||"")+'<br>'+esc(x.message||"")+'</div>').join("")||'<div class="empty">No enquiries.</div>'}catch(e){$("enqList").innerHTML='<div class="msg err">Enquiries table not ready: '+esc(e.message)+'</div>'}}
+function staff(){ $("view").innerHTML='<div class="card"><h3>👥 Staff Management</h3><div class="row"><input id="stn" placeholder="Staff name"><select id="str"><option>Admin</option><option>Teacher</option></select><input id="ste" placeholder="Email"></div><button class="btn" onclick="addStaff()">Add Staff</button><div id="staffList"></div></div>';loadStaff()}
+async function loadStaff(){if(demo){$("staffList").innerHTML='<div class="item"><b>Demo Teacher</b> — Teacher</div>';return}try{let {data,error}=await db.from("staff").select("*").order("created_at",{ascending:false});if(error)throw error;$("staffList").innerHTML=(data||[]).map(x=>'<div class="item"><b>'+esc(x.name)+'</b> — '+esc(x.role)+'<br>'+esc(x.email||"")+'</div>').join("")||'<div class="empty">No staff records.</div>'}catch(e){$("staffList").innerHTML='<div class="msg err">Staff table not ready: '+esc(e.message)+'</div>'}}
+async function addStaff(){const row={name:$("stn").value.trim(),role:$("str").value,email:$("ste").value.trim()};if(!row.name)return alert("Name required");if(demo){loadStaff();return}try{const {error}=await db.from("staff").insert(row);if(error)throw error;staff()}catch(e){alert(e.message)}}
+$("enquiryBtn").onclick=async()=>{const row={parent_name:$("parentName").value.trim(),phone:$("phone").value.trim(),child_name:$("childName").value.trim(),class_name:$("className").value,message:$("message").value.trim()};if(!row.parent_name||!row.phone||!row.child_name)return msg("enquiryMsg","Please fill Parent Name, Mobile and Child Name.",true);try{const {error}=await db.from("enquiries").insert(row);if(error)throw error;msg("enquiryMsg","✅ Enquiry submitted successfully.");$("parentName").value=$("phone").value=$("childName").value=$("message").value=""}catch(e){msg("enquiryMsg","Enquiry could not be submitted: "+e.message,true)}};
+async function logout(){if(!demo)await db.auth.signOut();demo=false;currentUser=null;$("app").classList.add("hidden");$("loginBox").classList.remove("hidden");$("password").value="";location.hash="portal"}
+</script>
+</body>
+</html>
