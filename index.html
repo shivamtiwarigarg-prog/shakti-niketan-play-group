@@ -31,7 +31,47 @@ function buildTabs(role){let base;if(role==='parent')base=[['dashboard','🏠 Pa
 function showTab(t){document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===t));let r=currentUser.role;if(r==='parent')return parentTab(t);if(t==='dashboard')dashboard(r);else if(t==='students')students();else if(t==='attendance')attendance();else if(t==='homework')homework();else if(t==='notices')notices();else if(t==='fees')fees();else if(t==='enquiries')enquiries();else if(t==='accounts')accounts();else if(t==='users')users()}
 function dashboard(r){$('view').innerHTML='<div class="statgrid"><div class="stat"><b>👧</b>Students</div><div class="stat"><b>👩‍🏫</b>Teachers</div><div class="stat"><b>📅</b>Attendance</div><div class="stat"><b>📢</b>Notices</div></div><br><div class="cards"><div class="card"><h3>Welcome to your '+esc(r)+' dashboard</h3><p>Use the tabs above to manage your assigned school work.</p></div><div class="card"><h3>🔒 Secure</h3><p>Parent accounts only show their own child’s linked information.</p></div><div class="card"><h3>☁️ Online</h3><p>Your portal works from mobile and desktop.</p></div></div>'}
 function students(){ $('view').innerHTML='<div class="card"><h3>👧 Student Management</h3><p class="muted">Owner can add and remove students. Other roles need the Students permission.</p><div class="row"><input id="sn" placeholder="Student name"><input id="sc" placeholder="Class"><input id="sp" placeholder="Parent name"><input id="sph" placeholder="Parent phone"></div><button class="btn" onclick="addStudent()">Add Student</button><div id="studentList" class="empty">Loading...</div></div>';loadStudents() }
-async function loadStudents(){if(demo)return $('studentList').innerHTML='<div class="item"><b>Demo Student</b> <span class="badge">Play Group</span></div>';try{let{data,error}=await db.from('students').select('*').order('created_at',{ascending:false});if(error)throw error;$('studentList').innerHTML=(data||[]).map(x=>'<div class="item"><b>'+esc(x.name)+'</b> <span class="badge">'+esc(x.class_name||'')+'</span><br>Parent: '+esc(x.parent_name||'—')+' • '+esc(x.parent_phone||'—')+(currentUser.role==='owner'?'<br><button class="btn red" style="margin-top:8px" onclick="deleteStudent(\\''+x.id+'\\')">Remove Student</button>':'')+'</div>').join('')||'<div class="empty">No students yet.</div>'}catch(e){$('studentList').innerHTML='<div class="msg err">Could not load students: '+esc(e.message)+'</div>'}}
+async function loadStudents(){
+  if(demo){
+    $('studentList').innerHTML='<div class="item"><b>Demo Student</b> <span class="badge">Play Group</span></div>';
+    return;
+  }
+
+  try{
+    let {data,error}=await db
+      .from('students')
+      .select('*')
+      .order('created_at',{ascending:false});
+
+    if(error) throw error;
+
+    $('studentList').innerHTML=(data||[]).map(x=>`
+      <div class="item">
+        <b>${esc(x.name)}</b>
+        <span class="badge">${esc(x.class_name||'')}</span><br>
+        Parent: ${esc(x.parent_name||'—')} • ${esc(x.parent_phone||'—')}
+        ${
+          currentUser.role==='owner'
+          ? `<br><button type="button" class="btn red removeStudent"
+              data-id="${esc(x.id)}" style="margin-top:8px">
+              Remove Student
+             </button>`
+          : ''
+        }
+      </div>
+    `).join('') || '<div class="empty">No students yet.</div>';
+
+    document.querySelectorAll('.removeStudent').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        deleteStudent(btn.dataset.id);
+      });
+    });
+
+  }catch(e){
+    $('studentList').innerHTML=
+      '<div class="msg err">Could not load students: '+esc(e.message)+'</div>';
+  }
+}
 async function addStudent(){let row={name:$('sn').value.trim(),class_name:$('sc').value.trim(),parent_name:$('sp').value.trim(),parent_phone:$('sph').value.trim()};if(!row.name)return alert('Student name required');if(demo)return;try{let{error}=await db.from('students').insert(row);if(error)throw error;students()}catch(e){alert(e.message)}}
 async function deleteStudent(id){if(currentUser.role!=='owner')return alert('Owner authorization required');if(!confirm('Remove this student? This cannot be undone.'))return;try{let token=(await db.auth.getSession()).data.session?.access_token;let r=await fetch(FN+'owner-control',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token,'apikey':SUPABASE_KEY},body:JSON.stringify({action:'delete_student',student_id:id})}),d=await r.json();if(!r.ok)throw Error(d.error||'Could not remove student');students()}catch(e){alert(e.message)}}
 
