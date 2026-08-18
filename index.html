@@ -4,7 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Shakti Niketan Play Group</title>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
@@ -13,106 +12,50 @@
  --card:#fff;--green:#25864e;--red:#9b3030;--line:#e7e0ed
 }
 *{box-sizing:border-box}
-body{
- margin:0;font-family:Arial,sans-serif;background:var(--bg);color:var(--ink)
-}
-header{
- position:sticky;top:0;z-index:5;background:#fff;padding:12px 6%;
- display:flex;justify-content:space-between;box-shadow:0 2px 15px #0001
-}
+body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:var(--ink)}
+header{position:sticky;top:0;z-index:5;background:#fff;padding:12px 6%;
+display:flex;justify-content:space-between;box-shadow:0 2px 15px #0001}
 .logo{font-weight:900;color:var(--p);font-size:20px}
-.logo small{
- display:block;font-size:9px;color:#f76;letter-spacing:2px
-}
-nav a{
- margin-left:12px;color:#333;text-decoration:none;font-weight:700;font-size:13px
-}
-.hero{
- padding:60px 7%;display:grid;grid-template-columns:1fr 1fr;
- gap:25px;align-items:center;
- background:linear-gradient(135deg,#eee2ff,#fff0d9,#def8ef)
-}
+.logo small{display:block;font-size:9px;color:#f76;letter-spacing:2px}
+nav a{margin-left:12px;color:#333;text-decoration:none;font-weight:700;font-size:13px}
+.hero{padding:60px 7%;display:grid;grid-template-columns:1fr 1fr;gap:25px;
+align-items:center;background:linear-gradient(135deg,#eee2ff,#fff0d9,#def8ef)}
 h1{font-size:50px;color:#3c2364}
-.hero-art{
- height:260px;border-radius:35px;background:#fff;display:flex;
- align-items:center;justify-content:center;font-size:90px;
- box-shadow:0 20px 50px #6535a822
-}
+.hero-art{height:260px;border-radius:35px;background:#fff;display:flex;
+align-items:center;justify-content:center;font-size:90px;box-shadow:0 20px 50px #6535a822}
 section{padding:50px 7%}
 .title{text-align:center;margin-bottom:25px}
 .title h2{color:#3c2364}
-.cards{
- display:grid;grid-template-columns:repeat(3,1fr);gap:16px
-}
-.card,.panel{
- background:var(--card);padding:20px;border-radius:18px;
- box-shadow:0 7px 25px #0000000d
-}
-.btn{
- border:0;border-radius:10px;padding:11px 16px;background:var(--p);
- color:#fff;font-weight:800;cursor:pointer
-}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card,.panel{background:var(--card);padding:20px;border-radius:18px;box-shadow:0 7px 25px #0000000d}
+.btn{border:0;border-radius:10px;padding:11px 16px;background:var(--p);color:#fff;font-weight:800;cursor:pointer}
+.btn:disabled{opacity:.6}
 .red{background:var(--red)}
 .green{background:var(--green)}
-input,select,textarea{
- width:100%;padding:11px;border:1px solid #ddd;border-radius:9px;
- margin:5px 0 10px;font:inherit
-}
+input,select,textarea{width:100%;padding:11px;border:1px solid #ddd;border-radius:9px;
+margin:5px 0 10px;font:inherit}
 textarea{min-height:80px}
 .row{display:flex;gap:9px;flex-wrap:wrap}
 .row>*{flex:1;min-width:140px}
-.roles{
- display:grid;grid-template-columns:repeat(4,1fr);gap:7px
-}
-.role,.tab{
- border:0;padding:11px;border-radius:9px;background:var(--soft);
- font-weight:800;cursor:pointer
-}
+.roles{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.role,.tab{border:0;padding:11px;border-radius:9px;background:var(--soft);font-weight:800;cursor:pointer}
 .active{background:var(--p)!important;color:#fff}
-.tabs{
- display:flex;gap:7px;flex-wrap:wrap;margin:15px 0
-}
+.tabs{display:flex;gap:7px;flex-wrap:wrap;margin:15px 0}
 .tabcontent{display:none}
 .tabcontent.active{display:block}
-.item{
- border:1px solid var(--line);padding:12px;border-radius:12px;margin:8px 0
-}
-.notice{
- background:#fff7d8;padding:12px;border-radius:10px;margin:8px 0
-}
-.summary{
- display:grid;grid-template-columns:repeat(4,1fr);gap:8px
-}
-.stat{
- background:var(--soft);padding:15px;text-align:center;border-radius:12px
-}
-.stat b{
- display:block;font-size:22px;color:var(--p)
-}
-.check{
- display:grid;grid-template-columns:repeat(3,1fr);gap:6px
-}
-.check label{
- background:#f7f1ff;padding:7px;border-radius:8px
-}
-.msg{
- padding:9px;border-radius:8px;background:#eef8f1;margin:8px 0
-}
+.item{border:1px solid var(--line);padding:12px;border-radius:12px;margin:8px 0}
+.notice{background:#fff7d8;padding:12px;border-radius:10px;margin:8px 0}
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.stat{background:var(--soft);padding:15px;text-align:center;border-radius:12px}
+.stat b{display:block;font-size:22px;color:var(--p)}
+.check{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.check label{background:#f7f1ff;padding:7px;border-radius:8px}
+.msg{padding:9px;border-radius:8px;background:#eef8f1;margin:8px 0}
 .err{background:#fff0f0;color:#8b2424}
 .muted{font-size:12px;color:#777}
-.pill{
- display:inline-block;padding:4px 8px;background:#f1e9ff;
- border-radius:9px;margin:2px;font-size:12px
-}
-footer{
- background:#241534;color:#fff;text-align:center;padding:25px
-}
-#resetBox{
- max-width:600px;margin:auto
-}
-.reset-title{
- text-align:center;color:#3c2364
-}
+.pill{display:inline-block;padding:4px 8px;background:#f1e9ff;border-radius:9px;margin:2px;font-size:12px}
+footer{background:#241534;color:#fff;text-align:center;padding:25px}
+#resetBox{max-width:600px;margin:auto}
 @media(max-width:800px){
  nav{display:none}
  .hero{grid-template-columns:1fr}
@@ -128,11 +71,7 @@ footer{
 <body>
 
 <header>
-<div class="logo" id="brand">
-Shakti Niketan
-<small>PLAY GROUP</small>
-</div>
-
+<div class="logo" id="brand">Shakti Niketan<small>PLAY GROUP</small></div>
 <nav>
 <a href="#home">Home</a>
 <a href="#login">🔐 Login</a>
@@ -142,31 +81,22 @@ Shakti Niketan
 </nav>
 </header>
 
-
 <section class="hero" id="home">
 <div>
 <h1 id="hero">A Happy Place for Little Minds 💜</h1>
 <p id="heroText">Learn • Play • Grow — a joyful beginning for every child.</p>
-<button class="btn" onclick="location.hash='admission'">
-Admission Enquiry
-</button>
+<button class="btn" onclick="location.hash='admission'">Admission Enquiry</button>
 </div>
-
 <div class="hero-art">🧒🎨📚</div>
 </section>
 
-
 <section id="login">
-
 <div class="title">
 <h2>Secure School Portal 🔐</h2>
 <p>Owner • Admin • Teacher • Parent</p>
 </div>
 
-
 <div class="panel" style="max-width:1100px;margin:auto">
-
-<!-- NORMAL LOGIN -->
 
 <div id="loginBox">
 
@@ -193,41 +123,21 @@ Authentication and school data are stored online using Supabase.
 
 </div>
 
-
-<!-- PASSWORD RESET BOX -->
-
 <div id="resetBox" hidden>
 
-<h2 class="reset-title">🔐 Reset Password</h2>
-
-<p style="text-align:center">
-Create a new password for your school portal.
-</p>
+<h2 style="text-align:center;color:#3c2364">🔐 Reset Password</h2>
 
 <label>New Password</label>
-<input
- id="newPassword"
- type="password"
- placeholder="New Password (8+ characters)"
->
+<input id="newPassword" type="password" placeholder="New Password (8+ characters)">
 
 <label>Confirm New Password</label>
-<input
- id="confirmPassword"
- type="password"
- placeholder="Confirm New Password"
->
+<input id="confirmPassword" type="password" placeholder="Confirm New Password">
 
-<button class="btn" id="resetPassword">
-Update Password
-</button>
+<button class="btn" id="resetPassword">Update Password</button>
 
 <div id="resetMsg"></div>
 
 </div>
-
-
-<!-- APP -->
 
 <div id="app" hidden>
 
@@ -243,18 +153,13 @@ Update Password
 </div>
 </section>
 
-
 <section id="about">
-
 <div class="title">
 <h2>About Our School</h2>
-<p id="aboutText">
-A caring, safe and joyful environment for early learning.
-</p>
+<p id="aboutText">A caring, safe and joyful environment for early learning.</p>
 </div>
 
 <div class="cards">
-
 <div class="card">
 ❤️
 <h3>Care & Safety</h3>
@@ -272,10 +177,8 @@ A caring, safe and joyful environment for early learning.
 <h3>Overall Growth</h3>
 <p>Creativity, communication, confidence and social skills.</p>
 </div>
-
 </div>
 </section>
-
 
 <section id="admission">
 
@@ -303,15 +206,12 @@ A caring, safe and joyful environment for early learning.
 
 <textarea id="enqText" placeholder="Message"></textarea>
 
-<button class="btn" id="sendEnq">
-Submit Enquiry
-</button>
+<button class="btn" id="sendEnq">Submit Enquiry</button>
 
 <div id="enqMsg"></div>
 
 </div>
 </section>
-
 
 <section id="contact">
 
@@ -342,33 +242,21 @@ Submit Enquiry
 </div>
 </section>
 
-
 <footer>
-Shakti Niketan Play Group
-<br>
+Shakti Niketan Play Group<br>
 <span id="foot"></span>
 </footer>
 
-
 <script>
 
-/* =========================
-   SUPABASE
-========================= */
+const URL='https://fmyuhiohjyvetzbrbayk.supabase.co';
 
-const URL =
-'https://fmyuhiohjyvetzbrbayk.supabase.co';
+const KEY='sb_publishable_5zXKwEf_v9RcLOxGbSuAog_O7WU_hKQ';
 
-const KEY =
-'sb_publishable_5zXKwEf_v9RcLOxGbSuAog_O7WU_hKQ';
+const db=supabase.createClient(URL,KEY);
 
-const db = supabase.createClient(URL,KEY);
-
-const LOGIN =
-URL+'/functions/v1/school-login';
-
-const ADMIN =
-URL+'/functions/v1/school-user-admin';
+const LOGIN=URL+'/functions/v1/school-login';
+const ADMIN=URL+'/functions/v1/school-user-admin';
 
 let me=null;
 let chosen='owner';
@@ -387,51 +275,28 @@ const P=[
 'users'
 ];
 
-const esc=x =>
-String(x??'').replace(
-/[&<>"']/g,
-c=>({
+const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({
 '&':'&amp;',
 '<':'&lt;',
 '>':'&gt;',
 '"':'&quot;',
 "'":'&#39;'
-}[c])
-);
+}[c]));
 
-const can=p =>
-me?.role==='owner' ||
-me?.permissions?.includes(p);
+const can=p=>me?.role==='owner'||me?.permissions?.includes(p);
 
-const say=(id,t,e=false)=>
+const say=(id,t,e=false)=>{
 $(id).innerHTML=
 '<div class="msg '+(e?'err':'')+'">'+esc(t)+'</div>';
-
-
-/* =========================
-   ROLE SELECT
-========================= */
-
-document.querySelectorAll('.role').forEach(b=>{
-
-b.onclick=()=>{
-
-document
-.querySelectorAll('.role')
-.forEach(x=>x.classList.remove('active'));
-
-b.classList.add('active');
-
-chosen=b.dataset.r;
-
 };
 
+document.querySelectorAll('.role').forEach(b=>{
+b.onclick=()=>{
+document.querySelectorAll('.role').forEach(x=>x.classList.remove('active'));
+b.classList.add('active');
+chosen=b.dataset.r;
+};
 });
-
-
-/* =========================
-   SCHOOL SETTINGS
-========================= */
 
 async function settings(){
 
@@ -446,18 +311,17 @@ const {data}=await db
 if(data){
 
 $('brand').innerHTML=
-esc(data.school_name)+
+esc(data.school_name||'Shakti Niketan')+
 '<small>PLAY GROUP</small>';
 
-$('hero').textContent=data.hero_title||'A Happy Place for Little Minds 💜';
+$('hero').textContent=
+data.hero_title||'A Happy Place for Little Minds 💜';
 
 $('heroText').textContent=
-data.hero_text||
-'Learn • Play • Grow — a joyful beginning for every child.';
+data.hero_text||'Learn • Play • Grow — a joyful beginning for every child.';
 
 $('aboutText').textContent=
-data.about||
-'A caring, safe and joyful environment for early learning.';
+data.about||'A caring, safe and joyful environment for early learning.';
 
 $('address').textContent=
 data.address||'Will be added by Owner.';
@@ -473,66 +337,65 @@ $('foot').textContent=data.phone||'';
 }
 
 }catch(e){
-
 console.log('Settings error:',e);
-
 }
 
 }
-
-
-/* =========================
-   LOGIN
-========================= */
 
 async function login(){
 
 const username=$('lid').value.trim();
 const password=$('lpw').value;
 
-if(!username||!password){
+if(!username||!password)
+return say('loginMsg','Enter Login ID and password',true);
 
-return say(
-'loginMsg',
-'Enter Login ID and password',
-true
-);
+const btn=$('login');
 
-}
+btn.disabled=true;
+btn.textContent='Logging in...';
 
 try{
 
-const r=await fetch(
-LOGIN,
-{
+const r=await fetch(LOGIN,{
 method:'POST',
+mode:'cors',
 headers:{
-'content-type':'application/json'
+'Content-Type':'application/json',
+'apikey':KEY
 },
 body:JSON.stringify({
 username,
 password
 })
-}
-);
+});
 
-const j=await r.json();
+const raw=await r.text();
+
+let j;
+
+try{
+j=JSON.parse(raw);
+}catch(_){
+throw Error('Server returned an invalid response. Please refresh and try again.');
+}
 
 if(!r.ok)
-throw Error(j.error||'Login failed');
+throw Error(j.error||`Login failed (${r.status})`);
+
+if(!j.session?.access_token||!j.session?.refresh_token)
+throw Error('Login server did not return a valid session.');
 
 if(j.user.role!==chosen)
-throw Error(
-'Please select the correct portal for this Login ID.'
-);
+throw Error('Please select the correct portal for this Login ID.');
 
-await db.auth.setSession({
-
+const {error:sessionError}=await db.auth.setSession({
 access_token:j.session.access_token,
-
 refresh_token:j.session.refresh_token
-
 });
+
+if(sessionError)
+throw sessionError;
 
 me={
 ...j.user,
@@ -541,13 +404,14 @@ permissions:[]
 
 if(me.role!=='owner'){
 
-const {data}=await db
+const {data,error}=await db
 .from('permissions')
 .select('permission')
 .eq('user_id',me.id);
 
-me.permissions=(data||[])
-.map(x=>x.permission);
+if(error)throw error;
+
+me.permissions=(data||[]).map(x=>x.permission);
 
 }
 
@@ -556,28 +420,28 @@ $('resetBox').hidden=true;
 $('app').hidden=false;
 
 $('welcome').textContent=
-'Welcome, '+
-(me.full_name||me.username)+
-' 👋';
+'Welcome, '+(me.full_name||me.username)+' 👋';
 
 await dashboard();
 
 }catch(e){
 
+console.error('Login error:',e);
+
 say(
 'loginMsg',
-e.message||'Login failed',
+e?.message||'Login failed. Please try again.',
 true
 );
 
-}
+}finally{
+
+btn.disabled=false;
+btn.textContent='Login';
 
 }
 
-
-/* =========================
-   LOGOUT
-========================= */
+}
 
 async function logout(){
 
@@ -586,9 +450,7 @@ await db.auth.signOut();
 me=null;
 
 $('app').hidden=true;
-
 $('loginBox').hidden=false;
-
 $('resetBox').hidden=true;
 
 $('lpw').value='';
@@ -598,17 +460,12 @@ $('lpw').value='';
 $('login').onclick=login;
 $('logout').onclick=logout;
 
-
-/* =========================
-   PASSWORD RECOVERY
-========================= */
-
 async function checkRecovery(){
 
 const hash=window.location.hash;
 
 if(
-hash.includes('type=recovery') ||
+hash.includes('type=recovery')||
 hash.includes('access_token=')
 ){
 
@@ -618,22 +475,10 @@ $('resetBox').hidden=false;
 
 try{
 
-/*
-Supabase automatically creates
-the recovery session from the link.
-*/
-
 const {data,error}=await db.auth.getSession();
 
-if(error){
-
-say(
-'resetMsg',
-error.message,
-true
-);
-
-}
+if(error)
+say('resetMsg',error.message,true);
 
 if(!data.session){
 
@@ -657,60 +502,40 @@ true
 
 }catch(e){
 
-say(
-'resetMsg',
-e.message,
-true
-);
+say('resetMsg',e.message,true);
 
 }
 
 }
 
 }
-
-
-/* =========================
-   UPDATE PASSWORD
-========================= */
 
 $('resetPassword').onclick=async()=>{
 
-const password=
-$('newPassword').value;
+const password=$('newPassword').value;
+const confirm=$('confirmPassword').value;
 
-const confirm=
-$('confirmPassword').value;
-
-if(password.length<8){
-
+if(password.length<8)
 return say(
 'resetMsg',
 'Password must be at least 8 characters.',
 true
 );
 
-}
-
-if(password!==confirm){
-
+if(password!==confirm)
 return say(
 'resetMsg',
 'Passwords do not match.',
 true
 );
 
-}
-
 try{
 
-const {data,error}=
-await db.auth.updateUser({
+const {error}=await db.auth.updateUser({
 password:password
 });
 
-if(error)
-throw error;
+if(error)throw error;
 
 say(
 'resetMsg',
@@ -721,8 +546,7 @@ setTimeout(async()=>{
 
 await db.auth.signOut();
 
-window.location.href=
-window.location.pathname;
+window.location.href=window.location.pathname;
 
 },1800);
 
@@ -738,11 +562,6 @@ true
 
 };
 
-
-/* =========================
-   TABS
-========================= */
-
 function tab(id){
 
 document
@@ -752,11 +571,6 @@ document
 $(id).classList.add('active');
 
 }
-
-
-/* =========================
-   DASHBOARD
-========================= */
 
 async function dashboard(){
 
@@ -797,11 +611,6 @@ n||[]
 
 }
 
-
-/* =========================
-   STAFF DASHBOARD
-========================= */
-
 function staffDash(s,h,f,n){
 
 let t=`
@@ -832,8 +641,7 @@ Pending Fees
 
 <div class="tabs">
 
-<button class="tab active"
-onclick="tab('ov')">
+<button class="tab active" onclick="tab('ov')">
 Overview
 </button>
 
@@ -844,70 +652,46 @@ can('students')||
 can('attendance')||
 can('homework')||
 can('fees')
-){
-
+)
 t+=`
-<button class="tab"
-onclick="tab('st')">
+<button class="tab" onclick="tab('st')">
 Students
 </button>
 `;
 
-}
-
-if(can('notices')){
-
+if(can('notices'))
 t+=`
-<button class="tab"
-onclick="tab('no')">
+<button class="tab" onclick="tab('no')">
 Notices
 </button>
 `;
 
-}
-
-if(can('enquiries')){
-
+if(can('enquiries'))
 t+=`
-<button class="tab"
-onclick="tab('eq');loadEnq()">
+<button class="tab" onclick="tab('eq');loadEnq()">
 Enquiries
 </button>
 `;
 
-}
-
-if(can('users')){
-
+if(can('users'))
 t+=`
-<button class="tab"
-onclick="tab('us');loadUsers()">
+<button class="tab" onclick="tab('us');loadUsers()">
 Users
 </button>
 `;
 
-}
-
-if(can('settings')){
-
+if(can('settings'))
 t+=`
-<button class="tab"
-onclick="tab('se');loadSet()">
+<button class="tab" onclick="tab('se');loadSet()">
 Settings
 </button>
 `;
 
-}
-
 t+=`</div>`;
-
-
-/* OVERVIEW */
 
 t+=`
 
-<div id="ov"
-class="tabcontent active">
+<div id="ov" class="tabcontent active">
 
 <h3>Recent Notices</h3>
 
@@ -922,16 +706,11 @@ ${esc(x.body)}
 
 </div>
 
-`).join('')
-||
-'No notices.'
+`).join('')||'No notices.'
 }
 
 </div>
 `;
-
-
-/* STUDENTS */
 
 if(
 can('students')||
@@ -942,8 +721,7 @@ can('fees')
 
 t+=`
 
-<div id="st"
-class="tabcontent">
+<div id="st" class="tabcontent">
 
 <h3>Students</h3>
 
@@ -957,8 +735,7 @@ t+=`
 
 <div class="row">
 
-<input id="sn"
-placeholder="Student name">
+<input id="sn" placeholder="Student name">
 
 <select id="sc">
 
@@ -969,13 +746,11 @@ placeholder="Student name">
 
 </select>
 
-<input id="sp"
-placeholder="Parent Login ID (optional)">
+<input id="sp" placeholder="Parent Login ID (optional)">
 
 </div>
 
-<button class="btn"
-onclick="addStudent()">
+<button class="btn" onclick="addStudent()">
 Add Student
 </button>
 
@@ -985,7 +760,6 @@ Add Student
 
 }
 
-
 t+=`
 
 ${
@@ -994,21 +768,20 @@ s.map(x=>`
 <div class="item">
 
 <b>${esc(x.name)}</b>
- · ${esc(x.class_name)}
+· ${esc(x.class_name)}
 
 <br>
 
 <span class="muted">
-Parent:
-${esc(x.parent_id||'Not linked')}
+Parent: ${esc(x.parent_id||'Not linked')}
 </span>
 
 <div class="row">
 
 ${
-can('attendance')
-?
+can('attendance')?
 `
+
 <button class="btn green"
 onclick="att('${x.id}','Present')">
 Present
@@ -1018,68 +791,60 @@ Present
 onclick="att('${x.id}','Absent')">
 Absent
 </button>
-`
-:''
+
+`:''
 }
 
 ${
-can('homework')
-?
+can('homework')?
 `
+
 <button class="btn"
 onclick="hw('${x.id}')">
 Homework
 </button>
-`
-:''
+
+`:''
 }
 
 ${
-can('fees')
-?
+can('fees')?
 `
+
 <button class="btn"
 onclick="fee('${x.id}')">
 Fee
 </button>
-`
-:''
+
+`:''
 }
 
 </div>
 
 </div>
 
-`).join('')
-||
-'No students.'
+`).join('')||'No students.'
 }
 
 </div>
+
 `;
 
 }
-
-
-/* NOTICES */
 
 if(can('notices')){
 
 t+=`
 
-<div id="no"
-class="tabcontent">
+<div id="no" class="tabcontent">
 
 <h3>Notices</h3>
 
-<input id="nt"
-placeholder="Title">
+<input id="nt" placeholder="Title">
 
-<textarea id="nb"
-placeholder="Details"></textarea>
+<textarea id="nb" placeholder="Details"></textarea>
 
-<button class="btn"
-onclick="notice()">
+<button class="btn" onclick="notice()">
 Publish
 </button>
 
@@ -1098,19 +863,16 @@ ${esc(x.body)}
 }
 
 </div>
+
 `;
 
 }
-
-
-/* ENQUIRIES */
 
 if(can('enquiries')){
 
 t+=`
 
-<div id="eq"
-class="tabcontent">
+<div id="eq" class="tabcontent">
 
 <h3>Admission Enquiries</h3>
 
@@ -1119,19 +881,16 @@ Loading...
 </div>
 
 </div>
+
 `;
 
 }
-
-
-/* USERS */
 
 if(can('users')){
 
 t+=`
 
-<div id="us"
-class="tabcontent">
+<div id="us" class="tabcontent">
 
 <h3>User Management</h3>
 
@@ -1139,19 +898,19 @@ class="tabcontent">
 
 <div class="row">
 
-<input id="ui"
-placeholder="Login ID">
+<input id="ui" placeholder="Login ID">
 
-<input id="un"
-placeholder="Full name">
+<input id="un" placeholder="Full name">
 
 </div>
 
 <div class="row">
 
-<input id="up"
+<input
+id="up"
 type="password"
-placeholder="Password (8+ characters)">
+placeholder="Password (8+ characters)"
+>
 
 <select id="ur">
 
@@ -1165,12 +924,7 @@ Parent
 
 ${
 me.role==='owner'
-?
-`
-<option value="admin">
-Admin
-</option>
-`
+?'<option value="admin">Admin</option>'
 :''
 }
 
@@ -1188,7 +942,8 @@ P.map(p=>`
 <input
 class="pc"
 type="checkbox"
-value="${p}">
+value="${p}"
+>
 
 ${p}
 
@@ -1199,8 +954,7 @@ ${p}
 
 </div>
 
-<button class="btn"
-onclick="userCreate()">
+<button class="btn" onclick="userCreate()">
 Create User
 </button>
 
@@ -1213,64 +967,56 @@ Loading...
 </div>
 
 </div>
+
 `;
 
 }
-
-
-/* SETTINGS */
 
 if(can('settings')){
 
 t+=`
 
-<div id="se"
-class="tabcontent">
+<div id="se" class="tabcontent">
 
 <h3>School Settings</h3>
 
 <div class="card">
 
-<input id="setP"
-placeholder="Phone">
+<input id="setP" placeholder="Phone">
 
-<input id="setA"
-placeholder="Address">
+<input id="setA" placeholder="Address">
 
-<input id="setH"
-placeholder="Hours">
+<input id="setH" placeholder="Hours">
 
-<input id="setT"
-placeholder="Hero title">
+<input id="setT" placeholder="Hero title">
 
-<input id="setHT"
-placeholder="Hero text">
+<input id="setHT" placeholder="Hero text">
 
-<textarea
-id="setAbout"
-placeholder="About">
-</textarea>
+<textarea id="setAbout" placeholder="About"></textarea>
 
-<button class="btn"
-onclick="saveSet()">
+<button class="btn" onclick="saveSet()">
 Save School Info
 </button>
 
 <hr>
 
-<h4>
-Owner Login ID & Password
-</h4>
+<h4>Owner Login ID & Password</h4>
 
-<input id="newId"
-placeholder="New Owner Login ID">
+<input
+id="newId"
+placeholder="New Owner Login ID"
+>
 
-<input id="newPw"
+<input
+id="newPw"
 type="password"
-placeholder="New Owner Password (8+)">
+placeholder="New Owner Password (8+)"
+>
 
-<button class="btn red"
-onclick="ownerCred()">
+<button
+class="btn red"
+onclick="ownerCred()"
+>
 Change Owner Credentials
 </button>
 
@@ -1279,6 +1025,7 @@ Change Owner Credentials
 </div>
 
 </div>
+
 `;
 
 }
@@ -1286,11 +1033,6 @@ Change Owner Credentials
 $('dash').innerHTML=t;
 
 }
-
-
-/* =========================
-   PARENT DASHBOARD
-========================= */
 
 async function parentDash(s,h,f,n){
 
@@ -1308,22 +1050,21 @@ Children
 </div>
 
 <div class="stat">
-<b>
-${h.filter(
+<b>${
+h.filter(
 x=>mine.some(s=>s.id===x.student_id)
-).length}
-</b>
+).length
+}</b>
 Homework
 </div>
 
 <div class="stat">
-<b>
-${f.filter(
-x=>mine.some(s=>s.id===x.student_id)
-&&
+<b>${
+f.filter(
+x=>mine.some(s=>s.id===x.student_id)&&
 x.status==='Pending'
-).length}
-</b>
+).length
+}</b>
 Pending Fees
 </div>
 
@@ -1341,12 +1082,10 @@ t+=mine.map(x=>`
 
 <h3>
 👧 ${esc(x.name)}
- · ${esc(x.class_name)}
+· ${esc(x.class_name)}
 </h3>
 
-<h4>
-📚 Homework
-</h4>
+<h4>📚 Homework</h4>
 
 ${
 h.filter(q=>q.student_id===x.id)
@@ -1355,7 +1094,6 @@ h.filter(q=>q.student_id===x.id)
 <div class="item">
 
 <b>${esc(q.title)}</b>
-
 <br>
 
 ${esc(q.details||'')}
@@ -1363,41 +1101,30 @@ ${esc(q.details||'')}
 <br>
 
 <span class="muted">
-Due:
-${esc(q.due_date||'Not set')}
+Due: ${esc(q.due_date||'Not set')}
 </span>
 
 </div>
 
-`).join('')
-||
-'No homework.'
+`).join('')||'No homework.'
 }
 
-<h4>
-💰 Fees
-</h4>
+<h4>💰 Fees</h4>
 
 ${
 f.filter(q=>q.student_id===x.id)
 .map(q=>`
 
 <div class="item">
-
 ₹${esc(q.amount)}
- ·
+·
 ${esc(q.status)}
-
 </div>
 
-`).join('')
-||
-'No fee record.'
+`).join('')||'No fee record.'
 }
 
-<h4>
-📅 Attendance
-</h4>
+<h4>📅 Attendance</h4>
 
 <div id="a${x.id}">
 Loading...
@@ -1405,13 +1132,8 @@ Loading...
 
 </div>
 
-`).join('')
-||
-`
-<div class="card">
-No child linked to this Parent account.
-</div>
-`;
+`).join('')||
+'<div class="card">No child linked to this Parent account.</div>';
 
 t+=`
 
@@ -1430,16 +1152,14 @@ ${esc(x.body)}
 
 </div>
 
-`).join('')
-||
-'No notices.'
+`).join('')||'No notices.'
 }
 
 </div>
+
 `;
 
 $('dash').innerHTML=t;
-
 
 for(const x of mine){
 
@@ -1450,31 +1170,22 @@ const {data}=await db
 .order('attendance_date',{ascending:false});
 
 $('a'+x.id).innerHTML=
-
 (data||[])
 .map(q=>`
 
 <span class="pill">
 
 ${esc(q.attendance_date)}
- ·
+·
 ${esc(q.status)}
 
 </span>
 
-`)
-.join('')
-||
-'No record.';
+`).join('')||'No record.';
 
 }
 
 }
-
-
-/* =========================
-   ADD STUDENT
-========================= */
 
 async function addStudent(){
 
@@ -1518,30 +1229,18 @@ dashboard();
 
 }
 
-
-/* =========================
-   ATTENDANCE
-========================= */
-
 async function att(id,status){
 
 const {error}=await db
 .from('attendance')
-.upsert(
-{
+.upsert({
 student_id:id,
-attendance_date:
-new Date()
-.toISOString()
-.slice(0,10),
+attendance_date:new Date().toISOString().slice(0,10),
 status,
 marked_by:me.id
-},
-{
-onConflict:
-'student_id,attendance_date'
-}
-);
+},{
+onConflict:'student_id,attendance_date'
+});
 
 if(error)
 alert(error.message);
@@ -1550,26 +1249,16 @@ dashboard();
 
 }
 
-
-/* =========================
-   HOMEWORK
-========================= */
-
 async function hw(id){
 
-const title=
-prompt('Homework title:');
+const title=prompt('Homework title:');
 
-if(!title)
-return;
+if(!title)return;
 
-const details=
-prompt('Details:')||'';
+const details=prompt('Details:')||'';
 
 const due=
-prompt(
-'Due date YYYY-MM-DD (optional):'
-)||null;
+prompt('Due date YYYY-MM-DD (optional):')||null;
 
 const {error}=await db
 .from('homework')
@@ -1588,18 +1277,11 @@ dashboard();
 
 }
 
-
-/* =========================
-   FEES
-========================= */
-
 async function fee(id){
 
-const amount=
-prompt('Fee amount:');
+const amount=prompt('Fee amount:');
 
-if(amount===null)
-return;
+if(amount===null)return;
 
 const status=
 prompt(
@@ -1623,23 +1305,13 @@ dashboard();
 
 }
 
-
-/* =========================
-   NOTICE
-========================= */
-
 async function notice(){
 
-const title=
-$('nt').value.trim();
-
-const body=
-$('nb').value.trim();
+const title=$('nt').value.trim();
+const body=$('nb').value.trim();
 
 if(!title||!body)
-return alert(
-'Fill title and details'
-);
+return alert('Fill title and details');
 
 const {error}=await db
 .from('notices')
@@ -1656,46 +1328,33 @@ dashboard();
 
 }
 
-
-/* =========================
-   CREATE USER
-========================= */
-
 async function userCreate(){
 
-const username=
-$('ui').value.trim();
+const username=$('ui').value.trim();
+const name=$('un').value.trim();
+const password=$('up').value;
+const role=$('ur').value;
 
-const name=
-$('un').value.trim();
+const permissions=[
+...document.querySelectorAll('.pc:checked')
+].map(x=>x.value);
 
-const password=
-$('up').value;
-
-const role=
-$('ur').value;
-
-const permissions=
-[...document.querySelectorAll('.pc:checked')]
-.map(x=>x.value);
-
-if(
-!username||
-!name||
-password.length<8
-){
-
+if(!username||!name||password.length<8)
 return alert(
 'Fill details; password must be 8+ characters'
 );
 
-}
-
 const {data}=await db.auth.getSession();
 
-const r=await fetch(
-ADMIN,
-{
+if(!data.session)
+return say(
+'um',
+'Your Owner/Admin session has expired. Please login again.',
+true
+);
+
+const r=await fetch(ADMIN,{
+
 method:'POST',
 
 headers:{
@@ -1711,8 +1370,8 @@ password,
 role,
 permissions
 })
-}
-);
+
+});
 
 const j=await r.json();
 
@@ -1732,68 +1391,44 @@ dashboard();
 
 }
 
-
-/* =========================
-   LOAD USERS
-========================= */
-
 async function loadUsers(){
 
 const {data}=await db
 .from('profiles')
-.select(
-'id,username,full_name,role'
-)
-.order(
-'created_at',
-{ascending:false}
-);
+.select('id,username,full_name,role')
+.order('created_at',{ascending:false});
 
 $('ul').innerHTML=
-
 (data||[])
 .map(x=>`
 
 <div class="item">
 
-<b>
-${esc(x.full_name||x.username)}
-</b>
-
- ·
-${esc(x.username)}
- ·
-${esc(x.role)}
+<b>${esc(x.full_name||x.username)}</b>
+· ${esc(x.username)}
+· ${esc(x.role)}
 
 ${
 x.role!=='owner'
 ?
-`
-<br>
 
-<button class="btn"
-onclick="editPerm('${x.id}')">
+`<br>
 
+<button
+class="btn"
+onclick="editPerm('${x.id}')"
+>
 Edit Permissions
+</button>`
 
-</button>
-`
 :''
 }
 
 </div>
 
-`)
-.join('')
-||
-'No users.';
+`).join('')||'No users.';
 
 }
-
-
-/* =========================
-   EDIT PERMISSION
-========================= */
 
 async function editPerm(id){
 
@@ -1802,8 +1437,7 @@ const s=prompt(
 P.join(', ')
 );
 
-if(s===null)
-return;
+if(s===null)return;
 
 const a=s
 .split(',')
@@ -1838,23 +1472,14 @@ loadUsers();
 
 }
 
-
-/* =========================
-   LOAD ENQUIRIES
-========================= */
-
 async function loadEnq(){
 
 const {data}=await db
 .from('admission_enquiries')
 .select('*')
-.order(
-'created_at',
-{ascending:false}
-);
+.order('created_at',{ascending:false});
 
 $('eqList').innerHTML=
-
 (data||[])
 .map(x=>`
 
@@ -1863,14 +1488,14 @@ $('eqList').innerHTML=
 <b>
 ${esc(x.parent_name)}
 </b>
- ·
+·
 ${esc(x.phone)}
 
 <br>
 
 Child:
 ${esc(x.child_name||'')}
- ·
+·
 ${esc(x.class_name||'')}
 
 <br>
@@ -1879,17 +1504,9 @@ ${esc(x.message||'')}
 
 </div>
 
-`)
-.join('')
-||
-'No enquiries.';
+`).join('')||'No enquiries.';
 
 }
-
-
-/* =========================
-   LOAD SETTINGS
-========================= */
 
 async function loadSet(){
 
@@ -1902,25 +1519,15 @@ const {data}=await db
 if(data){
 
 $('setP').value=data.phone||'';
-
 $('setA').value=data.address||'';
-
 $('setH').value=data.hours||'';
-
 $('setT').value=data.hero_title||'';
-
 $('setHT').value=data.hero_text||'';
-
 $('setAbout').value=data.about||'';
 
 }
 
 }
-
-
-/* =========================
-   SAVE SETTINGS
-========================= */
 
 async function saveSet(){
 
@@ -1929,17 +1536,11 @@ const {error}=await db
 .update({
 
 phone:$('setP').value,
-
 address:$('setA').value,
-
 hours:$('setH').value,
-
 hero_title:$('setT').value,
-
 hero_text:$('setHT').value,
-
 about:$('setAbout').value,
-
 updated_by:me.id
 
 })
@@ -1947,7 +1548,6 @@ updated_by:me.id
 
 if(error)
 alert(error.message);
-
 else{
 
 await settings();
@@ -1958,31 +1558,20 @@ alert('Saved');
 
 }
 
-
-/* =========================
-   OWNER CREDENTIALS
-========================= */
-
 async function ownerCred(){
 
 if(me.role!=='owner')
-return alert(
-'Only Owner can change credentials'
-);
+return alert('Only Owner can change credentials');
 
-const id=
-$('newId').value.trim();
-
-const pw=
-$('newPw').value;
+const id=$('newId').value.trim();
+const pw=$('newPw').value;
 
 if(!id||pw.length<8)
 return alert(
 'Enter new ID and 8+ character password'
 );
 
-let r=
-await db.auth.updateUser({
+let r=await db.auth.updateUser({
 password:pw
 });
 
@@ -1993,8 +1582,7 @@ r.error.message,
 true
 );
 
-r=
-await db
+r=await db
 .from('profiles')
 .update({
 username:id
@@ -2015,11 +1603,6 @@ say(
 
 }
 
-
-/* =========================
-   ADMISSION ENQUIRY
-========================= */
-
 $('sendEnq').onclick=async()=>{
 
 const parent_name=
@@ -2028,32 +1611,22 @@ $('enqName').value.trim();
 const phone=
 $('enqPhone').value.trim();
 
-if(!parent_name||!phone){
-
+if(!parent_name||!phone)
 return say(
 'enqMsg',
 'Name and mobile required',
 true
 );
 
-}
-
 const {error}=await db
 .from('admission_enquiries')
 .insert({
 
 parent_name,
-
 phone,
-
-child_name:
-$('enqChild').value.trim(),
-
-class_name:
-$('enqClass').value,
-
-message:
-$('enqText').value.trim()
+child_name:$('enqChild').value.trim(),
+class_name:$('enqClass').value,
+message:$('enqText').value.trim()
 
 });
 
@@ -2063,7 +1636,6 @@ say(
 error.message,
 true
 );
-
 else
 say(
 'enqMsg',
@@ -2072,26 +1644,10 @@ say(
 
 };
 
-
-/* =========================
-   START
-========================= */
-
 settings();
 
-/*
-Important:
-This checks whether the page was
-opened through Supabase password
-recovery link.
-*/
-
-setTimeout(
-checkRecovery,
-500
-);
+setTimeout(checkRecovery,500);
 
 </script>
-
 </body>
-  </html>
+ </html>
