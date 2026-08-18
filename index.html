@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Shakti Niketan Play Group</title>
+<style>
+:root{--p:#6535a8;--p2:#8b5dcc;--ink:#29232f;--bg:#faf8ff;--card:#fff;--soft:#f1e9ff;--green:#25864e;--red:#9b3030;--gold:#f5c451}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--ink)}
+header{position:sticky;top:0;z-index:20;background:#fff;padding:13px 5%;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 15px #0001}.logo{font-weight:900;font-size:21px;color:var(--p)}.logo small{display:block;font-size:10px;color:#ff765b;letter-spacing:2px}
+nav a{margin-left:14px;color:#333;text-decoration:none;font-weight:700;font-size:14px}
+.hero{padding:70px 7%;background:linear-gradient(135deg,#eee2ff,#fff0d9,#def8ef);display:grid;grid-template-columns:1fr 1fr;gap:35px;align-items:center}.hero h1{font-size:52px;line-height:1.04;color:#3c2364;margin:0 0 16px}.hero p{font-size:18px;color:#665f6c}.hero-art{height:300px;background:#fff;border-radius:38px;display:flex;align-items:center;justify-content:center;font-size:105px;box-shadow:0 20px 50px #6535a822}
+section{padding:55px 7%}.title{text-align:center;margin-bottom:28px}.title h2{font-size:33px;color:#3c2364;margin:0 0 6px}.title p{color:#777}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.card,.panel{background:var(--card);padding:22px;border-radius:21px;box-shadow:0 7px 25px #0000000c}.card h3{color:#3c2364}
+.btn{border:0;border-radius:25px;padding:11px 18px;background:var(--p);color:#fff;font-weight:800;cursor:pointer;text-decoration:none;display:inline-block}.btn.green{background:var(--green)}.btn.red{background:var(--red)}.btn.gray{background:#555}.btn.gold{background:#b98200}
+.portal{max-width:1150px;margin:auto}.roles{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:18px}.role{padding:13px;border:0;border-radius:12px;background:var(--soft);font-weight:800;cursor:pointer}.role.active{background:var(--p);color:#fff}
+input,select,textarea{width:100%;padding:11px;border:1px solid #ddd;border-radius:10px;margin:5px 0 11px;font:inherit}textarea{min-height:90px;resize:vertical}
+.row{display:flex;gap:9px;flex-wrap:wrap}.row>*{flex:1;min-width:130px}.hidden{display:none!important}.dash{display:none}.summary{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin:18px 0}.stat{background:#f7f1ff;padding:15px;border-radius:14px;text-align:center}.stat b{display:block;font-size:23px;color:var(--p)}
+.tabs{display:flex;gap:7px;flex-wrap:wrap;margin:18px 0}.tab{border:0;padding:10px 14px;border-radius:10px;background:#eee8f8;font-weight:700;cursor:pointer}.tab.active{background:var(--p);color:#fff}.tabcontent{display:none}.tabcontent.active{display:block}
+.item{border:1px solid #eee;border-radius:14px;padding:14px;margin:9px 0;background:#fff}.notice{padding:13px;background:#fff7d8;border-radius:12px;margin:8px 0}.muted{font-size:12px;color:#777}.pill{display:inline-block;padding:4px 9px;border-radius:20px;background:#eee8f8;font-size:12px;font-weight:700}.gallery{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.gallery img{width:100%;height:170px;object-fit:cover;border-radius:16px;background:#eee}
+.login-note{font-size:12px;color:#777}.admin-box{border:2px dashed #d7c6f3;padding:17px;border-radius:16px;background:#fcfaff}.admin-box label{background:#f7f1ff;padding:8px 10px;border-radius:9px}
+footer{background:#241534;color:#fff;text-align:center;padding:30px}
+@media(max-width:800px){nav{display:none}.hero{grid-template-columns:1fr;padding-top:50px}.hero h1{font-size:40px}.cards,.roles,.summary{grid-template-columns:1fr}.gallery{grid-template-columns:repeat(2,1fr)}.hero-art{height:210px;font-size:75px}.row>*{min-width:100%}}
+</style>
+</head>
+<body>
+<header><div class="logo" id="brand">Shakti Niketan<small>PLAY GROUP</small></div><nav><a href="#home">Home</a><a href="#login">🔐 Login</a><a href="#about">About</a><a href="#programs">Programs</a><a href="#gallery">Gallery</a><a href="#admission">Admission</a><a href="#contact">Contact</a><a href="#login">Login</a></nav></header>
+
+<section class="hero" id="home"><div><h1 id="heroTitle">A Happy Place for Little Minds 💜</h1><p id="heroText">Learn • Play • Grow — a joyful beginning for every child.</p><a class="btn" href="#admission">Admission Enquiry</a></div><div class="hero-art">🧒🎨📚</div></section>
+<section id="login" style="padding-top:28px;padding-bottom:35px"><div class="title"><h2>School Management Portal 🔐</h2><p>Owner • Admin • Teacher • Parent</p></div><div class="portal panel">
+<div id="loginBox"><div class="roles">
+<button class="role active" data-role="owner">👑 Owner</button><button class="role" data-role="admin">🛡️ Admin</button><button class="role" data-role="teacher">👩‍🏫 Teacher</button><button class="role" data-role="parent">👨‍👩‍👧 Parent</button></div>
+<label>Login ID</label><input id="uid" placeholder="Enter Login ID"><label>Password</label><input id="pwd" type="password" placeholder="Enter Password"><button class="btn" id="loginBtn">Login</button>
+<p class="login-note">Owner credentials are private. Teacher/Parent accounts are created by Owner/Admin according to permissions.</p></div>
+
+<div id="portal" class="hidden">
+<div class="row"><h2 id="welcome"></h2><button class="btn red" onclick="logout()">Logout</button></div>
+<div id="ownerDash" class="dash"></div><div id="adminDash" class="dash"></div><div id="teacherDash" class="dash"></div><div id="parentDash" class="dash"></div>
+</div></div></section>
+
+
+<section id="about"><div class="title"><h2>About Our School</h2><p id="aboutText">A caring, safe and joyful environment for early learning.</p></div><div class="cards">
+<div class="card">❤️<h3>Care & Safety</h3><p>Child-friendly care and a warm learning atmosphere.</p></div>
+<div class="card">🎨<h3>Fun Learning</h3><p>Stories, art, music, games and hands-on activities.</p></div>
+<div class="card">🌱<h3>Overall Growth</h3><p>Creativity, communication, confidence and social skills.</p></div></div></section>
+
+<section id="programs" style="background:#fff5eb"><div class="title"><h2>Our Programs</h2></div><div class="cards">
+<div class="card"><h3>🐣 Play Group</h3><p>Play-based early learning and social interaction.</p></div>
+<div class="card"><h3>🧸 Nursery</h3><p>Language, numbers, colours and creativity.</p></div>
+<div class="card"><h3>⭐ LKG & UKG</h3><p>A strong foundation for school readiness.</p></div></div></section>
+
+<section id="gallery"><div class="title"><h2>School Gallery</h2><p>School activities and memories.</p></div><div class="gallery" id="publicGallery"></div></section>
+
+<section id="admission"><div class="title"><h2>Admission Enquiry</h2><p>Fill the form and the school can contact you.</p></div><div class="panel" style="max-width:750px;margin:auto">
+<div class="row"><input id="enqName" placeholder="Parent Name"><input id="enqPhone" placeholder="Mobile Number"></div>
+<div class="row"><input id="enqChild" placeholder="Child Name"><select id="enqClass"><option>Play Group</option><option>Nursery</option><option>LKG</option><option>UKG</option></select></div>
+<textarea id="enqMsg" placeholder="Message"></textarea><button class="btn" onclick="submitEnquiry()">Submit Enquiry</button><p id="enqOk" class="muted"></p></div></section>
+
+<section id="contact"><div class="title"><h2>Contact Us</h2><p>For admission and school information.</p></div><div class="cards">
+<div class="card">📍<h3>Address</h3><p id="contactAddress">School address will be added by Admin.</p></div>
+<div class="card">📞<h3>Phone</h3><p id="contactPhone">School contact number will be added by Admin.</p></div>
+<div class="card">🕘<h3>School Hours</h3><p id="contactHours">School timings will be added by Admin.</p></div></div></section>
+
+
+
+<footer><b>Shakti Niketan Play Group</b><br><span id="footerPhone">Contact number will be added by Admin.</span></footer>
+
+<script>
+const DEFAULT={
+settings:{schoolName:"Shakti Niketan Play Group",phone:"",address:"",hours:"",about:"A caring, safe and joyful environment for early learning.",hero:"A Happy Place for Little Minds 💜",heroText:"Learn • Play • Grow — a joyful beginning for every child."},
+users:[
+{id:"Shivam6330@",name:"Shivam",role:"owner",password:"Shivam8707",perms:["ALL"]},
+{id:"teacher",name:"Demo Teacher",role:"teacher",password:"teacher123",perms:["students","attendance","homework","notices"]},
+{id:"parent",name:"Demo Parent",role:"parent",password:"parent123",perms:["child"]}],
+students:[{id:"ST1001",name:"Aarav",className:"Play Group",parentId:"parent",fee:"Paid",attendance:[{date:"2026-08-18",status:"Present"}],homework:["Practice A to E"],result:"Good"}],
+notices:["Welcome to Shakti Niketan Play Group!"],enquiries:[],
+gallery:[]};
+let data=JSON.parse(localStorage.getItem("shaktiNiketanComplete")||"null")||DEFAULT, role="owner",current=null;
+const $=id=>document.getElementById(id); function save(){localStorage.setItem("shaktiNiketanComplete",JSON.stringify(data));applySettings()}
+function applySettings(){let s=data.settings;$("brand").innerHTML=(s.schoolName||"Shakti Niketan Play Group").replace(" Play Group","")+"<small>PLAY GROUP</small>";$("heroTitle").textContent=s.hero;$("heroText").textContent=s.heroText;$("aboutText").textContent=s.about;$("contactPhone").textContent=s.phone||"School contact number will be added by Admin.";$("footerPhone").textContent=s.phone||"Contact number will be added by Admin.";$("contactAddress").textContent=s.address||"School address will be added by Admin.";$("contactHours").textContent=s.hours||"School timings will be added by Admin.";renderGallery()}
+document.querySelectorAll(".role").forEach(b=>b.onclick=()=>{document.querySelectorAll(".role").forEach(x=>x.classList.remove("active"));b.classList.add("active");role=b.dataset.role});
+$("loginBtn").onclick=()=>{let u=data.users.find(x=>x.id===$("uid").value.trim()&&x.password===$("pwd").value&&x.role===role);if(!u){alert("Wrong ID, password or selected role.");return}current=u;$("loginBox").classList.add("hidden");$("portal").classList.remove("hidden");$("welcome").textContent="Welcome, "+u.name;document.querySelectorAll(".dash").forEach(x=>x.style.display="none");$(role+"Dash").style.display="block";renderDashboard()};
+function logout(){current=null;location.reload()}
+function can(p){return current.role==="owner"||current.perms.includes("ALL")||current.perms.includes(p)}
+function renderDashboard(){if(role==="owner"||role==="admin")renderManager(role);if(role==="teacher")renderTeacher();if(role==="parent")renderParent()}
+function renderManager(which){
+let target=$(which+"Dash"),stats=`<div class="summary"><div class="stat">Students<b>${data.students.length}</b></div><div class="stat">Teachers<b>${data.users.filter(x=>x.role==="teacher").length}</b></div><div class="stat">Admins<b>${data.users.filter(x=>x.role==="admin").length}</b></div><div class="stat">Parents<b>${data.users.filter(x=>x.role==="parent").length}</b></div><div class="stat">Enquiries<b>${data.enquiries.length}</b></div><div class="stat">Notices<b>${data.notices.length}</b></div></div>`;
+target.innerHTML=stats+`<div class="tabs"><button class="tab active" onclick="tab(this,'mhome')">Dashboard</button><button class="tab" onclick="tab(this,'musers')">Users & Permissions</button><button class="tab" onclick="tab(this,'mstudents')">Students</button><button class="tab" onclick="tab(this,'mnotices')">Notices</button><button class="tab" onclick="tab(this,'menq')">Admission Enquiries</button><button class="tab" onclick="tab(this,'msettings')">School Settings</button><button class="tab" onclick="tab(this,'msecurity')">Login Security</button><button class="tab" onclick="tab(this,'mgallery')">Gallery</button><button class="tab" onclick="tab(this,'mbackup')">Backup</button></div>
+<div class="tabcontent active" id="mhome"><h3>Quick Control</h3><p>Owner has complete control. Admins can be granted selected permissions below.</p>${which==="admin"&&current.perms.indexOf("ALL")<0?`<p class="pill">Your permissions: ${current.perms.join(", ")}</p>`:""}</div>
+<div class="tabcontent" id="musers"><h3>Create User</h3><div class="row"><input id="uId" placeholder="Login ID"><input id="uName" placeholder="Name"><select id="uRole"><option>admin</option><option>teacher</option><option>parent</option></select><input id="uPass" placeholder="Password"></div><p><b>Permissions for Admin/Teacher:</b></p><div class="row" id="permChecks">${["students","attendance","homework","fees","notices","enquiries","settings","gallery","users"].map(p=>`<label><input style="width:auto" type="checkbox" value="${p}" class="pc"> ${p}</label>`).join("")}</div><button class="btn" onclick="createUser()">Create User</button><div id="usersList"></div>
+<div id="permissionEditor" class="admin-box hidden" style="margin-top:15px">
+<h3>Edit Permissions</h3>
+<p id="permissionUserName" class="muted"></p>
+<div class="row" id="editPermChecks"></div>
+<div class="row" style="margin-top:10px"><button class="btn" onclick="saveEditedPermissions()">Save Permissions</button><button class="btn gray" onclick="closePermissionEditor()">Cancel</button></div>
+</div></div>
+<div class="tabcontent" id="mstudents"><h3>Add Student</h3><div class="row"><input id="stName" placeholder="Student Name"><input id="stClass" placeholder="Class"><input id="stParent" placeholder="Parent Login ID"><button class="btn" onclick="addStudent()">Add</button></div><div id="studentsList"></div></div>
+<div class="tabcontent" id="mnotices"><h3>Notice Board</h3><textarea id="newNotice" placeholder="Write notice"></textarea><button class="btn" onclick="addNotice()">Publish Notice</button><div id="noticeList"></div></div>
+<div class="tabcontent" id="menq"><h3>Admission Enquiries</h3><div id="enquiryList"></div></div>
+<div class="tabcontent" id="msettings"><h3>School Information</h3><input id="setPhone" placeholder="School Contact Number"><input id="setAddress" placeholder="School Address"><input id="setHours" placeholder="School Timings"><input id="setHero" placeholder="Home Heading"><textarea id="setHeroText" placeholder="Home text"></textarea><textarea id="setAbout" placeholder="About school"></textarea><button class="btn" onclick="saveSettings()">Save School Information</button></div>
+<div class="tabcontent" id="msecurity"><div class="admin-box"><h3>🔐 Change Login ID & Password</h3><p>Only <b>Owner/Admin</b> can change their own login credentials. Teacher/Parent cannot access this section.</p><input id="newLoginId" placeholder="New Login ID"><input id="newLoginPass" type="password" placeholder="New Password"><button class="btn" onclick="changeCredentials()">Save Login Credentials</button></div>${which==="owner"?`<div class="admin-box" style="margin-top:15px"><h3>Owner Control</h3><p>Owner is the highest authority. Owner can create/remove Admins and give them permissions. Owner credentials cannot be changed by Teacher/Parent/Admin.</p></div>`:""}</div>
+<div class="tabcontent" id="mgallery"><h3>Gallery</h3><p class="muted">Choose an image from this phone. It is saved in this browser only.</p><input type="file" accept="image/*" onchange="addPhoto(event)"><div class="gallery" id="privateGallery"></div></div>
+<div class="tabcontent" id="mbackup"><h3>Backup & Restore</h3><button class="btn" onclick="downloadBackup()">Download Backup</button> <label class="btn gray">Restore Backup<input type="file" accept=".json" style="display:none" onchange="restoreBackup(event)"></label><button class="btn red" onclick="resetDemo()">Reset All Local Data</button></div>`;
+renderManagerLists();applySettings()
+}
+function tab(btn,id){let parent=btn.closest(".dash");parent.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));parent.querySelectorAll(".tabcontent").forEach(x=>x.classList.remove("active"));btn.classList.add("active");$(id).classList.add("active")}
+function renderManagerLists(){
+if(!$("usersList"))return;
+$("usersList").innerHTML=data.users.map((u,i)=>`<div class="item"><b>${u.name}</b> · ${u.id} · <span class="pill">${u.role}</span><br><span class="muted">Permissions: ${u.perms.join(", ")}</span>${u.role!=="owner"&&current.role==="owner"?`<div class="row" style="margin-top:8px"><button class="btn" onclick="editUserPermissions(${i})">Edit Permissions</button><button class="btn red" onclick="deleteUser(${i})">Remove User</button></div>`:""}</div>`).join("");
+$("studentsList").innerHTML=data.students.map(s=>`<div class="item"><b>${s.name}</b> · ${s.className} · ${s.id}<br>Parent: ${s.parentId||"Not linked"} · Fee: <b>${s.fee}</b><br>Attendance: ${s.attendance.map(a=>a.date+" "+a.status).join(", ")||"None"}<br>Homework: ${s.homework.join(", ")||"None"}<div class="row" style="margin-top:8px"><button class="btn green" onclick="markAttendance('${s.id}','Present')">Present</button><button class="btn red" onclick="markAttendance('${s.id}','Absent')">Absent</button><button class="btn" onclick="addHomework('${s.id}')">Homework</button><button class="btn gold" onclick="toggleFee('${s.id}')">Mark ${s.fee==="Paid"?"Pending":"Paid"}</button></div></div>`).join("");
+$("noticeList").innerHTML=data.notices.map((n,i)=>`<div class="notice">📢 ${n} <button class="btn red" onclick="deleteNotice(${i})">Delete</button></div>`).join("");
+$("enquiryList").innerHTML=data.enquiries.length?data.enquiries.map((e,i)=>`<div class="item"><b>${e.name}</b> · ${e.phone}<br>Child: ${e.child} · ${e.className}<br>${e.message||""}<br><span class="muted">${e.date}</span><br><button class="btn red" onclick="deleteEnquiry(${i})">Delete</button></div>`).join(""):"No enquiries yet.";
+$("setPhone").value=data.settings.phone;$("setAddress").value=data.settings.address;$("setHours").value=data.settings.hours;$("setHero").value=data.settings.hero;$("setHeroText").value=data.settings.heroText;$("setAbout").value=data.settings.about;
+$("privateGallery").innerHTML=data.gallery.map((x,i)=>`<div><img src="${x}"><button class="btn red" onclick="deletePhoto(${i})">Delete</button></div>`).join("")
+}
+function createUser(){if(current.role!=="owner"&&!can("users"))return alert("Permission denied");let id=$("uId").value.trim(),name=$("uName").value,pass=$("uPass").value,r=$("uRole").value;if(!id||!name||!pass)return alert("Fill all fields");if(data.users.some(x=>x.id===id))return alert("Login ID already exists");let perms=[...document.querySelectorAll(".pc:checked")].map(x=>x.value);if(r==="admin"&&current.role!=="owner")return alert("Only Owner can create Admin accounts");data.users.push({id,name,role:r,password:pass,perms});save();alert("User created");renderDashboard()}
+
+let editingUserIndex=-1;
+function editUserPermissions(i){
+  const u=data.users[i];
+  if(u.role==="owner") return alert("Owner permissions cannot be edited.");
+  if(current.role!=="owner" && !can("users")) return alert("Permission denied");
+  editingUserIndex=i;
+  $("permissionEditor").classList.remove("hidden");
+  $("permissionUserName").textContent=`Editing: ${u.name} (${u.role})`;
+  const perms=["students","attendance","homework","fees","notices","enquiries","settings","gallery","users"];
+  $("editPermChecks").innerHTML=perms.map(p=>`<label><input style="width:auto" type="checkbox" value="${p}" class="epc" ${u.perms.includes(p)?"checked":""}> ${p}</label>`).join("");
+  $("permissionEditor").scrollIntoView({behavior:"smooth",block:"center"});
+}
+function saveEditedPermissions(){
+  if(editingUserIndex<0)return;
+  if(current.role!=="owner" && !can("users")) return alert("Permission denied");
+  const u=data.users[editingUserIndex];
+  if(u.role==="owner") return alert("Owner permissions cannot be edited.");
+  u.perms=[...document.querySelectorAll(".epc:checked")].map(x=>x.value);
+  save(); alert("Permissions updated."); editingUserIndex=-1; $("permissionEditor").classList.add("hidden"); renderDashboard();
+}
+function closePermissionEditor(){editingUserIndex=-1;$("permissionEditor").classList.add("hidden")}
+
+function deleteUser(i){if(current.role!=="owner")return alert("Only Owner can remove users");if(data.users[i].role==="owner")return;data.users.splice(i,1);save();renderDashboard()}
+function addStudent(){if(!can("students"))return alert("Permission denied");let name=$("stName").value,cl=$("stClass").value,p=$("stParent").value;if(!name||!cl)return alert("Student name and class required");data.students.push({id:"ST"+Date.now(),name,className:cl,parentId:p,fee:"Pending",attendance:[],homework:[]});save();renderDashboard()}
+function markAttendance(id,status){if(!can("attendance"))return alert("Permission denied");let s=data.students.find(x=>x.id===id),d=new Date().toISOString().slice(0,10);s.attendance=s.attendance.filter(a=>a.date!==d);s.attendance.push({date:d,status});save();renderDashboard()}
+function addHomework(id){if(!can("homework"))return alert("Permission denied");let t=prompt("Homework:");if(t){data.students.find(x=>x.id===id).homework.unshift(t);save();renderDashboard()}}
+function toggleFee(id){if(!can("fees"))return alert("Permission denied");let s=data.students.find(x=>x.id===id);s.fee=s.fee==="Paid"?"Pending":"Paid";save();renderDashboard()}
+function addNotice(){if(!can("notices"))return alert("Permission denied");let n=$("newNotice").value;if(n){data.notices.unshift(n);$("newNotice").value="";save();renderDashboard()}}
+function deleteNotice(i){if(!can("notices"))return alert("Permission denied");data.notices.splice(i,1);save();renderDashboard()}
+function deleteEnquiry(i){if(!can("enquiries"))return alert("Permission denied");data.enquiries.splice(i,1);save();renderDashboard()}
+function saveSettings(){if(!can("settings"))return alert("Permission denied");Object.assign(data.settings,{phone:$("setPhone").value,address:$("setAddress").value,hours:$("setHours").value,hero:$("setHero").value,heroText:$("setHeroText").value,about:$("setAbout").value});save();alert("School information saved")}
+function changeCredentials(){if(!["owner","admin"].includes(current.role))return alert("Only Owner/Admin can change login credentials");let id=$("newLoginId").value.trim(),pass=$("newLoginPass").value;if(!id||!pass)return alert("Enter new ID and password");if(data.users.some(x=>x.id===id&&x!==current))return alert("That ID is already in use");current.id=id;current.password=pass;save();alert("Login credentials changed. Please login again.");logout()}
+function submitEnquiry(){let e={name:$("enqName").value,phone:$("enqPhone").value,child:$("enqChild").value,className:$("enqClass").value,message:$("enqMsg").value,date:new Date().toLocaleString()};if(!e.name||!e.phone)return alert("Name and mobile are required");data.enquiries.unshift(e);save();$("enqOk").textContent="Enquiry submitted successfully.";["enqName","enqPhone","enqChild","enqMsg"].forEach(x=>$(x).value="")}
+function renderTeacher(){let target=$("teacherDash");target.innerHTML=`<h3>Teacher Dashboard</h3><div id="teacherList"></div><h3>School Notices</h3><div id="teacherNoticeList"></div>`;let students=data.students;target.querySelector("#teacherList").innerHTML=students.map(s=>`<div class="item"><b>${s.name}</b> · ${s.className}<br>Attendance: ${s.attendance.map(a=>a.date+" "+a.status).join(", ")||"None"}<br><button class="btn green" onclick="markAttendance('${s.id}','Present')">Present</button> <button class="btn red" onclick="markAttendance('${s.id}','Absent')">Absent</button> <button class="btn" onclick="addHomework('${s.id}')">Homework</button></div>`).join("");target.querySelector("#teacherNoticeList").innerHTML=data.notices.map(n=>`<div class="notice">📢 ${n}</div>`).join("")}
+function renderParent(){let target=$("parentDash"),s=data.students.filter(x=>x.parentId===current.id);target.innerHTML=`<h3>My Child</h3>`+(s.length?s.map(x=>`<div class="item"><h3>${x.name}</h3>Class: ${x.className}<br>Fees: <b>${x.fee}</b><br>Attendance: ${x.attendance.map(a=>a.date+" "+a.status).join(", ")||"No record"}<br>Homework: ${x.homework.join(", ")||"None"}</div>`).join(""):"No child linked to this Parent ID.")}
+function renderGallery(){let box=$("publicGallery");if(!box)return;box.innerHTML=data.gallery.length?data.gallery.map(x=>`<img src="${x}">`).join(""):`<div class="card">📸 School photos will appear here.</div>`}
+function addPhoto(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{data.gallery.unshift(r.result);save();renderDashboard()};r.readAsDataURL(f)}
+function deletePhoto(i){data.gallery.splice(i,1);save();renderDashboard()}
+function downloadBackup(){let blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="shakti-niketan-backup.json";a.click()}
+function restoreBackup(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let d=JSON.parse(r.result);if(!d.users||!d.students)throw 0;data=d;save();alert("Backup restored");location.reload()}catch(x){alert("Invalid backup")}};r.readAsText(f)}
+function resetDemo(){if(current.role!=="owner")return alert("Only Owner can reset data");if(confirm("Delete all local data and restore demo data?")){localStorage.removeItem("shaktiNiketanComplete");location.reload()}}
+applySettings();renderGallery();
+</script>
+</body>
+</html>
