@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shakti Niketan Play Group — Parent Portal</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--p:#6535a8;--p2:#8d55cf;--soft:#f2eaff;--bg:#faf8ff;--ink:#29232f;--muted:#777;--line:#e7deef;--green:#25864e;--red:#a42e2e;--gold:#9a7000}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:#fff;padding:14px 6%;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 14px #0001;position:sticky;top:0;z-index:20}
+.logo{font-size:22px;font-weight:900;color:var(--p)}.logo small{display:block;font-size:9px;letter-spacing:3px;color:#e9766b}
+nav a{margin-left:15px;text-decoration:none;color:#333;font-weight:bold;font-size:13px}
+section{padding:40px 7%}.hero{padding:55px 7%;display:grid;grid-template-columns:1fr 1fr;gap:25px;align-items:center;background:linear-gradient(135deg,#eee2ff,#fff0dc,#def8ef)}
+.hero h1{font-size:45px;color:#3d2364;margin:8px 0}.hero-art{height:240px;border-radius:28px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:70px;box-shadow:0 20px 50px #6535a822}
+.title{text-align:center}.title h2{color:#3d2364}
+.panel,.card{background:#fff;border-radius:18px;padding:20px;box-shadow:0 7px 25px #0000000d}
+.roles{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.role,.tab{border:0;border-radius:10px;padding:12px;background:var(--soft);font-weight:800;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;position:relative;z-index:2}.role.active,.tab.active{background:var(--p);color:#fff}
+input,select,textarea{width:100%;padding:12px;border:1px solid #ddd;border-radius:9px;margin:5px 0 12px;font:inherit;background:#fff}textarea{min-height:90px;resize:vertical}
+.btn{border:0;border-radius:10px;padding:12px 16px;background:var(--p);color:#fff;font-weight:800;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;position:relative;z-index:2}.btn.green{background:var(--green)}.btn.red{background:var(--red)}.btn.gray{background:#777}.btn.light{background:#eee;color:#43266b}.item .btn,.notice .btn,.hw .btn{font-size:12px;padding:8px 10px}
+.row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1;min-width:180px}
+.msg{padding:10px;border-radius:9px;background:#eef8f1;margin:10px 0}.err{background:#fff0f0;color:#8b2424}
+.hidden{display:none!important}.muted{color:var(--muted)}
+.appbar{display:flex;gap:8px;overflow:auto;margin:15px 0}.tab{white-space:nowrap;border:1px solid #ddd;background:#fff}
+.badge{display:inline-block;padding:4px 8px;border-radius:20px;background:var(--soft);color:#55358a;font-size:12px;font-weight:800}
+.childHead{background:linear-gradient(135deg,#6535a8,#9b6bd0);color:#fff;padding:20px;border-radius:20px;margin-bottom:16px;display:flex;gap:16px;align-items:center}
+.childPhoto{width:82px;height:82px;border-radius:50%;background:#ffffff2b;display:flex;align-items:center;justify-content:center;font-size:42px;overflow:hidden;flex:0 0 82px}.childPhoto img{width:100%;height:100%;object-fit:cover}
+.childHead h2{margin:0 0 7px}.childHead p{margin:4px 0}
+.parentGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.sectionTitle{display:flex;justify-content:space-between;align-items:center;gap:10px}.sectionTitle h3{margin:0;color:#3d2364}
+.dataTable{width:100%;border-collapse:collapse}.dataTable th,.dataTable td{padding:9px 6px;text-align:left;border-bottom:1px solid var(--line);font-size:14px}.dataTable th{color:var(--p)}
+.hw{border:1px solid var(--line);border-left:5px solid var(--p);padding:13px;border-radius:12px;margin:9px 0}.hw h4{margin:0 0 6px}
+.item,.notice,.request{border:1px solid var(--line);border-radius:12px;padding:12px;margin:8px 0}.notice b{color:#3d2364}.request{border-left:5px solid #e0a400}
+.connect{background:#fff7df;border:1px solid #efd58c;border-radius:15px;padding:17px;margin-top:16px}.connect h3{margin:0;color:var(--gold)}
+.empty{text-align:center;padding:25px;color:var(--muted)}
+.siteGrid{display:grid;grid-template-columns:1fr 1fr;gap:15px}.galleryGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.galleryGrid img{width:100%;height:150px;object-fit:cover;border-radius:12px}.stat{background:var(--soft);padding:15px;border-radius:12px;text-align:center}.stat b{display:block;color:var(--p);font-size:23px;margin-bottom:5px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+footer{background:#241534;color:#fff;text-align:center;padding:25px}
+@media(max-width:800px){nav{display:none}.hero{grid-template-columns:1fr}.hero h1{font-size:35px}.roles,.stats,.cards,.parentGrid,.siteGrid,.galleryGrid{grid-template-columns:1fr}.row>*{min-width:100%}.childHead{align-items:flex-start}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">Shakti Niketan<small>PLAY GROUP</small></div>
+  <nav><a href="#home">Home</a><a href="#portal">🔐 Portal</a><a href="#enquiry">📩 Enquiry</a><a href="#gallery">🖼️ Gallery</a><a href="#contact">📞 Contact</a><a href="#about">About</a></nav>
+</header>
+
+<section class="hero" id="home">
+  <div><h1>A Happy Place for Little Minds 💜</h1><p>Learn • Play • Grow — a joyful beginning for every child.</p><button class="btn" onclick="location.hash='portal'">Open School Portal</button></div>
+  <div class="hero-art">🧒🎨📚🌱</div>
+</section>
+
+<section id="portal">
+<div class="title"><h2>Secure School Portal 🔐</h2><p>Owner • Admin • Teacher • Parent</p></div>
+<div class="panel" style="max-width:1100px;margin:auto">
+
+<div id="loginBox">
+  <div class="roles">
+    <button class="role active" data-role="owner">👑 Owner</button>
+    <button class="role" data-role="admin">🛡️ Admin</button>
+    <button class="role" data-role="teacher">👩‍🏫 Teacher</button>
+    <button class="role" data-role="parent">👨‍👩‍👧 Parent</button>
+  </div>
+  <label>Login ID</label><input id="loginId" autocomplete="username" placeholder="Enter Login ID">
+  <label>Password</label><input id="password" type="password" autocomplete="current-password" placeholder="Enter password">
+  <button class="btn" id="loginBtn">Login</button>
+  <button class="btn gray" id="demoBtn">Demo Dashboard</button>
+  <div id="loginMsg"></div>
+</div>
+
+<div id="app" class="hidden">
+  <div class="row" style="align-items:center">
+    <div><h2 id="welcome" style="margin:0 0 5px"></h2><span id="roleBadge" class="badge"></span></div>
+    <button class="btn light hidden" id="notifyBtn" style="flex:0 0 auto">🔔 Enable Notifications</button><button class="btn red" id="logoutBtn" style="flex:0 0 auto">Logout</button>
+  </div>
+  <div class="appbar" id="tabs"></div>
+  <div id="view"></div>
+</div>
+
+</div>
+</section>
+
+<section id="enquiry">
+<div class="title"><h2 id="enquiryTitle">📩 Admission Enquiry</h2><p id="enquiryText">Want to know more? Send us your details.</p></div>
+<div class="panel" style="max-width:900px;margin:auto">
+<div class="row"><input id="publicParentName" placeholder="Parent name"><input id="publicPhone" placeholder="Mobile number"></div>
+<div class="row"><input id="publicChildName" placeholder="Child name"><input id="publicClass" placeholder="Class / Play Group"></div>
+<textarea id="publicMessage" placeholder="Your enquiry / message"></textarea>
+<button class="btn green" onclick="submitPublicEnquiry()">📩 Send Enquiry</button>
+<div id="publicEnquiryMsg"></div>
+</div>
+</section>
+<section id="gallery">
+<div class="title"><h2>🖼️ School Gallery</h2></div>
+<div id="publicGallery" class="galleryGrid"><div class="empty">Loading gallery...</div></div>
+</section>
+<section id="contact">
+<div class="title"><h2>📞 Contact Us</h2></div>
+<div id="publicContact" class="card" style="max-width:900px;margin:auto;text-align:center">Loading contact details...</div>
+</section>
+<section id="about">
+<div class="title"><h2>About Our School</h2></div>
+<div id="publicAbout" class="cards">
+<div class="card">❤️<h3>Care & Safety</h3><p>A warm and child-friendly learning environment.</p></div>
+<div class="card">🎨<h3>Fun Learning</h3><p>Stories, art, games and hands-on activities.</p></div>
+<div class="card">🌱<h3>Overall Growth</h3><p>Creativity, confidence and communication.</p></div>
+</div>
+</section>
+<div id="publicSocial" style="text-align:center;margin:20px"></div><footer>Shakti Niketan Play Group • Secure School Portal</footer>
+
+<script>
+"use strict";
+window.addEventListener("error",function(e){
+  console.error(e.error||e.message);
+});
+window.addEventListener("unhandledrejection",function(e){
+  console.error(e.reason||e);
+});
+const SUPABASE_URL="https://fmyuhiohjyvetzbrbayk.supabase.co";
+const SUPABASE_KEY="sb_publishable_5zXKwEf_v9RcLOxGbSuAog_O7WU_hKQ";
+let db=null;
+function initSupabase(){
+  try{
+    if(!window.supabase || typeof window.supabase.createClient!=="function"){
+      console.warn("Supabase library did not load.");
+      return false;
+    }
+    db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+    return true;
+  }catch(e){
+    console.error("Supabase initialization failed:",e);
+    return false;
+  }
+}
+initSupabase();
+window.addEventListener("DOMContentLoaded",()=>{if(db)loadPublicSite()});
+const FN=SUPABASE_URL+"/functions/v1/";
+const CONTROL_FN=SUPABASE_URL+"/functions/v1/school-control-v2";
+let selectedRole="owner",currentUser=null,demo=false,parentPortalData=null,parentActiveTab="dashboard",myPermissions=new Set();
+
+const $=id=>document.getElementById(id);
+const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function date(v){if(!v)return"—";const d=new Date(v);return isNaN(d)?String(v):d.toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"})}
+function badge(v){return '<span class="badge">'+esc(v||"—")+"</span>"}
+function showMsg(id,text,error=false){$(id).innerHTML='<div class="msg '+(error?"err":"")+'">'+esc(text)+"</div>"}
+
+
+async function loadPublicSite(){
+  if(!db)return;
+  try{
+    const {data:settings}=await db.from("school_settings").select("*").order("created_at",{ascending:true}).limit(1).maybeSingle();
+    if(settings){
+      const title=document.querySelector(".hero h1");
+      const heroText=document.querySelector(".hero p");
+      const logo=document.querySelector(".logo");
+      if(title && settings.hero_title)title.textContent=settings.hero_title;
+      if(heroText && settings.hero_text)heroText.textContent=settings.hero_text;
+      if(logo && settings.school_name){
+        logo.childNodes[0].nodeValue=settings.school_name+" ";
+      }
+      if(logo && settings.logo_url){
+        logo.innerHTML='<img src="'+esc(settings.logo_url)+'" alt="School Logo" style="width:42px;height:42px;object-fit:cover;border-radius:10px;vertical-align:middle;margin-right:8px">'+esc(settings.school_name||"Shakti Niketan")+'<small>PLAY GROUP</small>';
+      }
+      const hero=document.querySelector(".hero");
+      if(hero && settings.hero_image_url){
+        hero.style.backgroundImage='linear-gradient(135deg,#eee2ffcc,#fff0dccc,#def8efcc),url("'+String(settings.hero_image_url).replace(/"/g,'&quot;')+'")';
+        hero.style.backgroundSize="cover"; hero.style.backgroundPosition="center";
+      }
+      const admissionTitle=document.querySelector("#enquiryTitle");
+      const admissionText=document.querySelector("#enquiryText");
+      if(admissionTitle && settings.admission_title)admissionTitle.textContent=settings.admission_title;
+      if(admissionText && settings.admission_text)admissionText.textContent=settings.admission_text;
+      const social=$("publicSocial");
+      if(social){
+        const links=[];
+        if(settings.facebook_url)links.push('<a href="'+esc(settings.facebook_url)+'" target="_blank" rel="noopener">📘 Facebook</a>');
+        if(settings.instagram_url)links.push('<a href="'+esc(settings.instagram_url)+'" target="_blank" rel="noopener">📸 Instagram</a>');
+        if(settings.whatsapp){
+          const wa=String(settings.whatsapp).trim();
+          const waHref=/^https?:\/\//i.test(wa)?wa:'https://wa.me/'+wa.replace(/\D/g,"");
+          if(waHref!=='https://wa.me/')links.push('<a href="'+esc(waHref)+'" target="_blank" rel="noopener">💬 WhatsApp</a>');
+        }
+        social.innerHTML=links.join(" &nbsp; ")||"";
+      }
+      const contact=$("publicContact");
+      if(contact){
+        const parts=[];
+        if(settings.phone)parts.push('📞 <a href="tel:'+esc(settings.phone)+'"><b>'+esc(settings.phone)+'</b></a>');
+        if(settings.contact_email)parts.push('✉️ <a href="mailto:'+esc(settings.contact_email)+'"><b>'+esc(settings.contact_email)+'</b></a>');
+        if(settings.address)parts.push("📍 "+esc(settings.address));
+        if(settings.hours)parts.push("🕘 "+esc(settings.hours));
+        contact.innerHTML=parts.length?parts.join("<br><br>"):"Contact details will be updated soon.";
+      }
+      const about=$("publicAbout");
+      if(about && settings.about){
+        about.innerHTML='<div class="card" style="grid-column:1/-1"><h3>About Shakti Niketan</h3><p>'+esc(settings.about)+'</p></div>';
+      }
+    }
+    const {data:g,error:ge}=await db.from("gallery").select("id,image_url,caption,created_at").order("created_at",{ascending:false});
+    const box=$("publicGallery");
+    if(box){
+      if(ge) throw ge;
+      box.innerHTML=(g||[]).map(x=>'<div class="card"><img src="'+esc(x.image_url)+'" alt="'+esc(x.caption||"School Gallery")+'" style="width:100%;height:220px;object-fit:cover;border-radius:14px"><p style="margin:8px 0 0;font-weight:700">'+esc(x.caption||"")+'</p></div>').join("")||'<div class="empty">Gallery photos will appear here soon.</div>';
+    }
+  }catch(e){
+    console.error("Public site load failed:",e);
+    const box=$("publicGallery"); if(box)box.innerHTML='<div class="empty">Gallery is temporarily unavailable.</div>';
+  }
+}
+
+async function submitPublicEnquiry(){
+  const parent_name=$("publicParentName")?.value.trim(),phone=$("publicPhone")?.value.trim(),child_name=$("publicChildName")?.value.trim(),class_name=$("publicClass")?.value.trim(),message=$("publicMessage")?.value.trim();
+  if(!parent_name||!phone)return showMsg("publicEnquiryMsg","Parent name and phone are required.",true);
+  try{
+    const {error}=await db.from("enquiries").insert({parent_name,phone,child_name,class_name,message});
+    if(error)throw error;
+    showMsg("publicEnquiryMsg","✅ Enquiry sent successfully. School will contact you.");
+    ["publicParentName","publicPhone","publicChildName","publicClass","publicMessage"].forEach(id=>{if($(id))$(id).value=""});
+  }catch(e){showMsg("publicEnquiryMsg",e.message,true)}
+}
+
+document.querySelectorAll(".role").forEach(b=>b.onclick=()=>{
+ document.querySelectorAll(".role").forEach(x=>x.classList.remove("active"));
+ b.classList.add("active");selectedRole=b.dataset.role;
+});
+
+$("loginBtn").onclick=login;
+$("demoBtn").onclick=()=>{demo=true;currentUser={role:selectedRole,full_name:"Demo "+selectedRole,username:"demo"};openApp()};
+$("logoutBtn").onclick=logout;
+
+async function login(){
+ const username=$("loginId").value.trim(),password=$("password").value;
+ if(!username||!password)return showMsg("loginMsg","Login ID and password are required.",true);
+ $("loginBtn").disabled=true;$("loginBtn").textContent="Logging in...";
+ try{
+  const r=await fetch(FN+"school-login",{method:"POST",headers:{"Content-Type":"application/json",apikey:SUPABASE_KEY},body:JSON.stringify({username,password})});
+  let d={};try{d=await r.json()}catch{}
+  if(!r.ok)throw Error(d.error||"Login failed.");
+  if(d.user?.role!==selectedRole)throw Error("Please select the correct portal.");
+  if(!db) throw Error("School service did not load. Please refresh the page once.");
+  const s=await db.auth.setSession({access_token:d.session.access_token,refresh_token:d.session.refresh_token||""});
+  if(s.error)throw s.error;
+  currentUser=d.user;demo=false;openApp();
+ }catch(e){showMsg("loginMsg",e.message,true)}
+ finally{$("loginBtn").disabled=false;$("loginBtn").textContent="Login"}
+}
+
+async function openApp(){
+ $("loginBox").classList.add("hidden");$("app").classList.remove("hidden");
+ $("welcome").textContent="Welcome, "+(currentUser.full_name||currentUser.username||"User")+" 👋";
+ $("roleBadge").textContent=(currentUser.role||selectedRole).toUpperCase();
+ await loadMyPermissions();
+ buildTabs(currentUser.role);
+ document.querySelectorAll(".tab").forEach(b=>{
+   const map={students:"students",attendance:"attendance",homework:"homework",fees:"fees",notices:"notices",enquiries:"enquiries",gallery:"gallery",website:"website"};
+   const r=map[b.dataset.tab]; if(r && currentUser.role!=="owner" && currentUser.role!=="parent") b.classList.toggle("hidden",!canView(r));
+ });
+ showTab("dashboard"); setupNotificationUI();
+}
+
+async function loadMyPermissions(){
+ myPermissions=new Set();
+ if(!currentUser || currentUser.role==="owner" || currentUser.role==="parent")return;
+ try{
+  const r=await db.from("role_permissions").select("permission").eq("role",currentUser.role);
+  (r.data||[]).forEach(x=>myPermissions.add(x.permission));
+ }catch(e){}
+}
+function canView(resource){return currentUser?.role==="owner" || currentUser?.role==="parent" || myPermissions.has(resource+":view") || myPermissions.has(resource);}
+
+function buildTabs(role){
+ let tabs;
+ if(role==="parent")tabs=[
+  ["dashboard","🏠 My Child"],["attendance","📅 Attendance"],["homework","📚 Homework"],
+  ["fees","💰 Fees"],["notices","📢 Notices"],["profile","👦 Child Profile"]
+ ];
+ else tabs=[["dashboard","🏠 Dashboard"],["students","👧 Students"],["attendance","📅 Attendance"],["homework","📚 Homework"],["notices","📢 Notices"],["fees","💰 Fees"],["enquiries","📩 Enquiries"],["gallery","🖼️ Gallery"],["website","🌐 Website"]];
+ if(role==="admin")tabs.push(["enquiries","📩 Enquiries"]);
+ if(role==="owner")tabs.push(["accounts","🔑 Create Login"],["users","👥 Users"],["parentRequests","🔔 Parent Requests"],["superPower","👑 Super Power"]);
+ $("tabs").innerHTML=tabs.map(t=>'<button class="tab" data-tab="'+t[0]+'">'+t[1]+"</button>").join("");
+ document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
+}
+
+function showTab(tab){
+ document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));
+ if(currentUser.role==="parent"){parentActiveTab=tab;loadStudentPortal(tab);return}
+ if(tab==="dashboard")dashboard();
+ else if(tab==="students")students();
+ else if(tab==="attendance")attendance();
+ else if(tab==="homework")homework();
+ else if(tab==="notices")notices();
+ else if(tab==="fees")fees();
+ else if(tab==="enquiries")enquiries();
+ else if(tab==="accounts")accounts();
+ else if(tab==="users")users();
+ else if(tab==="parentRequests")parentRequests();
+ else if(tab==="superPower")superPower();
+ else if(tab==="website")websiteSettings();
+ else if(tab==="gallery")gallery();
+}
+
+function dashboard(){
+ $("view").innerHTML='<div class="stats"><div class="stat"><b>👧</b>Students</div><div class="stat"><b>👩‍🏫</b>Teachers</div><div class="stat"><b>📅</b>Attendance</div><div class="stat"><b>📢</b>Notices</div></div><br><div class="cards"><div class="card"><h3>Welcome</h3><p>Use the tabs above to manage school work.</p></div><div class="card"><h3>🔒 Secure</h3><p>Parent accounts see only their linked child.</p></div><div class="card"><h3>🔔 Parent Requests</h3><p>Owner can approve or reject connection requests.</p></div><div class="card"><h3>👑 Super Power</h3><p>Full control over users, permissions and school records.</p></div></div>';
+}
+
+async function getSessionToken(){
+ if(!db) throw Error("School service is not loaded. Please refresh the page once.");
+ const s=await db.auth.getSession();
+ return s.data.session?.access_token;
+}
+async function ownerCall(body){
+ const token=await getSessionToken();if(!token)throw Error("Owner session expired.");
+ const r=await fetch(CONTROL_FN,{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+token,apikey:SUPABASE_KEY},body:JSON.stringify(body)});
+ let d={};try{d=await r.json()}catch{}
+ if(!r.ok)throw Error(d.error||"Owner action failed.");return d;
+}
+
+
+async function ownerCrudList(table){
+  const d=await ownerCall({action:"crud_list",table});
+  return d.rows||[];
+}
+async function ownerCrudInsert(table,data){
+  return await ownerCall({action:"crud_insert",table,data});
+}
+async function ownerCrudUpdate(table,id,data){
+  return await ownerCall({action:"crud_update",table,id,data});
+}
+async function ownerCrudDelete(table,id){
+  if(!confirm("Are you sure you want to delete this record?")) return;
+  await ownerCall({action:"crud_delete",table,id});
+}
+function ownerActionButtons(table,id,editFn){
+  const wrap=document.createElement("span");
+  const e=document.createElement("button");e.className="btn light";e.style.margin="4px";e.textContent="✏️ Edit";e.onclick=editFn;
+  const d=document.createElement("button");d.className="btn red";d.style.margin="4px";d.textContent="🗑️ Delete";d.onclick=async()=>{try{await ownerCrudDelete(table,id);editFn.__reload&&editFn.__reload()}catch(x){alert(x.message)}};
+  wrap.append(e,d);return wrap;
+}
+
+let studentOptionsCache=[];
+async function getStudentsForPicker(){
+  try{
+    if(currentUser?.role==="owner"&&!demo) return await ownerCrudList("students");
+    const r=await db.from("students").select("id,name,class_name").order("name");
+    if(r.error) throw r.error;
+    return r.data||[];
+  }catch(e){ console.error(e); return []; }
+}
+async function fillStudentPicker(selectId, includeAll=true, selected=""){
+  const el=$(selectId); if(!el)return;
+  const rows=await getStudentsForPicker();
+  studentOptionsCache=rows;
+  el.innerHTML=(includeAll?'<option value="">Select student</option>':"")+
+    rows.map(x=>'<option value="'+esc(x.id)+'" data-class="'+esc(x.class_name||"")+'">'+esc(x.name)+' — '+esc(x.class_name||"")+'</option>').join("");
+  if(selected)el.value=selected;
+}
+function selectedStudentName(selectId){
+ const el=$(selectId),o=el?.selectedOptions?.[0]; return o?.textContent?.split(" — ")[0]||"";
+}
+async function fillClassPicker(selectId, selected=""){
+ const el=$(selectId); if(!el)return;
+ const rows=await getStudentsForPicker();
+ const classes=[...new Set(rows.map(x=>x.class_name).filter(Boolean))].sort();
+ el.innerHTML='<option value="">Select Class</option>'+classes.map(c=>'<option value="'+esc(c)+'">'+esc(c)+'</option>').join("");
+ if(selected)el.value=selected;
+}
+function students(){
+ $("view").innerHTML='<div class="card"><div class="sectionTitle"><h3>👧 Students</h3><button class="btn" id="refreshStudents">↻ Refresh</button></div><div class="row"><input id="sn" placeholder="Student name"><input id="sc" placeholder="Class"><input id="sp" placeholder="Parent name"><input id="sph" placeholder="Parent phone"><input id="sphoto" placeholder="Photo URL (optional)"></div><button class="btn green" id="addStudentBtn">➕ Add Student</button><div id="studentList">Loading...</div></div>';
+ $("addStudentBtn").onclick=addStudent; $("refreshStudents").onclick=loadStudents; loadStudents();
+}
+async function loadStudents(){
+ if(currentUser?.role==="owner"&&!demo){
+  try{const rows=await ownerCrudList("students");const box=$("studentList");box.innerHTML="";
+   if(!rows.length){box.innerHTML='<div class="empty">No students.</div>';return}
+   rows.forEach(x=>{const el=document.createElement("div");el.className="item";el.innerHTML='<b>'+esc(x.name)+'</b> '+badge(x.class_name)+'<br>Parent: '+esc(x.parent_name||"—")+' • '+esc(x.parent_phone||"—")+'<br>';
+    const edit=()=>editStudent(x);const b=ownerActionButtons("students",x.id,edit);b.lastChild.onclick=async()=>{try{await ownerCrudDelete("students",x.id);loadStudents()}catch(e){alert(e.message)}};el.appendChild(b);box.appendChild(el)});
+  }catch(e){$("studentList").innerHTML='<div class="msg err">'+esc(e.message)+"</div>"};return
+ }
+ if(demo){$("studentList").innerHTML='<div class="item"><b>Demo Student</b> '+badge("Play Group")+"</div>";return}
+ try{const r=await db.from("students").select("*").order("created_at",{ascending:false});if(r.error)throw r.error;$("studentList").innerHTML=(r.data||[]).map(x=>'<div class="item"><b>'+esc(x.name)+"</b> "+badge(x.class_name)+"<br>Parent: "+esc(x.parent_name||"—")+" • "+esc(x.parent_phone||"—")+"</div>").join("")||'<div class="empty">No students.</div>'}catch(e){$("studentList").innerHTML='<div class="msg err">'+esc(e.message)+"</div>"}
+}
+async function editStudent(x){
+ const name=prompt("Student name:",x.name||"");if(name===null)return;
+ const cls=prompt("Class:",x.class_name||"");if(cls===null)return;
+ const pn=prompt("Parent name:",x.parent_name||"");if(pn===null)return;
+ const pp=prompt("Parent phone:",x.parent_phone||"");if(pp===null)return;
+ try{await ownerCrudUpdate("students",x.id,{name,class_name:cls,parent_name:pn,parent_phone:pp});loadStudents()}catch(e){alert(e.message)}
+}
+async function addStudent(){
+ const row={name:$("sn").value.trim(),class_name:$("sc").value.trim(),parent_name:$("sp").value.trim(),parent_phone:$("sph").value.trim(),photo_url:$("sphoto").value.trim()};
+ if(!row.name||!row.class_name)return alert("Student name and class required.");
+ if(demo)return alert("Demo mode does not save.");
+ try{if(currentUser?.role==="owner")await ownerCrudInsert("students",row);else{const r=await db.from("students").insert(row);if(r.error)throw r.error}students()}catch(e){alert(e.message)}
+}
+
+
+function attendance(){
+ $("view").innerHTML='<div class="card"><div class="sectionTitle"><h3>📅 Attendance</h3><button class="btn" id="refreshAtt">↻ Refresh</button></div><div class="row"><input id="adate" type="date"><select id="astudent"><option value="">Select student</option></select><select id="astatus"><option>Present</option><option>Absent</option><option>Leave</option></select></div><button class="btn green" id="saveAtt">➕ Add Attendance</button><div id="attList"></div></div>';
+ $("adate").value=new Date().toISOString().slice(0,10);$("saveAtt").onclick=addAttendance;$("refreshAtt").onclick=loadAttendance;fillStudentPicker("astudent",true);loadAttendance();
+}
+async function loadAttendance(){
+ if(currentUser?.role==="owner"&&!demo){try{const rows=await ownerCrudList("attendance"),box=$("attList");box.innerHTML="";if(!rows.length){box.innerHTML='<div class="empty">No attendance records.</div>';return}
+ rows.forEach(x=>{const el=document.createElement("div");el.className="item";el.innerHTML='<b>'+esc(x.student_name||x.student_id||"Student")+'</b> — '+badge(x.status)+'<br>'+date(x.attendance_date||x.date)+'<br>';
+ const edit=()=>editAttendance(x),b=ownerActionButtons("attendance",x.id,edit);b.lastChild.onclick=async()=>{try{await ownerCrudDelete("attendance",x.id);loadAttendance()}catch(e){alert(e.message)}};el.appendChild(b);box.appendChild(el)})}catch(e){$("attList").innerHTML='<div class="msg err">'+esc(e.message)+"</div>"};return}
+ if(demo){$("attList").innerHTML='<div class="item"><b>Demo Student</b> — Present<br>22 Aug 2026</div>';return}
+ const r=await db.from("attendance").select("*").order("attendance_date",{ascending:false}).limit(50);if(r.error)return $("attList").innerHTML='<div class="msg err">'+esc(r.error.message)+"</div>";$("attList").innerHTML=(r.data||[]).map(x=>'<div class="item"><b>'+esc(x.student_name||"Student")+"</b> — "+badge(x.status)+"<br>"+date(x.attendance_date||x.date)+"</div>").join("")||'<div class="empty">No attendance records.</div>';
+}
+async function editAttendance(x){
+ const d=prompt("Attendance date (YYYY-MM-DD):",x.attendance_date||x.date||"");if(d===null)return;
+ const s=prompt("Student name:",x.student_name||"");if(s===null)return;
+ const st=prompt("Status (Present / Absent / Leave):",x.status||"Present");if(st===null)return;
+ try{await ownerCrudUpdate("attendance",x.id,{attendance_date:d,date:d,student_name:s,status:st});loadAttendance()}catch(e){alert(e.message)}
+}
+async function addAttendance(){
+ const sid=$("astudent").value, sname=selectedStudentName("astudent"); const row={attendance_date:$("adate").value,student_id:sid||null,student_name:sname,status:$("astatus").value,date:$("adate").value};
+ if(!row.student_name)return alert("Student name required.");if(demo)return;
+ try{if(currentUser?.role==="owner")await ownerCrudInsert("attendance",row);else{const r=await db.from("attendance").insert(row);if(r.error)throw r.error}attendance()}catch(e){alert(e.message)}
+}
+
+
+function homework(){
+ $("view").innerHTML=`<div class="card"><div class="sectionTitle"><h3>📚 Homework</h3><button class="btn" id="refreshHw">↻ Refresh</button></div>
+ <div class="row"><input id="htitle" placeholder="Subject / Homework title">
+ <select id="htarget"><option value="class">🏫 Entire Class</option><option value="student">👦 Specific Student</option></select>
+ <select id="hclass"><option value="">Select Class</option></select>
+ <select id="hstudent" class="hidden"><option value="">Select student</option></select>
+ <input id="hdue" type="date"></div>
+ <div class="parentOnlyNote">Choose <b>Entire Class</b> for every student in the selected class, or <b>Specific Student</b> for only one child.</div>
+ <textarea id="hdesc" placeholder="Homework details"></textarea><button class="btn green" id="addHw">➕ Add Homework</button><div id="hwList"></div></div>`;
+ $("addHw").onclick=addHomework;$("refreshHw").onclick=loadHomework;
+ fillStudentPicker("hstudent",true);fillClassPicker("hclass");
+ $("htarget").onchange=()=>{const t=$("htarget").value;$("hclass").classList.toggle("hidden",t!=="class");$("hstudent").classList.toggle("hidden",t!=="student");};
+ loadHomework();
+}
+
+async function loadHomework(){
+ if(currentUser?.role==="owner"&&!demo){try{const rows=await ownerCrudList("homework"),box=$("hwList");box.innerHTML="";if(!rows.length){box.innerHTML='<div class="empty">No homework.</div>';return}
+ rows.forEach(x=>{const el=document.createElement("div");el.className="hw";el.innerHTML='<h4>'+esc(x.title)+'</h4>'+badge(x.target_type==="student"?(x.student_name||"Specific Student"):(x.class_name||"Class"))+'<div style="margin:7px 0">'+esc(x.description||x.details||"No details.")+'</div><small>Assigned: '+date(x.created_at)+' • Due: '+date(x.due_date)+'</small><br>';
+ const edit=()=>editHomework(x),b=ownerActionButtons("homework",x.id,edit);b.lastChild.onclick=async()=>{try{await ownerCrudDelete("homework",x.id);loadHomework()}catch(e){alert(e.message)}};el.appendChild(b);box.appendChild(el)})}catch(e){$("hwList").innerHTML='<div class="msg err">'+esc(e.message)+"</div>"};return}
+ if(demo){$("hwList").innerHTML='<div class="hw"><h4>English — Learn A to Z</h4><div>Write A to Z two times.</div><small>Assigned: 22 Aug 2026 • Due: 24 Aug 2026</small></div>';return}
+ const r=await db.from("homework").select("*").order("created_at",{ascending:false});if(r.error)return $("hwList").innerHTML='<div class="msg err">'+esc(r.error.message)+"</div>";$("hwList").innerHTML=(r.data||[]).map(x=>'<div class="hw"><h4>'+esc(x.title)+"</h4>"+badge(x.class_name||"All Classes")+'<div style="margin:7px 0">'+esc(x.description||x.details||"No details.")+'</div><small>Assigned: '+date(x.created_at)+" • Due: "+date(x.due_date)+"</small></div>").join("")||'<div class="empty">No homework.</div>';
+}
+async function editHomework(x){
+ const title=prompt("Subject / Homework title:",x.title||"");if(title===null)return;
+ const desc=prompt("Homework details:",x.description||x.details||"");if(desc===null)return;
+ const target=prompt("Target: class OR student",x.target_type||"class");if(target===null)return;
+ const cls=target==="class"?prompt("Class:",x.class_name||""):null;
+ const sid=target==="student"?prompt("Student ID:",x.student_id||""):null;
+ if(target==="class"&&!cls)return alert("Class is required.");
+ if(target==="student"&&!sid)return alert("Student ID is required.");
+ const due=prompt("Due date (YYYY-MM-DD):",x.due_date||"");if(due===null)return;
+ try{await ownerCrudUpdate("homework",x.id,{title,description:desc,details:desc,class_name:target==="class"?cls:null,due_date:due||null,student_id:target==="student"?sid:null,target_type:target});loadHomework()}catch(e){alert(e.message)}
+}
+async function addHomework(){
+ const target=$("htarget").value;
+ const sid=target==="student"?$("hstudent").value:"";
+ const sname=target==="student"?selectedStudentName("hstudent"):"";
+ const cls=target==="class"?$("hclass").value:"";
+ if(!cls && target==="class")return alert("Please select a class.");
+ if(!sid && target==="student")return alert("Please select a student.");
+ const row={title:$("htitle").value.trim(),class_name:cls,due_date:$("hdue").value||null,description:$("hdesc").value.trim(),details:$("hdesc").value.trim(),student_id:sid||null,student_name:sname||null,target_type:target};
+ if(!row.title)return alert("Homework title required.");if(demo)return;
+ try{if(currentUser?.role==="owner")await ownerCrudInsert("homework",row);else{const r=await db.from("homework").insert(row);if(r.error)throw r.error}homework()}catch(e){alert(e.message)}
+}
+
+
+function fees(){
+ $("view").innerHTML='<div class="card"><div class="sectionTitle"><h3>💰 Fees</h3><button class="btn" id="refreshFee">↻ Refresh</button></div><div class="row"><select id="fstudent"><option value="">Select student</option></select><input id="famt" type="number" placeholder="Amount"><select id="fstatus"><option>Paid</option><option>Pending</option><option>Partial</option></select><input id="fdue" type="date"></div><button class="btn green" id="saveFee">➕ Add Fee</button><div id="feeList"></div></div>';
+ $("saveFee").onclick=addFee;$("refreshFee").onclick=loadFees;fillStudentPicker("fstudent",true);loadFees();
+}
+async function loadFees(){
+ if(currentUser?.role==="owner"&&!demo){try{const rows=await ownerCrudList("fees"),box=$("feeList");box.innerHTML="";if(!rows.length){box.innerHTML='<div class="empty">No fee records.</div>';return}
+ rows.forEach(x=>{const el=document.createElement("div");el.className="item";el.innerHTML='<b>'+esc(x.student_name||"Student")+'</b> — ₹'+esc(x.amount)+' '+badge(x.status)+'<br>Due: '+date(x.due_date)+'<br>';
+ const edit=()=>editFee(x),b=ownerActionButtons("fees",x.id,edit);b.lastChild.onclick=async()=>{try{await ownerCrudDelete("fees",x.id);loadFees()}catch(e){alert(e.message)}};el.appendChild(b);box.appendChild(el)})}catch(e){$("feeList").innerHTML='<div class="msg err">'+esc(e.message)+"</div>"};return}
+ if(demo){$("feeList").innerHTML='<div class="item"><b>Demo Student</b> — ₹2500 '+badge("Pending")+"</div>";return}
+ const r=await db.from("fees").select("*").order("created_at",{ascending:false});if(r.error)return $("feeList").innerHTML='<div class="msg err">'+esc(r.error.message)+"</div>";$("feeList").innerHTML=(r.data||[]).map(x=>'<div class="item"><b>'+esc(x.student_name||"Student")+"</b> — ₹"+esc(x.amount)+" "+badge(x.status)+"<br>Due: "+date(x.due_date)+"</div>").join("")||'<div class="empty">No fee records.</div>';
+}
+async function editFee(x){
+ const name=prompt("Student name:",x.student_name||"");if(name===null)return;
+ const amt=prompt("Amount:",x.amount||"");if(amt===null)return;
+ const st=prompt("Status (Paid / Pending / Partial):",x.status||"Pending");if(st===null)return;
+ const due=prompt("Due date (YYYY-MM-DD):",x.due_date||"");if(due===null)return; const sid=prompt("Student ID:",x.student_id||"");
+ try{await ownerCrudUpdate("fees",x.id,{student_name:name,student_id:sid||null,amount:Number(amt),status:st,due_date:due||null});loadFees()}catch(e){alert(e.message)}
+}
+async function addFee(){
+ const sid=$("fstudent").value, sname=selectedStudentName("fstudent"); const row={student_id:sid||null,student_name:sname,amount:Number($("famt").value),status:$("fstatus").value,due_date:$("fdue").value||null};if(!row.student_name||!row.amount)return alert("Student and amount required.");if(demo)return;
+ try{if(currentUser?.role==="owner")await ownerCrudInsert("fees",row);else{const r=await db.from("fees").insert(row);if(r.error)throw r.error}fees()}catch(e){alert(e.message)}
+}
+
+
+function notices(){
+ $("view").innerHTML='<div class="card"><div class="sectionTitle"><h3>📢 School Notices</h3><button class="btn" id="refreshNotice">↻ Refresh</button></div><div class="row"><input id="ntitle" placeholder="Notice title"><select id="ntarget"><option value="all">👥 All</option><option value="class">🏫 Class</option><option value="student">👦 Specific Student</option></select><select id="nclass" class="hidden"><option value="">Select Class</option></select><select id="nstudent" class="hidden"><option value="">Select student</option></select></div><input id="nfor" placeholder="Audience: All / Parents / Teachers"><textarea id="nmsg" placeholder="Notice message"></textarea><button class="btn green" id="publishNotice">➕ Publish Notice</button><div id="noticeList"></div></div>';
+ $("publishNotice").onclick=addNotice;$("refreshNotice").onclick=loadNotices;
+ $("ntarget").onchange=()=>{const t=$("ntarget").value;$("nclass").classList.toggle("hidden",t!=="class");$("nstudent").classList.toggle("hidden",t!=="student")};
+ fillStudentPicker("nstudent",true);fillClassPicker("nclass");loadNotices();
+}
+async function loadNotices(){
+ if(currentUser?.role==="owner"&&!demo){try{const rows=await ownerCrudList("notices"),box=$("noticeList");box.innerHTML="";if(!rows.length){box.innerHTML='<div class="empty">No notices.</div>';return}
+ rows.forEach(x=>{const el=document.createElement("div");el.className="notice";el.innerHTML='<b>'+esc(x.title)+'</b> '+badge(x.audience||"All")+" "+badge(x.target_type==="student"?"👦 "+(x.target_student_name||"Student"):x.target_type==="class"?"🏫 "+(x.target_class_name||"Class"):"👥 All")+"<br>"+esc(x.message||x.body||"")+"<br><small>"+date(x.published_at||x.created_at)+"</small><br>";
+ const edit=()=>editNotice(x),b=ownerActionButtons("notices",x.id,edit);b.lastChild.onclick=async()=>{try{await ownerCrudDelete("notices",x.id);loadNotices()}catch(e){alert(e.message)}};el.appendChild(b);box.appendChild(el)})}catch(e){$("noticeList").innerHTML='<div class="msg err">'+esc(e.message)+"</div>"};return}
+ if(demo){$("noticeList").innerHTML='<div class="notice"><b>Welcome</b><br>School portal is active.</div>';return}
+ const r=await db.from("notices").select("*").order("created_at",{ascending:false});if(r.error)return $("noticeList").innerHTML='<div class="msg err">'+esc(r.error.message)+"</div>";$("noticeList").innerHTML=(r.data||[]).map(x=>'<div class="notice"><b>'+esc(x.title)+"</b> "+badge(x.audience||"All")+"<br>"+esc(x.message||x.body||"")+"<br><small>"+date(x.published_at||x.created_at)+"</small></div>").join("")||'<div class="empty">No notices.</div>';
+}
+async function editNotice(x){
+ const title=prompt("Notice title:",x.title||"");if(title===null)return;
+ const msg=prompt("Notice message:",x.message||x.body||"");if(msg===null)return;
+ const aud=prompt("Audience (All / Parents / Teachers):",x.audience||"All");if(aud===null)return;
+ const tt=prompt("Target (all / class / student):",x.target_type||"all");if(tt===null)return;
+ const tc=tt==="class"?prompt("Class:",x.target_class_name||""):null; const ts=tt==="student"?prompt("Student ID (use student list in new notice for easier selection):",x.target_student_id||""):null;
+ try{await ownerCrudUpdate("notices",x.id,{title,message:msg,body:msg,audience:aud,target_type:tt,target_class_name:tt==="class"?tc:null,target_student_id:tt==="student"?ts:null});loadNotices()}catch(e){alert(e.message)}
+}
+async function addNotice(){
+ const target=$("ntarget").value,sid=$("nstudent").value,cls=$("nclass").value;
+ const row={title:$("ntitle").value.trim(),audience:$("nfor").value.trim()||"All",message:$("nmsg").value.trim(),body:$("nmsg").value.trim(),target_type:target,target_student_id:target==="student"?(sid||null):null,target_class_name:target==="class"?(cls||null):null};
+ if(target==="student"&&!sid)return alert("Please select a student.");
+ if(target==="class"&&!cls)return alert("Please select a class.");if(!row.title||!row.message)return alert("Title and notice required.");if(demo)return;
+ try{if(currentUser?.role==="owner")await ownerCrudInsert("notices",row);else{const r=await db.from("notices").insert(row);if(r.error)throw r.error}notices()}catch(e){alert(e.message)}
+}
+
+
+function websiteSettings(){
+ $("view").innerHTML=`<div class="card">
+ <div class="sectionTitle"><h3>🌐 Website Manager</h3><span class="badge">👑 Owner Controlled</span></div>
+ <p class="muted">यहाँ से पूरी public website की information manage होगी — school name, logo, photos, home page, contact, email, address, social links और admission enquiry.</p>
+ <div id="websiteForm">Loading...</div>
+ </div>`;
+ loadWebsiteSettings();
+}
+
+async function loadWebsiteSettings(){
+ try{
+  const d=await ownerCall({action:"crud_list",table:"school_settings"}),x=(d.rows||[])[0]||{};
+  $("websiteForm").innerHTML=`
+  <h3>🏫 Basic School Information</h3>
+  <div class="row">
+   <input id="wsName" placeholder="School name" value="${esc(x.school_name||"Shakti Niketan Play Group")}">
+   <input id="wsPhone" placeholder="Phone number" value="${esc(x.phone||"")}">
+  </div>
+  <div class="row">
+   <input id="wsEmail" type="email" placeholder="Contact email" value="${esc(x.contact_email||"")}">
+   <input id="wsWhatsapp" placeholder="WhatsApp number / link" value="${esc(x.whatsapp||"")}">
+  </div>
+  <input id="wsAddress" placeholder="Full school address" value="${esc(x.address||"")}">
+  <input id="wsHours" placeholder="School timings" value="${esc(x.hours||"")}">
+
+  <hr style="border:0;border-top:1px solid var(--line);margin:20px 0">
+  <h3>🖼️ Website Photos & Branding</h3>
+  <label>School Logo</label>
+  <input id="wsLogoFile" type="file" accept="image/*">
+  ${x.logo_url?'<img src="'+esc(x.logo_url)+'" style="width:100px;height:100px;object-fit:cover;border-radius:16px;margin:8px 0">':""}
+  <label>Home/Hero Photo</label>
+  <input id="wsHeroFile" type="file" accept="image/*">
+  ${x.hero_image_url?'<img src="'+esc(x.hero_image_url)+'" style="width:100%;max-height:220px;object-fit:cover;border-radius:16px;margin:8px 0">':""}
+
+  <hr style="border:0;border-top:1px solid var(--line);margin:20px 0">
+  <h3>🏠 Home Page</h3>
+  <input id="wsHeroTitle" placeholder="Home page main heading" value="${esc(x.hero_title||"A Happy Place for Little Minds 💜")}">
+  <textarea id="wsHeroText" placeholder="Home page description">${esc(x.hero_text||"")}</textarea>
+
+  <h3>❤️ About School</h3>
+  <textarea id="wsAbout" placeholder="About your school">${esc(x.about||"")}</textarea>
+
+  <h3>📩 Admission Enquiry</h3>
+  <input id="wsAdmissionTitle" placeholder="Admission section title" value="${esc(x.admission_title||"Admission Enquiry")}">
+  <textarea id="wsAdmissionText" placeholder="Admission section message">${esc(x.admission_text||"Want to know more? Send your details and the school will contact you.")}</textarea>
+
+  <h3>📱 Social Links</h3>
+  <div class="row">
+   <input id="wsFacebook" placeholder="Facebook URL" value="${esc(x.facebook_url||"")}">
+   <input id="wsInstagram" placeholder="Instagram URL" value="${esc(x.instagram_url||"")}">
+  </div>
+
+  <div class="row">
+   <button class="btn green" onclick="saveWebsiteSettings()">💾 Save Website Changes</button>
+   <button class="btn light" onclick="loadWebsiteSettings()">↻ Reload</button><button class="btn light" onclick="document.getElementById('home').scrollIntoView({behavior:'smooth'})">🌐 Preview Website</button>
+  </div>
+  <div id="websiteMsg"></div>
+
+  <hr style="border:0;border-top:1px solid var(--line);margin:24px 0">
+  <h3>🖼️ Gallery</h3>
+  <p class="muted">Website की सारी gallery photos भी यहीं से manage होंगी.</p>
+  <button class="btn" onclick="gallery()">Open Gallery Manager</button>
+  </div>`;
+ }
+ catch(e){$("websiteForm").innerHTML='<div class="msg err">'+esc(e.message)+"</div>"}
+}
+
+async function uploadWebsiteImage(file,prefix){
+ if(!file)return null;
+ if(file.size>5*1024*1024)throw Error("Image must be 5 MB or smaller.");
+ const ext=(file.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"");
+ const path="website/"+prefix+"-"+Date.now()+"-"+Math.random().toString(36).slice(2)+"."+ext;
+ const r=await db.storage.from("school-gallery").upload(path,file,{upsert:false,contentType:file.type||"image/jpeg"});
+ if(r.error)throw r.error;
+ return db.storage.from("school-gallery").getPublicUrl(path).data.publicUrl;
+}
+
+async function saveWebsiteSettings(){
+ try{
+  const d=await ownerCall({action:"crud_list",table:"school_settings"}),x=(d.rows||[])[0]||null;
+  const patch={
+   school_name:$("wsName").value.trim(), phone:$("wsPhone").value.trim(),
+   contact_email:$("wsEmail").value.trim(), whatsapp:$("wsWhatsapp").value.trim(),
+   address:$("wsAddress").value.trim(), hours:$("wsHours").value.trim(),
+   hero_title:$("wsHeroTitle").value.trim(), hero_text:$("wsHeroText").value.trim(),
+   about:$("wsAbout").value.trim(), admission_title:$("wsAdmissionTitle").value.trim(),
+   admission_text:$("wsAdmissionText").value.trim(), facebook_url:$("wsFacebook").value.trim(),
+   instagram_url:$("wsInstagram").value.trim()
+  };
+  const logo=$("wsLogoFile").files[0],hero=$("wsHeroFile").files[0];
+  if(logo)patch.logo_url=await uploadWebsiteImage(logo,"logo");
+  if(hero)patch.hero_image_url=await uploadWebsiteImage(hero,"hero");
+  if(x) await ownerCrudUpdate("school_settings",x.id,patch);
+  else await ownerCrudInsert("school_settings",Object.assign({id:true},patch));
+  showMsg("websiteMsg","✅ Website updated successfully.");
+  await loadPublicSite();
+ }catch(e){showMsg("websiteMsg",e.message,true)}
+}
+
+function gallery(){
+ $("view").innerHTML=`<div class="card"><div class="sectionTitle"><h3>🖼️ Gallery Management</h3><button class="btn" id="refreshGallery">↻ Refresh</button></div>
+ <p class="muted">📷 Phone se photo choose karo. URL paste karne ki zarurat nahi.</p>
+ <div id="galleryUploadArea"></div><div id="galleryMsg"></div><div id="galleryList">Loading...</div></div>`;
+ $("refreshGallery").onclick=loadGallery;
+ const canAdd=currentUser?.role==="owner" || myPermissions.has("gallery:add");
+ $("galleryUploadArea").innerHTML=canAdd?'<input id="galleryFile" type="file" accept="image/*"><input id="galleryCaption" placeholder="Photo caption"><div id="galleryPreview" class="hidden"></div><button class="btn green" id="uploadGallery">📷 Upload Photo</button>':'<div class="msg">🔒 You do not have Gallery → Add permission.</div>';
+ if(canAdd){$("galleryFile").onchange=previewGalleryFile;$("uploadGallery").onclick=uploadGalleryPhoto;}
+ loadGallery();
+}
+function previewGalleryFile(){
+ const f=$("galleryFile").files?.[0],box=$("galleryPreview");if(!f)return box.classList.add("hidden");
+ if(!f.type.startsWith("image/"))return alert("Please select an image.");
+ if(f.size>5*1024*1024)return alert("Image must be 5 MB or smaller.");
+ box.classList.remove("hidden");box.innerHTML='<img src="'+URL.createObjectURL(f)+'" style="max-width:100%;max-height:240px;border-radius:14px">';
+}
+async function uploadGalleryPhoto(){
+ const f=$("galleryFile").files?.[0],caption=$("galleryCaption").value.trim();
+ if(!f)return showMsg("galleryMsg","Please choose a photo.",true);
+ try{
+  const token=await getSessionToken();if(!token)throw Error("Owner session expired.");
+  const ext=(f.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"")||"jpg";
+  const path="gallery/"+crypto.randomUUID()+"."+ext;
+  const up=await db.storage.from("school-gallery").upload(path,f,{upsert:false,contentType:f.type});
+  if(up.error)throw up.error;
+  const pub=db.storage.from("school-gallery").getPublicUrl(path).data.publicUrl;
+  await ownerCrudInsert("gallery",{image_url:pub,caption});
+  showMsg("galleryMsg","✅ Photo uploaded.");
+  $("galleryFile").value="";$("galleryCaption").value="";$("galleryPreview").classList.add("hidden");loadGallery();
+ }catch(e){showMsg("galleryMsg",e.message,true)}
+}
+async function loadGallery(){
+ try{
+  const d=await ownerCall({action:"crud_list",table:"gallery"}),box=$("galleryList");box.innerHTML="";
+  const rows=d.rows||[];if(!rows.length){box.innerHTML='<div class="empty">No gallery photos.</div>';return}
+  rows.forEach(x=>{const el=document.createElement("div");el.className="item";el.innerHTML='<img src="'+esc(x.image_url)+'" style="width:110px;height:80px;object-fit:cover;border-radius:10px"><br><b>'+esc(x.caption||"")+'</b><br>';
+   if(currentUser?.role==="owner" || myPermissions.has("gallery:edit")){
+     const edit=document.createElement("button");edit.className="btn light";edit.textContent="✏️ Caption";edit.onclick=async()=>{const c=prompt("Photo caption:",x.caption||"");if(c===null)return;try{await ownerCrudUpdate("gallery",x.id,{caption:c});loadGallery()}catch(e){alert(e.message)}};el.appendChild(edit);
+   }
+   if(currentUser?.role==="owner" || myPermissions.has("gallery:delete")){
+     const del=document.createElement("button");del.className="btn red";del.textContent="🗑️ Delete";del.onclick=async()=>{if(!confirm("Delete this photo?"))return;try{await ownerCrudDelete("gallery",x.id);loadGallery()}catch(e){alert(e.message)}};el.appendChild(del);
+   }
+   box.appendChild(el)});
+ }catch(e){$("galleryList").innerHTML='<div class="msg err">'+esc(e.message)+"</div>"}
+}
+
+function enquiries(){
+ $("view").innerHTML='<div class="card"><div class="sectionTitle"><h3>📩 Admission Enquiries</h3><button class="btn" onclick="enquiries()">↻ Refresh</button></div><div id="enqList">Loading...</div></div>';
+ loadEnquiries();
+}
+async function loadEnquiries(){
+ try{
+  let rows=[];
+  if(currentUser?.role==="owner" || currentUser?.role!=="parent"){
+    const d=await ownerCall({action:"crud_list",table:"enquiries"}); rows=d.rows||[];
+  }
+  $("enqList").innerHTML=rows.map(x=>'<div class="item"><b>'+esc(x.parent_name||"Parent")+'</b> — '+esc(x.child_name||"")+'<br>'+esc(x.phone||"")+' • '+esc(x.class_name||"")+'<br>'+esc(x.message||"")+'<br>'+badge(x.status||"New")+'</div>').join("")||'<div class="empty">No enquiries.</div>';
+ }catch(e){$("enqList").innerHTML='<div class="msg err">'+esc(e.message)+"</div>"}
+}
+
+
+function accounts(){
+ $("view").innerHTML='<div class="card"><h3>🔑 Create School Login</h3><div class="row"><select id="accountRole"><option value="admin">Admin</option><option value="teacher">Teacher</option><option value="parent">Parent</option></select><input id="accountName" placeholder="Full name"></div><div id="parentStudentWrap" class="hidden"><select id="accountStudent"><option value="">Select child</option></select></div><div class="row"><input id="accountUsername" placeholder="Login ID"><input id="accountPassword" type="password" placeholder="Password (8+ characters)"></div><input id="accountPassword2" type="password" placeholder="Confirm password"><button class="btn green" id="createAccount">Create Account</button><div id="accountMsg"></div></div>';
+ $("accountRole").onchange=()=>{$("parentStudentWrap").classList.toggle("hidden",$("accountRole").value!=="parent")};$("createAccount").onclick=createAccount;loadAccountStudents();
+}
+async function loadAccountStudents(){const r=await db.from("students").select("id,name,class_name").order("name");if(!r.error)$("accountStudent").innerHTML='<option value="">Select child</option>'+(r.data||[]).map(x=>'<option value="'+esc(x.id)+'">'+esc(x.name)+" — "+esc(x.class_name)+"</option>").join("")}
+async function createAccount(){
+ const role=$("accountRole").value,name=$("accountName").value.trim(),u=$("accountUsername").value.trim(),p=$("accountPassword").value,p2=$("accountPassword2").value,sid=role==="parent"?$("accountStudent").value:null;
+ if(!u||!p)return showMsg("accountMsg","Login ID and password required.",true);if(p.length<8)return showMsg("accountMsg","Password must be at least 8 characters.",true);if(p!==p2)return showMsg("accountMsg","Passwords do not match.",true);if(role==="parent"&&!sid)return showMsg("accountMsg","Select child.",true);
+ try{const t=await getSessionToken();const r=await fetch(FN+"school-user-admin",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+t,apikey:SUPABASE_KEY},body:JSON.stringify({username:u,full_name:name,password:p,role,student_id:sid})});let d={};try{d=await r.json()}catch{}if(!r.ok)throw Error(d.error||"Could not create account.");showMsg("accountMsg","Account created. Login ID: "+u)}catch(e){showMsg("accountMsg",e.message,true)}
+}
+
+function users(){$("view").innerHTML='<div class="card"><div class="sectionTitle"><h3>👥 Users & Authorization</h3><button class="btn" onclick="accounts()">➕ Create Login</button></div><div id="usersList">Loading...</div></div>';loadUsers()}
+async function loadUsers(){
+ const r=await db.from("profiles").select("id,username,full_name,role,student_id").neq("role","owner").order("created_at",{ascending:false});if(r.error)return $("usersList").innerHTML='<div class="msg err">'+esc(r.error.message)+"</div>";
+ $("usersList").innerHTML="";(r.data||[]).forEach(u=>{const el=document.createElement("div");el.className="item";el.innerHTML='<b>'+esc(u.full_name||u.username)+'</b> '+badge(u.role)+'<br>Login ID: '+esc(u.username||"—")+"<br>";
+ const role=document.createElement("select");["admin","teacher","parent"].forEach(x=>{const o=document.createElement("option");o.value=x;o.textContent=x;o.selected=x===u.role;role.appendChild(o)});el.appendChild(role);
+ const rb=document.createElement("button");rb.className="btn light";rb.textContent="🔄 Change Role";rb.onclick=async()=>{try{await ownerCall({action:"change_role",user_id:u.id,role:role.value});loadUsers()}catch(e){alert(e.message)}};
+ const dbtn=document.createElement("button");dbtn.className="btn red";dbtn.textContent="🗑️ Delete User";dbtn.onclick=async()=>{if(!confirm("Delete this user?"))return;try{await ownerCall({action:"delete_user",user_id:u.id});loadUsers()}catch(e){alert(e.message)}};
+ el.append(rb,dbtn);$("usersList").appendChild(el)})
+}
+
+
+async function loadStudentPortal(){
+ if(demo)return demoParent();
+ $("view").innerHTML='<div class="empty">Loading your child portal...</div>';
+ try{
+  const t=await getSessionToken();if(!t)throw Error("Session expired. Login again.");
+  const r=await fetch(FN+"student-profile",{headers:{Authorization:"Bearer "+t,apikey:SUPABASE_KEY}});
+  let d={};try{d=await r.json()}catch{}if(!r.ok)throw Error(d.error||"Unable to load child portal.");
+  renderParent(d);
+ }catch(e){$("view").innerHTML='<div class="msg err">'+esc(e.message)+"</div>"}
+}
+
+function renderParent(d){
+ parentPortalData=d;
+ const s=d.student||{},a=d.attendance||[],h=d.homework||[],f=d.fees||[],n=d.notices||[];
+ const present=a.filter(x=>String(x.status).toLowerCase()==="present").length;
+ const pending=f.filter(x=>String(x.status).toLowerCase()!=="paid");
+ const photo=s.photo_url?'<img src="'+esc(s.photo_url)+'" alt="Child photo">':"👦";
+ const head='<div class="childHead"><div class="childPhoto">'+photo+'</div><div><h2>'+esc(s.name||"Child")+' 👋</h2><p><b>Class:</b> '+esc(s.class_name||"—")+'</p><p><b>Parent:</b> '+esc(s.parent_name||"—")+'</p><p>Shakti Niketan Play Group</p></div></div>';
+
+ if(parentActiveTab==="attendance"){
+  $("view").innerHTML=head+'<div class="card"><div class="sectionTitle"><h3>📅 Attendance</h3>'+badge(a.length+" records")+'</div>'+
+  (a.length?'<table class="dataTable"><tr><th>Date</th><th>Status</th></tr>'+a.map(x=>'<tr><td>'+date(x.attendance_date||x.date)+'</td><td>'+badge(x.status)+'</td></tr>').join("")+'</table>':
+  '<div class="empty">No attendance records have been published for your child yet.</div>')+'</div>'; return;
+ }
+ if(parentActiveTab==="homework"){
+  $("view").innerHTML=head+'<div class="card"><div class="sectionTitle"><h3>📚 Homework</h3>'+badge(h.length+" items")+'</div>'+
+  (h.length?h.map(x=>'<div class="hw"><h4>'+esc(x.title)+'</h4>'+badge(x.class_name||s.class_name||"Class")+'<div style="margin:7px 0">'+esc(x.description||x.details||"No details.")+'</div><small>Assigned: '+date(x.created_at)+' • Due: '+date(x.due_date)+'</small></div>').join(""):
+  '<div class="empty">No homework has been assigned to your child yet.</div>')+'</div>'; return;
+ }
+ if(parentActiveTab==="fees"){
+  $("view").innerHTML=head+'<div class="card"><div class="sectionTitle"><h3>💰 Fees</h3>'+badge(pending.length+" pending")+'</div>'+
+  (f.length?f.map(x=>'<div class="item"><b>₹'+esc(x.amount)+'</b> '+badge(x.status)+'<br><small>Due: '+date(x.due_date)+'</small></div>').join(""):
+  '<div class="empty">No fee information has been published for your child yet.</div>')+'</div>'; return;
+ }
+ if(parentActiveTab==="notices"){
+  $("view").innerHTML=head+'<div class="card"><div class="sectionTitle"><h3>📢 Notices</h3>'+badge(n.length+" notices")+'</div>'+
+  (n.length?n.map(x=>'<div class="notice"><b>'+esc(x.title)+'</b> '+badge(x.audience||"All")+'<br>'+esc(x.message||x.body||"")+'<br><small>'+date(x.published_at||x.created_at)+'</small></div>').join(""):
+  '<div class="empty">No notices for your child yet.</div>')+'</div>'; return;
+ }
+ if(parentActiveTab==="profile"){
+  $("view").innerHTML=head+'<div class="card"><h3>👦 Child Profile</h3><table class="dataTable">'+
+  '<tr><th>Name</th><td>'+esc(s.name||"—")+'</td></tr><tr><th>Class</th><td>'+esc(s.class_name||"—")+'</td></tr>'+
+  '<tr><th>Parent</th><td>'+esc(s.parent_name||"—")+'</td></tr><tr><th>Parent Phone</th><td>'+esc(s.parent_phone||"—")+'</td></tr>'+
+  '</table></div><div class="connect"><h3>🔔 Parent–Child Connection</h3><p>Need the school to confirm or update your connection with your child?</p>'+
+  '<button class="btn green" onclick="sendConnectRequest()">🔔 Notify Owner / Request Connection</button><div id="connectMsg"></div></div>'; return;
+ }
+ $("view").innerHTML=head+'<div class="stats"><div class="stat"><b>'+present+'</b>Present</div><div class="stat"><b>'+a.length+'</b>Attendance Records</div><div class="stat"><b>'+h.length+'</b>Homework</div><div class="stat"><b>'+pending.length+'</b>Pending Fees</div></div>'+
+ '<div class="card" style="margin-top:16px"><h3>📌 Quick Summary</h3><p>Use the buttons above to open only the section you want.</p><p class="muted">Attendance, Homework, Fees and Notices are shown separately and only for your linked child.</p></div>';
+}
+function demoParent(){
+ renderParent({student:{name:"Shivamji",class_name:"Class 6",parent_name:"Demo Parent"},attendance:[{date:"2026-08-22",status:"Present"}],homework:[{title:"English — Learn A to Z",description:"Write A to Z two times.",created_at:"2026-08-22",due_date:"2026-08-24",class_name:"Class 6"}],fees:[{amount:2500,status:"Pending",due_date:"2026-08-30"}],notices:[{title:"Welcome",message:"School portal is active.",created_at:"2026-08-22"}]});
+}
+
+
+async function sendConnectRequest(){
+ if(demo)return showMsg("connectMsg","Demo: Owner would receive the connection notification.");
+ try{const t=await getSessionToken();const r=await fetch(FN+"parent-connect-v3",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+t,apikey:SUPABASE_KEY},body:JSON.stringify({message:"Parent wants to confirm/connect with the child."})});let d={};try{d=await r.json()}catch{}if(!r.ok)throw Error(d.error||"Could not send request.");showMsg("connectMsg","✅ Request sent to Owner successfully.");}catch(e){showMsg("connectMsg",e.message,true)}
+}
+
+function superPower(){
+ $("view").innerHTML=`<div class="card">
+  <h3>👑 Owner Super Power</h3>
+  <p class="muted">👑 Only Owner can grant or remove permissions. Admin/Teacher can never grant permissions to themselves.</p>
+  <div class="card"><h3>🔐 Give Permission</h3>
+   <div class="row">
+    <select id="permRole"><option value="admin">🛡️ Admin</option><option value="teacher">👩‍🏫 Teacher</option><option value="parent">👨‍👩‍👧 Parent</option></select>
+    <select id="permResource">
+      <option value="students">👧 Students</option><option value="attendance">📅 Attendance</option><option value="homework">📚 Homework</option>
+      <option value="fees">💰 Fees</option><option value="notices">📢 Notices</option><option value="enquiries">📩 Enquiries</option>
+      <option value="gallery">🖼️ Gallery</option><option value="website">🌐 Website</option><option value="users">👥 Users</option>
+    </select>
+    <select id="permAction"><option value="view">👁️ View</option><option value="add">➕ Add</option><option value="edit">✏️ Edit</option><option value="delete">🗑️ Delete</option></select>
+    <select id="permEnabled"><option value="true">✅ Allow</option><option value="false">🚫 Deny</option></select>
+   </div>
+   <button class="btn green" onclick="savePermission()">💾 Save Permission</button><div id="permMsg"></div>
+  </div>
+  <div class="card"><h3>📋 Current Permissions</h3><div id="permMatrix">Loading...</div></div>
+  <div class="cards">
+   <div class="card"><h3>🌐 Website</h3><p>Owner can edit school information, contact details and public website content.</p><button class="btn" onclick="websiteSettings()">Open Website Settings</button></div>
+   <div class="card"><h3>🖼️ Gallery</h3><p>Owner can upload, edit captions and delete photos.</p><button class="btn" onclick="gallery()">Open Gallery</button></div>
+   <div class="card"><h3>📩 Enquiries</h3><p>Visitor enquiries are visible to authorized staff selected by Owner.</p><button class="btn" onclick="showTab('enquiries')">Open Enquiries</button></div>
+  </div>
+ </div>`;
+ loadPermissionMatrix();
+}
+
+async function savePermission(){
+ try{
+  const role=$("permRole").value,resource=$("permResource").value,permission_action=$("permAction").value,enabled=$("permEnabled").value==="true";
+  const d=await ownerCall({action:"set_role_permission",role,resource,permission_action,enabled});
+  showMsg("permMsg","✅ "+role.toUpperCase()+" → "+resource+" → "+permission_action+" is now "+(enabled?"ALLOWED":"DENIED")+".");
+  loadPermissionMatrix();
+ }catch(e){showMsg("permMsg",e.message,true)}
+}
+async function loadPermissionMatrix(){
+ const el=$("permMatrix"); if(!el)return;
+ try{
+  const d=await ownerCall({action:"get_role_permissions"}),rows=d.permissions||[];
+  const roles=["admin","teacher","parent"],resources=["students","attendance","homework","fees","notices","enquiries","gallery","website"],actions=["view","add","edit","delete"];
+  let out='<div style="overflow:auto"><table class="dataTable"><tr><th>Role</th><th>Section</th><th>View</th><th>Add</th><th>Edit</th><th>Delete</th></tr>';
+  for(const role of roles)for(const res of resources){
+   const cells=actions.map(a=>rows.some(x=>x.role===role&&x.permission===res+":"+a)?'✅':'—');
+   out+='<tr><td>'+esc(role)+'</td><td>'+esc(res)+'</td>'+cells.map(x=>'<td>'+x+'</td>').join('')+'</tr>';
+  }
+  el.innerHTML=out+'</table></div>';
+ }catch(e){el.innerHTML='<div class="msg err">'+esc(e.message)+'</div>'}
+}
+async function parentRequests(){
+ $("view").innerHTML='<div class="card"><h3>🔔 Parent–Child Connection Requests</h3><p class="muted">Review requests sent by parents.</p><div id="requestList">Loading...</div></div>';
+ try{const d=await ownerCall({action:"get_parent_requests"}),a=d.requests||[];$("requestList").innerHTML=a.length?"":'<div class="empty">🎉 No pending requests.</div>';
+ a.forEach(x=>{const p=x.profiles||{},s=x.students||{};const el=document.createElement("div");el.className="request";el.innerHTML="<b>👨‍👩‍👧 "+esc(p.full_name||p.username||"Parent")+"</b><br><b>Child:</b> "+esc(s.name||"—")+" • <b>Class:</b> "+esc(s.class_name||"—")+"<br><b>Message:</b> "+esc(x.message||"—")+"<br><small>Requested: "+date(x.created_at)+"</small>";
+ const ok=document.createElement("button");ok.className="btn green";ok.textContent="Approve & Connect";ok.onclick=async()=>{try{await ownerCall({action:"respond_parent_request",request_id:x.id,status:"approved"});parentRequests()}catch(e){alert(e.message)}};
+ const no=document.createElement("button");no.className="btn red";no.textContent="Reject";no.onclick=async()=>{try{await ownerCall({action:"respond_parent_request",request_id:x.id,status:"rejected"});parentRequests()}catch(e){alert(e.message)}};
+ el.appendChild(document.createElement("br"));el.append(ok,no);$("requestList").appendChild(el)});
+ }catch(e){$("requestList").innerHTML='<div class="msg err">'+esc(e.message)+"</div>"}
+}
+
+
+const VAPID_PUBLIC_KEY="BP4zPAOvliLIUovgB1Ah7pWcdkm67sOResRzrDUnjDhH29emJj2hXZZ9wC6TGpge5z8Vv5h49451dSlFclcBHuM";
+function urlBase64ToUint8Array(base64String){const padding='='.repeat((4-base64String.length%4)%4),base64=(base64String+padding).replace(/-/g,'+').replace(/_/g,'/');const raw=atob(base64);return Uint8Array.from([...raw].map(c=>c.charCodeAt(0)))}
+async function setupNotificationUI(){
+ const b=$("notifyBtn");
+ if(currentUser?.role!=="owner" || !("Notification" in window) || !("serviceWorker" in navigator) || !("PushManager" in window)){b.classList.add("hidden");return}
+ b.classList.remove("hidden");b.onclick=enableOwnerNotifications;
+}
+async function enableOwnerNotifications(){
+ const b=$("notifyBtn");b.disabled=true;b.textContent="🔔 Setting up...";
+ try{
+  if(!window.isSecureContext)throw Error("Notifications require HTTPS. Open the GitHub Pages website.");
+  const permission=await Notification.requestPermission();
+  if(permission!=="granted")throw Error("Notification permission was not allowed.");
+  const reg=await navigator.serviceWorker.register("./sw.js",{scope:"./"});
+  let sub=await reg.pushManager.getSubscription();
+  if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlBase64ToUint8Array(VAPID_PUBLIC_KEY)});
+  const token=await getSessionToken();
+  const r=await fetch(FN+"push-subscribe-v2",{method:"POST",headers:{Authorization:"Bearer "+token,apikey:SUPABASE_KEY,"Content-Type":"application/json"},body:JSON.stringify({subscription:sub.toJSON()})});
+  let d={};try{d=await r.json()}catch{}if(!r.ok)throw Error(d.error||"Could not register this phone.");
+  b.textContent="🔔 Notifications ON";b.classList.remove("light");b.classList.add("green");
+  alert("✅ Owner notifications are ON on this phone.");
+ }catch(e){b.disabled=false;b.textContent="🔔 Enable Notifications";alert(e.message)}
+}
+async function logout(){
+ if(!demo && db) await db.auth.signOut();
+ demo=false;currentUser=null;
+ $("app").classList.add("hidden");$("loginBox").classList.remove("hidden");$("password").value="";
+}
+</script>
+</body>
+</html>
