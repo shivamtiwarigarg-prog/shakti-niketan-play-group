@@ -224,6 +224,34 @@ function ownerActionButtons(table,id,editFn){
   const d=document.createElement("button");d.className="btn red";d.style.margin="4px";d.textContent="🗑️ Delete";d.onclick=async()=>{try{await ownerCrudDelete(table,id);editFn.__reload&&editFn.__reload()}catch(x){alert(x.message)}};
   wrap.append(e,d);return wrap;
 }
+
+let studentOptionsCache=[];
+async function getStudentsForPicker(){
+  try{
+    if(currentUser?.role==="owner"&&!demo) return await ownerCrudList("students");
+    const r=await db.from("students").select("id,name,class_name").order("name");
+    if(r.error) throw r.error;
+    return r.data||[];
+  }catch(e){ console.error(e); return []; }
+}
+async function fillStudentPicker(selectId, includeAll=true, selected=""){
+  const el=$(selectId); if(!el)return;
+  const rows=await getStudentsForPicker();
+  studentOptionsCache=rows;
+  el.innerHTML=(includeAll?'<option value="">Select student</option>':"")+
+    rows.map(x=>'<option value="'+esc(x.id)+'" data-class="'+esc(x.class_name||"")+'">'+esc(x.name)+' — '+esc(x.class_name||"")+'</option>').join("");
+  if(selected)el.value=selected;
+}
+function selectedStudentName(selectId){
+ const el=$(selectId),o=el?.selectedOptions?.[0]; return o?.textContent?.split(" — ")[0]||"";
+}
+async function fillClassPicker(selectId, selected=""){
+ const el=$(selectId); if(!el)return;
+ const rows=await getStudentsForPicker();
+ const classes=[...new Set(rows.map(x=>x.class_name).filter(Boolean))].sort();
+ el.innerHTML='<option value="">Select Class</option>'+classes.map(c=>'<option value="'+esc(c)+'">'+esc(c)+'</option>').join("");
+ if(selected)el.value=selected;
+}
 function students(){
  $("view").innerHTML='<div class="card"><div class="sectionTitle"><h3>👧 Students</h3><button class="btn" id="refreshStudents">↻ Refresh</button></div><div class="row"><input id="sn" placeholder="Student name"><input id="sc" placeholder="Class"><input id="sp" placeholder="Parent name"><input id="sph" placeholder="Parent phone"><input id="sphoto" placeholder="Photo URL (optional)"></div><button class="btn green" id="addStudentBtn">➕ Add Student</button><div id="studentList">Loading...</div></div>';
  $("addStudentBtn").onclick=addStudent; $("refreshStudents").onclick=loadStudents; loadStudents();
@@ -255,8 +283,8 @@ async function addStudent(){
 
 
 function attendance(){
- $("view").innerHTML='<div class="card"><div class="sectionTitle"><h3>📅 Attendance</h3><button class="btn" id="refreshAtt">↻ Refresh</button></div><div class="row"><input id="adate" type="date"><input id="astudent" placeholder="Student name"><select id="astatus"><option>Present</option><option>Absent</option><option>Leave</option></select></div><button class="btn green" id="saveAtt">➕ Add Attendance</button><div id="attList"></div></div>';
- $("adate").value=new Date().toISOString().slice(0,10);$("saveAtt").onclick=addAttendance;$("refreshAtt").onclick=loadAttendance;loadAttendance();
+ $("view").innerHTML='<div class="card"><div class="sectionTitle"><h3>📅 Attendance</h3><button class="btn" id="refreshAtt">↻ Refresh</button></div><div class="row"><input id="adate" type="date"><select id="astudent"><option value="">Select student</option></select><select id="astatus"><option>Present</option><option>Absent</option><option>Leave</option></select></div><button class="btn green" id="saveAtt">➕ Add Attendance</button><div id="attList"></div></div>';
+ $("adate").value=new Date().toISOString().slice(0,10);$("saveAtt").onclick=addAttendance;$("refreshAtt").onclick=loadAttendance;fillStudentPicker("astudent",true);loadAttendance();
 }
 async function loadAttendance(){
  if(currentUser?.role==="owner"&&!demo){try{const rows=await ownerCrudList("attendance"),box=$("attList");box.innerHTML="";if(!rows.length){box.innerHTML='<div class="empty">No attendance records.</div>';return}
@@ -272,15 +300,15 @@ async function editAttendance(x){
  try{await ownerCrudUpdate("attendance",x.id,{attendance_date:d,date:d,student_name:s,status:st});loadAttendance()}catch(e){alert(e.message)}
 }
 async function addAttendance(){
- const row={attendance_date:$("adate").value,student_name:$("astudent").value.trim(),status:$("astatus").value,date:$("adate").value};
+ const sid=$("astudent").value, sname=selectedStudentName("astudent"); const row={attendance_date:$("adate").value,student_id:sid||null,student_name:sname,status:$("astatus").value,date:$("adate").value};
  if(!row.student_name)return alert("Student name required.");if(demo)return;
  try{if(currentUser?.role==="owner")await ownerCrudInsert("attendance",row);else{const r=await db.from("attendance").insert(row);if(r.error)throw r.error}attendance()}catch(e){alert(e.message)}
 }
 
 
 function homework(){
- $("view").innerHTML='<div class="card"><div class="sectionTitle"><h3>📚 Homework</h3><button class="btn" id="refreshHw">↻ Refresh</button></div><div class="row"><input id="htitle" placeholder="Subject / Homework title"><input id="hclass" placeholder="Class"><input id="hdue" type="date"></div><textarea id="hdesc" placeholder="Homework details"></textarea><button class="btn green" id="addHw">➕ Add Homework</button><div id="hwList"></div></div>';
- $("addHw").onclick=addHomework;$("refreshHw").onclick=loadHomework;loadHomework();
+ $("view").innerHTML='<div class="card"><div class="sectionTitle"><h3>📚 Homework</h3><button class="btn" id="refreshHw">↻ Refresh</button></div><div class="row"><input id="htitle" placeholder="Subject / Homework title"><select id="hclass"><option value="">Select Class</option></select><select id="hstudent"><option value="">Select student</option></select><input id="hdue" type="date"></div><textarea id="hdesc" placeholder="Homework details"></textarea><button class="btn green" id="addHw">➕ Add Homework</button><div id="hwList"></div></div>';
+ $("addHw").onclick=addHomework;$("refreshHw").onclick=loadHomework;fillStudentPicker("hstudent",true);fillClassPicker("hclass");loadHomework();
 }
 async function loadHomework(){
  if(currentUser?.role==="owner"&&!demo){try{const rows=await ownerCrudList("homework"),box=$("hwList");box.innerHTML="";if(!rows.length){box.innerHTML='<div class="empty">No homework.</div>';return}
@@ -293,19 +321,19 @@ async function editHomework(x){
  const title=prompt("Subject / Homework title:",x.title||"");if(title===null)return;
  const desc=prompt("Homework details:",x.description||x.details||"");if(desc===null)return;
  const cls=prompt("Class:",x.class_name||"");if(cls===null)return;
- const due=prompt("Due date (YYYY-MM-DD):",x.due_date||"");if(due===null)return;
- try{await ownerCrudUpdate("homework",x.id,{title,description:desc,details:desc,class_name:cls,due_date:due||null});loadHomework()}catch(e){alert(e.message)}
+ const due=prompt("Due date (YYYY-MM-DD):",x.due_date||"");if(due===null)return; const sid=prompt("Student ID (optional; blank = class homework):",x.student_id||"");
+ try{await ownerCrudUpdate("homework",x.id,{title,description:desc,details:desc,class_name:cls,due_date:due||null,student_id:sid||null});loadHomework()}catch(e){alert(e.message)}
 }
 async function addHomework(){
- const row={title:$("htitle").value.trim(),class_name:$("hclass").value.trim(),due_date:$("hdue").value||null,description:$("hdesc").value.trim(),details:$("hdesc").value.trim()};
+ const sid=$("hstudent").value, sname=selectedStudentName("hstudent"); const cls=$("hclass").value || (studentOptionsCache.find(x=>x.id===sid)?.class_name||""); const row={title:$("htitle").value.trim(),class_name:cls,due_date:$("hdue").value||null,description:$("hdesc").value.trim(),details:$("hdesc").value.trim(),student_id:sid||null};
  if(!row.title)return alert("Homework title required.");if(demo)return;
  try{if(currentUser?.role==="owner")await ownerCrudInsert("homework",row);else{const r=await db.from("homework").insert(row);if(r.error)throw r.error}homework()}catch(e){alert(e.message)}
 }
 
 
 function fees(){
- $("view").innerHTML='<div class="card"><div class="sectionTitle"><h3>💰 Fees</h3><button class="btn" id="refreshFee">↻ Refresh</button></div><div class="row"><input id="fn" placeholder="Student name"><input id="famt" type="number" placeholder="Amount"><select id="fstatus"><option>Paid</option><option>Pending</option><option>Partial</option></select><input id="fdue" type="date"></div><button class="btn green" id="saveFee">➕ Add Fee</button><div id="feeList"></div></div>';
- $("saveFee").onclick=addFee;$("refreshFee").onclick=loadFees;loadFees();
+ $("view").innerHTML='<div class="card"><div class="sectionTitle"><h3>💰 Fees</h3><button class="btn" id="refreshFee">↻ Refresh</button></div><div class="row"><select id="fstudent"><option value="">Select student</option></select><input id="famt" type="number" placeholder="Amount"><select id="fstatus"><option>Paid</option><option>Pending</option><option>Partial</option></select><input id="fdue" type="date"></div><button class="btn green" id="saveFee">➕ Add Fee</button><div id="feeList"></div></div>';
+ $("saveFee").onclick=addFee;$("refreshFee").onclick=loadFees;fillStudentPicker("fstudent",true);loadFees();
 }
 async function loadFees(){
  if(currentUser?.role==="owner"&&!demo){try{const rows=await ownerCrudList("fees"),box=$("feeList");box.innerHTML="";if(!rows.length){box.innerHTML='<div class="empty">No fee records.</div>';return}
@@ -318,22 +346,24 @@ async function editFee(x){
  const name=prompt("Student name:",x.student_name||"");if(name===null)return;
  const amt=prompt("Amount:",x.amount||"");if(amt===null)return;
  const st=prompt("Status (Paid / Pending / Partial):",x.status||"Pending");if(st===null)return;
- const due=prompt("Due date (YYYY-MM-DD):",x.due_date||"");if(due===null)return;
- try{await ownerCrudUpdate("fees",x.id,{student_name:name,amount:Number(amt),status:st,due_date:due||null});loadFees()}catch(e){alert(e.message)}
+ const due=prompt("Due date (YYYY-MM-DD):",x.due_date||"");if(due===null)return; const sid=prompt("Student ID:",x.student_id||"");
+ try{await ownerCrudUpdate("fees",x.id,{student_name:name,student_id:sid||null,amount:Number(amt),status:st,due_date:due||null});loadFees()}catch(e){alert(e.message)}
 }
 async function addFee(){
- const row={student_name:$("fn").value.trim(),amount:Number($("famt").value),status:$("fstatus").value,due_date:$("fdue").value||null};if(!row.student_name||!row.amount)return alert("Student and amount required.");if(demo)return;
+ const sid=$("fstudent").value, sname=selectedStudentName("fstudent"); const row={student_id:sid||null,student_name:sname,amount:Number($("famt").value),status:$("fstatus").value,due_date:$("fdue").value||null};if(!row.student_name||!row.amount)return alert("Student and amount required.");if(demo)return;
  try{if(currentUser?.role==="owner")await ownerCrudInsert("fees",row);else{const r=await db.from("fees").insert(row);if(r.error)throw r.error}fees()}catch(e){alert(e.message)}
 }
 
 
 function notices(){
- $("view").innerHTML='<div class="card"><div class="sectionTitle"><h3>📢 School Notices</h3><button class="btn" id="refreshNotice">↻ Refresh</button></div><div class="row"><input id="ntitle" placeholder="Notice title"><input id="nfor" placeholder="For: All / Parents / Teachers"></div><textarea id="nmsg" placeholder="Notice message"></textarea><button class="btn green" id="publishNotice">➕ Publish Notice</button><div id="noticeList"></div></div>';
- $("publishNotice").onclick=addNotice;$("refreshNotice").onclick=loadNotices;loadNotices();
+ $("view").innerHTML='<div class="card"><div class="sectionTitle"><h3>📢 School Notices</h3><button class="btn" id="refreshNotice">↻ Refresh</button></div><div class="row"><input id="ntitle" placeholder="Notice title"><select id="ntarget"><option value="all">👥 All</option><option value="class">🏫 Class</option><option value="student">👦 Specific Student</option></select><select id="nclass" class="hidden"><option value="">Select Class</option></select><select id="nstudent" class="hidden"><option value="">Select student</option></select></div><input id="nfor" placeholder="Audience: All / Parents / Teachers"><textarea id="nmsg" placeholder="Notice message"></textarea><button class="btn green" id="publishNotice">➕ Publish Notice</button><div id="noticeList"></div></div>';
+ $("publishNotice").onclick=addNotice;$("refreshNotice").onclick=loadNotices;
+ $("ntarget").onchange=()=>{const t=$("ntarget").value;$("nclass").classList.toggle("hidden",t!=="class");$("nstudent").classList.toggle("hidden",t!=="student")};
+ fillStudentPicker("nstudent",true);fillClassPicker("nclass");loadNotices();
 }
 async function loadNotices(){
  if(currentUser?.role==="owner"&&!demo){try{const rows=await ownerCrudList("notices"),box=$("noticeList");box.innerHTML="";if(!rows.length){box.innerHTML='<div class="empty">No notices.</div>';return}
- rows.forEach(x=>{const el=document.createElement("div");el.className="notice";el.innerHTML='<b>'+esc(x.title)+'</b> '+badge(x.audience||"All")+"<br>"+esc(x.message||x.body||"")+"<br><small>"+date(x.published_at||x.created_at)+"</small><br>";
+ rows.forEach(x=>{const el=document.createElement("div");el.className="notice";el.innerHTML='<b>'+esc(x.title)+'</b> '+badge(x.audience||"All")+" "+badge(x.target_type==="student"?"👦 "+(x.target_student_name||"Student"):x.target_type==="class"?"🏫 "+(x.target_class_name||"Class"):"👥 All")+"<br>"+esc(x.message||x.body||"")+"<br><small>"+date(x.published_at||x.created_at)+"</small><br>";
  const edit=()=>editNotice(x),b=ownerActionButtons("notices",x.id,edit);b.lastChild.onclick=async()=>{try{await ownerCrudDelete("notices",x.id);loadNotices()}catch(e){alert(e.message)}};el.appendChild(b);box.appendChild(el)})}catch(e){$("noticeList").innerHTML='<div class="msg err">'+esc(e.message)+"</div>"};return}
  if(demo){$("noticeList").innerHTML='<div class="notice"><b>Welcome</b><br>School portal is active.</div>';return}
  const r=await db.from("notices").select("*").order("created_at",{ascending:false});if(r.error)return $("noticeList").innerHTML='<div class="msg err">'+esc(r.error.message)+"</div>";$("noticeList").innerHTML=(r.data||[]).map(x=>'<div class="notice"><b>'+esc(x.title)+"</b> "+badge(x.audience||"All")+"<br>"+esc(x.message||x.body||"")+"<br><small>"+date(x.published_at||x.created_at)+"</small></div>").join("")||'<div class="empty">No notices.</div>';
@@ -342,10 +372,15 @@ async function editNotice(x){
  const title=prompt("Notice title:",x.title||"");if(title===null)return;
  const msg=prompt("Notice message:",x.message||x.body||"");if(msg===null)return;
  const aud=prompt("Audience (All / Parents / Teachers):",x.audience||"All");if(aud===null)return;
- try{await ownerCrudUpdate("notices",x.id,{title,message:msg,body:msg,audience:aud});loadNotices()}catch(e){alert(e.message)}
+ const tt=prompt("Target (all / class / student):",x.target_type||"all");if(tt===null)return;
+ const tc=tt==="class"?prompt("Class:",x.target_class_name||""):null; const ts=tt==="student"?prompt("Student ID (use student list in new notice for easier selection):",x.target_student_id||""):null;
+ try{await ownerCrudUpdate("notices",x.id,{title,message:msg,body:msg,audience:aud,target_type:tt,target_class_name:tt==="class"?tc:null,target_student_id:tt==="student"?ts:null});loadNotices()}catch(e){alert(e.message)}
 }
 async function addNotice(){
- const row={title:$("ntitle").value.trim(),audience:$("nfor").value.trim()||"All",message:$("nmsg").value.trim(),body:$("nmsg").value.trim()};if(!row.title||!row.message)return alert("Title and notice required.");if(demo)return;
+ const target=$("ntarget").value,sid=$("nstudent").value,cls=$("nclass").value;
+ const row={title:$("ntitle").value.trim(),audience:$("nfor").value.trim()||"All",message:$("nmsg").value.trim(),body:$("nmsg").value.trim(),target_type:target,target_student_id:target==="student"?(sid||null):null,target_class_name:target==="class"?(cls||null):null};
+ if(target==="student"&&!sid)return alert("Please select a student.");
+ if(target==="class"&&!cls)return alert("Please select a class.");if(!row.title||!row.message)return alert("Title and notice required.");if(demo)return;
  try{if(currentUser?.role==="owner")await ownerCrudInsert("notices",row);else{const r=await db.from("notices").insert(row);if(r.error)throw r.error}notices()}catch(e){alert(e.message)}
 }
 
@@ -499,6 +534,7 @@ async function logout(){
 </script>
 </body>
 </html>
+
 
 
 
