@@ -12,10 +12,11 @@ body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:var(--ink)
 header{background:#fff;padding:12px 4.5%;display:flex;justify-content:space-between;align-items:center;gap:18px;box-shadow:0 2px 14px #0001;position:sticky;top:0;z-index:20}
 .logo{display:flex;align-items:center;gap:10px;min-width:230px;font-size:22px;font-weight:900;color:var(--p);line-height:1.05}.logo img{width:54px;height:54px;object-fit:contain;border-radius:12px;background:#fff}.logoText{display:flex;flex-direction:column}.logo small{display:block;font-size:10px;letter-spacing:3px;color:#e9766b;margin-top:5px}
 nav{display:flex;align-items:center;gap:4px}nav a{margin-left:8px;text-decoration:none;color:#29232f;font-weight:800;font-size:14px;padding:10px 11px;border-radius:9px}nav a:hover{background:var(--soft);color:var(--p)}nav .portalLink{background:var(--p);color:#fff;padding:11px 15px}
-section{padding:44px 5%}.hero{padding:58px 5% 40px;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;background:linear-gradient(135deg,#eee2ff,#fff0dc 52%,#def8ef);min-height:520px}.hero h1{font-size:52px;line-height:1.05;color:#3d2364;margin:8px 0 20px;max-width:650px}.hero p{font-size:21px;line-height:1.45;margin:0 0 26px;max-width:590px}.hero-actions{display:flex;gap:12px;flex-wrap:wrap}.btn.outline{background:#fff;color:var(--p);border:1px solid #b99bdc}.hero-art{height:420px;border-radius:28px;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 20px 50px #6535a822;overflow:hidden;position:relative}.hero-art img{width:100%;height:100%;object-fit:cover}.hero-art .classroom{width:100%;height:100%;padding:28px;background:linear-gradient(145deg,#fff,#f8f0ff);position:relative}.board{height:125px;border-radius:18px;background:linear-gradient(135deg,#9ddbd1,#d8f4df);display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;color:#2d6e65;letter-spacing:2px;box-shadow:inset 0 -6px #0000000b}.shelf{position:absolute;left:28px;right:28px;bottom:34px;height:120px;border-radius:18px;background:linear-gradient(#e9b57c,#d89555);box-shadow:0 10px 20px #0002}.toy{position:absolute;width:56px;height:56px;border-radius:14px;background:#f7b3c9;bottom:76px}.toy.t1{left:65px}.toy.t2{left:140px;background:#a8c8ff}.toy.t3{right:145px;background:#ffd37e}.toy.t4{right:70px;background:#b7e5a0}.tableToy{position:absolute;bottom:42px;left:50%;transform:translateX(-50%);width:220px;height:82px;border-radius:50%;background:#f4a4bd;box-shadow:0 14px 0 #d77f9a}.chair{position:absolute;bottom:18px;width:44px;height:75px;border-radius:12px;background:#7fc3e8}.chair.c1{left:24%}.chair.c2{right:24%;background:#f3b76d}
+section{padding:44px 5%}.hero{padding:58px 5% 40px;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;background:linear-gradient(135deg,#eee2ff,#fff0dc 52%,#def8ef);min-height:520px}.hero h1{font-size:52px;line-height:1.05;color:#3d2364;margin:8px 0 20px;max-width:650px}.hero p{font-size:21px;line-height:1.45;margin:0 0 26px;max-width:590px}.hero-actions{display:flex;gap:12px;flex-wrap:wrap}.btn.outline{background:#fff;color:var(--p);border:1px solid #b99bdc}.hero-art{height:420px;border-radius:30px;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 20px 50px #6535a822;overflow:hidden;position:relative;border:8px solid #ffffffcc}.hero-art img{width:100%;height:100%;object-fit:cover}.hero-art .classroom{width:100%;height:100%;padding:24px;background:linear-gradient(145deg,#fff8fb,#eefbfa);position:relative;overflow:hidden}.board{height:105px;border-radius:20px;background:linear-gradient(135deg,#bcefe4,#e4f8d8);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#2e7168;box-shadow:0 8px 20px #00000010;border:4px solid #fff}.board strong{font-size:28px;letter-spacing:2px}.board span{font-size:13px;font-weight:700;letter-spacing:1px;margin-top:5px;color:#568d83}.shelf{position:absolute;left:30px;right:30px;bottom:34px;height:108px;border-radius:20px;background:linear-gradient(#f3c48d,#e4a563);box-shadow:0 12px 22px #0002}.shelf:before{content:"📚  🧸  🎨  🧩";position:absolute;left:50%;top:15px;transform:translateX(-50%);font-size:28px;white-space:nowrap}.shelf:after{content:"";position:absolute;left:12px;right:12px;bottom:12px;height:12px;border-radius:8px;background:#c57d43}.tableToy{position:absolute;bottom:44px;left:50%;transform:translateX(-50%);width:190px;height:68px;border-radius:50%;background:#f4a4bd;box-shadow:0 13px 0 #d77f9a;z-index:3}.tableToy:after{content:"🧩  ✏️  🖍️";position:absolute;left:50%;top:18px;transform:translateX(-50%);font-size:20px;white-space:nowrap}.chair{position:absolute;bottom:19px;width:40px;height:70px;border-radius:12px;background:#7fc3e8;z-index:4;box-shadow:0 6px 0 #55a8d0}.chair:before{content:"";position:absolute;left:5px;right:5px;top:-20px;height:25px;border-radius:10px;background:inherit}.chair.c1{left:23%}.chair.c2{right:23%;background:#f3b76d;box-shadow:0 6px 0 #dc9851}.roomDecor{position:absolute;font-size:25px;z-index:5}.roomDecor.d1{left:24px;top:145px}.roomDecor.d2{right:24px;top:145px}.roomDecor.d3{right:30px;bottom:155px}
 .landingFeatures{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;max-width:1200px;margin:-10px auto 0;position:relative}.miniFeature{background:#fff;border-radius:16px;padding:16px;text-align:center;box-shadow:0 7px 25px #0000000d}.miniIcon{width:52px;height:52px;border-radius:15px;margin:0 auto 9px;display:flex;align-items:center;justify-content:center;font-size:25px}.miniFeature:nth-child(1) .miniIcon{background:#ffe0e8}.miniFeature:nth-child(2) .miniIcon{background:#fff0c8}.miniFeature:nth-child(3) .miniIcon{background:#e7ddff}.miniFeature:nth-child(4) .miniIcon{background:#dff5d9}.miniFeature b{display:block;color:#302143}.miniFeature span{font-size:13px;color:#666}
 .featurePanel{max-width:1200px;margin:0 auto;background:#fff;border-radius:24px;padding:28px;box-shadow:0 8px 35px #0000000d}.featureCards{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}.featureCard{text-align:center;border:1px solid #eee7f4;border-radius:17px;padding:24px 16px;background:#fff;box-shadow:0 6px 18px #00000008}.featureCard .bigIcon{width:58px;height:58px;margin:0 auto 12px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:27px;background:#f0e9ff}.featureCard:nth-child(2) .bigIcon{background:#ffe7ef}.featureCard:nth-child(3) .bigIcon{background:#e6edff}.featureCard:nth-child(4) .bigIcon{background:#fff4d6}.featureCard h3{margin:6px 0;color:#34466b}.featureCard p{margin:0;color:#666;font-size:13px;line-height:1.5}
 .publicBottom{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1.1fr 1fr;gap:18px}.publicCard{background:#fff;border:1px solid #eee7f4;border-radius:18px;padding:20px;box-shadow:0 6px 20px #00000008}.publicCard h3{margin:0 0 8px;color:#56328e}.publicGalleryGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.publicGalleryGrid img{width:100%;height:90px;object-fit:cover;border-radius:9px}
+.galleryThumb{border:0;background:#fff;padding:0;cursor:pointer;text-align:left;border-radius:12px;overflow:hidden;box-shadow:0 4px 14px #00000012}.galleryThumb img{display:block;width:100%;height:90px;object-fit:cover}.galleryThumb span{display:block;padding:7px 8px;font-size:11px;font-weight:800;color:#4c3570;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.galleryModal{position:fixed;inset:0;background:#17121fcc;z-index:100;display:none;align-items:center;justify-content:center;padding:18px}.galleryModal.open{display:flex}.galleryModalBox{width:min(900px,96vw);max-height:94vh;background:#fff;border-radius:22px;padding:14px;box-shadow:0 25px 80px #0008;position:relative}.galleryModalImg{width:100%;max-height:76vh;object-fit:contain;background:#f6f2fb;border-radius:15px}.galleryClose{position:absolute;right:12px;top:12px;width:42px;height:42px;border:0;border-radius:50%;background:#fff;color:#3d2364;font-size:24px;font-weight:900;cursor:pointer;box-shadow:0 4px 16px #0003}.galleryNav{display:flex;justify-content:center;gap:10px;margin-top:10px}.galleryNav button{border:0;border-radius:10px;padding:9px 15px;background:#6535a8;color:#fff;font-weight:800}.galleryCaption{text-align:center;color:#4a3b59;font-weight:700;margin:8px 0 2px}
 .title{text-align:center}.title h2{color:#3d2364}
 .panel,.card{background:#fff;border-radius:18px;padding:20px;box-shadow:0 7px 25px #0000000d}
 .roles{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.role,.tab{border:0;border-radius:10px;padding:12px;background:var(--soft);font-weight:800;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;position:relative;z-index:2}.role.active,.tab.active{background:var(--p);color:#fff}
@@ -54,7 +55,7 @@ footer{background:#241534;color:#fff;text-align:center;padding:25px}
     <p>Learn • Play • Grow — a joyful beginning for every child.</p>
     <div class="hero-actions"><button class="btn" onclick="location.hash='portal'">🔐 Open School Portal</button><button class="btn outline" onclick="location.hash='enquiry'">📩 Admission Enquiry</button></div>
   </div>
-  <div class="hero-art" id="heroArt"><div class="classroom"><div class="board">LEARN &nbsp; PLAY &nbsp; GROW</div><div class="shelf"></div><div class="toy t1"></div><div class="toy t2"></div><div class="toy t3"></div><div class="toy t4"></div><div class="tableToy"></div><div class="chair c1"></div><div class="chair c2"></div></div></div>
+  <div class="hero-art" id="heroArt"><div class="classroom"><div class="roomDecor d1">🌈</div><div class="roomDecor d2">⭐</div><div class="roomDecor d3">🌱</div><div class="board"><strong>LEARN • PLAY • GROW</strong><span>A joyful space for little minds</span></div><div class="shelf"></div><div class="tableToy"></div><div class="chair c1"></div><div class="chair c2"></div></div></div>
 </section>
 
 <div class="landingFeatures">
@@ -117,7 +118,7 @@ footer{background:#241534;color:#fff;text-align:center;padding:25px}
     <div class="publicCard" id="gallery">
       <h3>🖼️ Gallery</h3><p>Moments of joy and learning.</p>
       <div id="publicGallery" class="publicGalleryGrid"><div class="empty">Loading gallery...</div></div>
-      <button class="btn outline" style="margin-top:12px" onclick="location.hash='gallery'">View All Photos</button>
+      <button class="btn outline" style="margin-top:12px" onclick="openGalleryLightbox()">View All Photos</button>
     </div>
     <div class="publicCard" id="contact">
       <h3>📞 Contact Us</h3><p>We are here to help you!</p><div id="publicContact">Loading contact details...</div>
@@ -134,7 +135,7 @@ footer{background:#241534;color:#fff;text-align:center;padding:25px}
     <div class="card">🌱<h3>Overall Growth</h3><p>Creativity, confidence and communication.</p></div>
   </div>
 </section>
-<footer>© 2026 Shakti Niketan Play Group. All Rights Reserved. ❤️</footer>
+<div id="galleryModal" class="galleryModal" aria-hidden="true"><div class="galleryModalBox"><button class="galleryClose" onclick="closeGalleryLightbox()" aria-label="Close">×</button><img id="galleryModalImg" class="galleryModalImg" alt="School Gallery Photo"><div id="galleryModalCaption" class="galleryCaption"></div><div class="galleryNav"><button onclick="prevGalleryPhoto()">← Previous</button><button onclick="nextGalleryPhoto()">Next →</button></div></div></div><footer>© 2026 Shakti Niketan Play Group. All Rights Reserved. ❤️</footer>
 
 <script>
 "use strict";
@@ -185,17 +186,17 @@ async function loadPublicSite(){
       if(heroText && settings.hero_text)heroText.textContent=settings.hero_text;
       if(logo){
         const name=esc(settings.school_name||"Shakti Niketan");
-        const logoUrl=String(settings.logo_url||"").trim();
+        const logoUrl=String(settings.logo_url||settings.logo_data_url||"").trim();
         logo.innerHTML=(logoUrl?'<img id="schoolLogoImg" src="'+esc(logoUrl)+'" alt="School Logo">':"")+
           '<div class="logoText"><span>'+name+'</span><small>PLAY GROUP</small></div>';
         const logoImg=document.querySelector("#schoolLogoImg");
-        if(logoImg) logoImg.onerror=()=>{logoImg.remove();};
+        if(logoImg){ logoImg.onload=()=>logoImg.style.display="block"; logoImg.onerror=()=>{logoImg.style.display="none";}; }
       }
       const heroArt=document.querySelector("#heroArt");
       if(heroArt && settings.hero_image_url){
         heroArt.innerHTML='<img src="'+esc(settings.hero_image_url)+'" alt="Shakti Niketan classroom">';
         const heroImg=heroArt.querySelector("img");
-        if(heroImg) heroImg.onerror=()=>{heroArt.innerHTML='<div class="classroom"><div class="board">LEARN &nbsp; PLAY &nbsp; GROW</div><div class="shelf"></div><div class="toy t1"></div><div class="toy t2"></div><div class="toy t3"></div><div class="toy t4"></div><div class="tableToy"></div><div class="chair c1"></div><div class="chair c2"></div></div>';};
+        if(heroImg) heroImg.onerror=()=>{heroArt.innerHTML='<div class="classroom"><div class="roomDecor d1">🌈</div><div class="roomDecor d2">⭐</div><div class="roomDecor d3">🌱</div><div class="board"><strong>LEARN • PLAY • GROW</strong><span>A joyful space for little minds</span></div><div class="shelf"></div><div class="tableToy"></div><div class="chair c1"></div><div class="chair c2"></div></div></div';};
       }
       const admissionTitle=document.querySelector("#enquiryTitle");
       const admissionText=document.querySelector("#enquiryText");
@@ -231,7 +232,7 @@ async function loadPublicSite(){
     const box=$("publicGallery");
     if(box){
       if(ge) throw ge;
-      box.innerHTML=(g||[]).map(x=>'<div class="card"><img src="'+esc(x.image_url)+'" alt="'+esc(x.caption||"School Gallery")+'" style="width:100%;height:220px;object-fit:cover;border-radius:14px"><p style="margin:8px 0 0;font-weight:700">'+esc(x.caption||"")+'</p></div>').join("")||'<div class="empty">Gallery photos will appear here soon.</div>';
+      window.publicGalleryRows=g||[]; box.innerHTML=(g||[]).slice(0,6).map((x,i)=>'<button class="galleryThumb" type="button" onclick="openGalleryLightbox('+i+')"><img src="'+esc(x.image_url)+'" alt="'+esc(x.caption||"School Gallery")+'"><span>'+esc(x.caption||"View photo")+'</span></button>').join("")||'<div class="empty">Gallery photos will appear here soon.</div>';
     }
   }catch(e){
     console.error("Public site load failed:",e);
@@ -619,6 +620,8 @@ async function loadWebsiteSettings(){
  catch(e){$("websiteForm").innerHTML='<div class="msg err">'+esc(e.message)+"</div>"}
 }
 
+function imageFileToDataUrl(file,maxW,maxH,quality){return new Promise((resolve,reject)=>{if(!file||!file.type.startsWith("image/"))return reject(Error("Please select a valid image file."));if(file.size>5*1024*1024)return reject(Error("Image must be 5 MB or smaller."));const img=new Image(),url=URL.createObjectURL(file);img.onload=()=>{try{const scale=Math.min(1,maxW/img.naturalWidth,maxH/img.naturalHeight),c=document.createElement("canvas");c.width=Math.max(1,Math.round(img.naturalWidth*scale));c.height=Math.max(1,Math.round(img.naturalHeight*scale));const ctx=c.getContext("2d");ctx.fillStyle="#fff";ctx.fillRect(0,0,c.width,c.height);ctx.drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(url);resolve(c.toDataURL("image/jpeg",quality||0.9));}catch(e){URL.revokeObjectURL(url);reject(e)}};img.onerror=()=>{URL.revokeObjectURL(url);reject(Error("Could not read the logo image."))};img.src=url;});}
+
 async function uploadWebsiteImage(file,prefix){
  if(!file)return null;
  if(!file.type || !file.type.startsWith("image/"))throw Error("Please select a valid image file.");
@@ -647,7 +650,7 @@ async function saveWebsiteSettings(){
   };
   const logo=$("wsLogoFile")?.files?.[0],hero=$("wsHeroFile")?.files?.[0];
   const manualLogoUrl=$("wsLogoUrl")?.value.trim();
-  if(logo) patch.logo_url=await uploadWebsiteImage(logo,"logo");
+  if(logo) patch.logo_url=await imageFileToDataUrl(logo,420,420,0.9);
   else if(manualLogoUrl) patch.logo_url=manualLogoUrl;
   if(hero)patch.hero_image_url=await uploadWebsiteImage(hero,"hero");
   if(x) await ownerCrudUpdate("school_settings",x.id,patch);
@@ -657,6 +660,13 @@ async function saveWebsiteSettings(){
  }catch(e){showMsg("websiteMsg",e.message,true)}
 }
 
+window.publicGalleryRows=[]; window.galleryLightboxIndex=0;
+function openGalleryLightbox(index=0){const rows=window.publicGalleryRows||[];if(!rows.length){location.hash="gallery";return;}window.galleryLightboxIndex=Math.max(0,Math.min(index,rows.length-1));const modal=$("galleryModal");if(!modal)return;modal.classList.add("open");modal.setAttribute("aria-hidden","false");renderGalleryLightbox();}
+function renderGalleryLightbox(){const rows=window.publicGalleryRows||[],x=rows[window.galleryLightboxIndex];if(!x)return;$("galleryModalImg").src=x.image_url;$("galleryModalImg").alt=x.caption||"School Gallery Photo";$("galleryModalCaption").textContent=x.caption||"";}
+function closeGalleryLightbox(){const m=$("galleryModal");if(m){m.classList.remove("open");m.setAttribute("aria-hidden","true");}}
+function nextGalleryPhoto(){const rows=window.publicGalleryRows||[];if(!rows.length)return;window.galleryLightboxIndex=(window.galleryLightboxIndex+1)%rows.length;renderGalleryLightbox();}
+function prevGalleryPhoto(){const rows=window.publicGalleryRows||[];if(!rows.length)return;window.galleryLightboxIndex=(window.galleryLightboxIndex-1+rows.length)%rows.length;renderGalleryLightbox();}
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeGalleryLightbox();if(e.key==="ArrowRight")nextGalleryPhoto();if(e.key==="ArrowLeft")prevGalleryPhoto();});
 function gallery(){
  $("view").innerHTML=`<div class="card"><div class="sectionTitle"><h3>🖼️ Gallery Management</h3><button class="btn" id="refreshGallery">↻ Refresh</button></div>
  <p class="muted">📷 Phone se photo choose karo. URL paste karne ki zarurat nahi.</p>
