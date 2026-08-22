@@ -145,6 +145,57 @@ function date(v){if(!v)return"—";const d=new Date(v);return isNaN(d)?String(v)
 function badge(v){return '<span class="badge">'+esc(v||"—")+"</span>"}
 function showMsg(id,text,error=false){$(id).innerHTML='<div class="msg '+(error?"err":"")+'">'+esc(text)+"</div>"}
 
+
+async function loadPublicSite(){
+  if(!db)return;
+  try{
+    const {data:settings}=await db.from("school_settings").select("*").eq("id",true).maybeSingle();
+    if(settings){
+      const title=document.querySelector(".hero h1");
+      const heroText=document.querySelector(".hero p");
+      const logo=document.querySelector(".logo");
+      if(title && settings.hero_title)title.textContent=settings.hero_title;
+      if(heroText && settings.hero_text)heroText.textContent=settings.hero_text;
+      if(logo && settings.school_name){
+        logo.childNodes[0].nodeValue=settings.school_name+" ";
+      }
+      const contact=$("publicContact");
+      if(contact){
+        const parts=[];
+        if(settings.phone)parts.push("📞 <b>"+esc(settings.phone)+"</b>");
+        if(settings.contact_email)parts.push("✉️ <b>"+esc(settings.contact_email)+"</b>");
+        if(settings.address)parts.push("📍 "+esc(settings.address));
+        if(settings.hours)parts.push("🕘 "+esc(settings.hours));
+        contact.innerHTML=parts.length?parts.join("<br><br>"):"Contact details will be updated soon.";
+      }
+      const about=$("publicAbout");
+      if(about && settings.about){
+        about.innerHTML='<div class="card" style="grid-column:1/-1"><h3>About Shakti Niketan</h3><p>'+esc(settings.about)+'</p></div>';
+      }
+    }
+    const {data:g,error:ge}=await db.from("gallery").select("id,image_url,caption,created_at").order("created_at",{ascending:false});
+    const box=$("publicGallery");
+    if(box){
+      if(ge) throw ge;
+      box.innerHTML=(g||[]).map(x=>'<div class="card"><img src="'+esc(x.image_url)+'" alt="'+esc(x.caption||"School Gallery")+'" style="width:100%;height:220px;object-fit:cover;border-radius:14px"><p style="margin:8px 0 0;font-weight:700">'+esc(x.caption||"")+'</p></div>').join("")||'<div class="empty">Gallery photos will appear here soon.</div>';
+    }
+  }catch(e){
+    console.error("Public site load failed:",e);
+    const box=$("publicGallery"); if(box)box.innerHTML='<div class="empty">Gallery is temporarily unavailable.</div>';
+  }
+}
+
+async function submitPublicEnquiry(){
+  const parent_name=$("eqParent")?.value.trim(),phone=$("eqPhone")?.value.trim(),child_name=$("eqChild")?.value.trim(),class_name=$("eqClass")?.value.trim(),message=$("eqMessage")?.value.trim();
+  if(!parent_name||!phone)return showMsg("publicEnquiryMsg","Parent name and phone are required.",true);
+  try{
+    const {error}=await db.from("enquiries").insert({parent_name,phone,child_name,class_name,message});
+    if(error)throw error;
+    showMsg("publicEnquiryMsg","✅ Enquiry sent successfully. School will contact you.");
+    ["eqParent","eqPhone","eqChild","eqClass","eqMessage"].forEach(id=>{if($(id))$(id).value=""});
+  }catch(e){showMsg("publicEnquiryMsg",e.message,true)}
+}
+
 document.querySelectorAll(".role").forEach(b=>b.onclick=()=>{
  document.querySelectorAll(".role").forEach(x=>x.classList.remove("active"));
  b.classList.add("active");selectedRole=b.dataset.role;
@@ -479,11 +530,12 @@ async function saveWebsiteSettings(){
 function gallery(){
  $("view").innerHTML=`<div class="card"><div class="sectionTitle"><h3>🖼️ Gallery Management</h3><button class="btn" id="refreshGallery">↻ Refresh</button></div>
  <p class="muted">📷 Phone se photo choose karo. URL paste karne ki zarurat nahi.</p>
- <input id="galleryFile" type="file" accept="image/*">
- <input id="galleryCaption" placeholder="Photo caption">
- <div id="galleryPreview" class="hidden"></div>
- <button class="btn green" id="uploadGallery">📷 Upload Photo</button><div id="galleryMsg"></div><div id="galleryList">Loading...</div></div>`;
- $("refreshGallery").onclick=loadGallery;$("galleryFile").onchange=previewGalleryFile;$("uploadGallery").onclick=uploadGalleryPhoto;loadGallery();
+ <div id="galleryUploadArea"></div><div id="galleryMsg"></div><div id="galleryList">Loading...</div></div>`;
+ $("refreshGallery").onclick=loadGallery;
+ const canAdd=currentUser?.role==="owner" || myPermissions.has("gallery:add");
+ $("galleryUploadArea").innerHTML=canAdd?'<input id="galleryFile" type="file" accept="image/*"><input id="galleryCaption" placeholder="Photo caption"><div id="galleryPreview" class="hidden"></div><button class="btn green" id="uploadGallery">📷 Upload Photo</button>':'<div class="msg">🔒 You do not have Gallery → Add permission.</div>';
+ if(canAdd){$("galleryFile").onchange=previewGalleryFile;$("uploadGallery").onclick=uploadGalleryPhoto;}
+ loadGallery();
 }
 function previewGalleryFile(){
  const f=$("galleryFile").files?.[0],box=$("galleryPreview");if(!f)return box.classList.add("hidden");
@@ -511,7 +563,13 @@ async function loadGallery(){
   const d=await ownerCall({action:"crud_list",table:"gallery"}),box=$("galleryList");box.innerHTML="";
   const rows=d.rows||[];if(!rows.length){box.innerHTML='<div class="empty">No gallery photos.</div>';return}
   rows.forEach(x=>{const el=document.createElement("div");el.className="item";el.innerHTML='<img src="'+esc(x.image_url)+'" style="width:110px;height:80px;object-fit:cover;border-radius:10px"><br><b>'+esc(x.caption||"")+'</b><br>';
-   const del=document.createElement("button");del.className="btn red";del.textContent="🗑️ Delete";del.onclick=async()=>{if(!confirm("Delete this photo?"))return;try{await ownerCrudDelete("gallery",x.id);loadGallery()}catch(e){alert(e.message)}};el.appendChild(del);box.appendChild(el)});
+   if(currentUser?.role==="owner" || myPermissions.has("gallery:edit")){
+     const edit=document.createElement("button");edit.className="btn light";edit.textContent="✏️ Caption";edit.onclick=async()=>{const c=prompt("Photo caption:",x.caption||"");if(c===null)return;try{await ownerCrudUpdate("gallery",x.id,{caption:c});loadGallery()}catch(e){alert(e.message)}};el.appendChild(edit);
+   }
+   if(currentUser?.role==="owner" || myPermissions.has("gallery:delete")){
+     const del=document.createElement("button");del.className="btn red";del.textContent="🗑️ Delete";del.onclick=async()=>{if(!confirm("Delete this photo?"))return;try{await ownerCrudDelete("gallery",x.id);loadGallery()}catch(e){alert(e.message)}};el.appendChild(del);
+   }
+   box.appendChild(el)});
  }catch(e){$("galleryList").innerHTML='<div class="msg err">'+esc(e.message)+"</div>"}
 }
 
@@ -650,7 +708,7 @@ async function loadPermissionMatrix(){
  const el=$("permMatrix"); if(!el)return;
  try{
   const d=await ownerCall({action:"get_role_permissions"}),rows=d.permissions||[];
-  const roles=["admin","teacher","parent"],resources=["students","attendance","homework","fees","notices","enquiries","gallery","settings"],actions=["view","add","edit","delete"];
+  const roles=["admin","teacher","parent"],resources=["students","attendance","homework","fees","notices","enquiries","gallery","website"],actions=["view","add","edit","delete"];
   let out='<div style="overflow:auto"><table class="dataTable"><tr><th>Role</th><th>Section</th><th>View</th><th>Add</th><th>Edit</th><th>Delete</th></tr>';
   for(const role of roles)for(const res of resources){
    const cells=actions.map(a=>rows.some(x=>x.role===role&&x.permission===res+":"+a)?'✅':'—');
@@ -701,3 +759,4 @@ async function logout(){
 </script>
 </body>
 </html>
+
