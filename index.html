@@ -588,6 +588,9 @@ async function addNotice(){
 }
 
 
+window.removeWebsiteLogo=false; window.removeWebsiteHero=false;
+function clearWebsiteLogo(){window.removeWebsiteLogo=true; const f=$("wsLogoFile"); if(f)f.value=""; const u=$("wsLogoUrl"); if(u)u.value=""; const b=$("wsLogoPreview"); if(b)b.innerHTML="<div class=\"msg err\">🗑️ Logo will be removed when you click Save.</div>";}
+function clearWebsiteHero(){window.removeWebsiteHero=true; const f=$("wsHeroFile"); if(f)f.value=""; const b=$("wsHeroPreview"); if(b)b.innerHTML="<div class=\"msg err\">🗑️ Home/Hero photo will be removed when you click Save.</div>";}
 function websiteSettings(){
  $("view").innerHTML=`<div class="card">
  <div class="sectionTitle"><h3>🌐 Website Manager</h3><span class="badge">👑 Owner Controlled</span></div>
@@ -619,9 +622,11 @@ async function loadWebsiteSettings(){
   <input id="wsLogoFile" type="file" accept="image/*">
   <input id="wsLogoUrl" placeholder="Or paste a public logo image URL" value="${esc(x.logo_url||"")}">
   <div id="wsLogoPreview" style="margin:10px 0">${x.logo_url?'<img src="'+esc(x.logo_url)+'" style="width:110px;height:80px;object-fit:contain;border:1px solid var(--line);border-radius:14px;padding:6px;background:#fff">':"No logo selected yet."}</div>
-  <label>Home/Hero Photo — upload from phone</label>
+  <button type="button" class="btn red" onclick="clearWebsiteLogo()">🗑️ Remove Logo</button>
+  <label style="display:block;margin-top:18px">Home/Hero Photo — upload from phone</label>
   <input id="wsHeroFile" type="file" accept="image/png,image/jpeg,image/webp">
-  ${x.hero_image_url?'<img src="'+esc(x.hero_image_url)+'" style="width:100%;max-height:220px;object-fit:cover;border-radius:16px;margin:8px 0">':""}
+  <div id="wsHeroPreview" style="margin:8px 0">${x.hero_image_url?'<img src="'+esc(x.hero_image_url)+'" style="width:100%;max-height:220px;object-fit:cover;border-radius:16px">':"No Home/Hero photo selected yet."}</div>
+  <button type="button" class="btn red" onclick="clearWebsiteHero()">🗑️ Remove Home/Hero Photo</button>
 
   <hr style="border:0;border-top:1px solid var(--line);margin:20px 0">
   <h3>🏠 Home Page</h3>
@@ -652,8 +657,11 @@ async function loadWebsiteSettings(){
   <p class="muted">Website की सारी gallery photos भी यहीं से manage होंगी.</p>
   <button class="btn" onclick="gallery()">Open Gallery Manager</button>
   </div>`;
+  window.removeWebsiteLogo=false; window.removeWebsiteHero=false;
   const lf=$("wsLogoFile");
-  if(lf) lf.onchange=()=>{const f=lf.files?.[0],box=$("wsLogoPreview");if(!f||!box)return; if(!f.type.startsWith("image/"))return alert("Please select an image."); if(f.size>5*1024*1024)return alert("Image must be 5 MB or smaller."); box.innerHTML='<img src="'+URL.createObjectURL(f)+'" style="width:110px;height:80px;object-fit:contain;border:1px solid var(--line);border-radius:14px;padding:6px;background:#fff"><div class="muted" style="margin-top:5px">New logo selected. Click Save Website Changes.</div>';};
+  if(lf) lf.onchange=()=>{const f=lf.files?.[0],box=$("wsLogoPreview");if(!f||!box)return; window.removeWebsiteLogo=false; if(!f.type.startsWith("image/"))return alert("Please select an image."); if(f.size>5*1024*1024)return alert("Image must be 5 MB or smaller."); box.innerHTML='<img src="'+URL.createObjectURL(f)+'" style="width:110px;height:80px;object-fit:contain;border:1px solid var(--line);border-radius:14px;padding:6px;background:#fff"><div class="muted" style="margin-top:5px">New logo selected. Click Save Website Changes.</div>';};
+  const hf=$("wsHeroFile");
+  if(hf) hf.onchange=()=>{const f=hf.files?.[0],box=$("wsHeroPreview");if(!f||!box)return; window.removeWebsiteHero=false; if(!f.type.startsWith("image/"))return alert("Please select an image."); if(f.size>5*1024*1024)return alert("Image must be 5 MB or smaller."); box.innerHTML='<img src="'+URL.createObjectURL(f)+'" style="width:100%;max-height:220px;object-fit:cover;border-radius:16px"><div class="muted" style="margin-top:5px">New Home/Hero photo selected. Click Save Website Changes.</div>';};
  }
  catch(e){$("websiteForm").innerHTML='<div class="msg err">'+esc(e.message)+"</div>"}
 }
@@ -701,13 +709,19 @@ async function saveWebsiteSettings(){
     const hero=$('wsHeroFile')?.files?.[0];
     const manualLogoUrl=$('wsLogoUrl')?.value.trim();
 
-    if(logo){
+    if(window.removeWebsiteLogo){
+      patch.logo_url=null;
+    }else if(logo){
       patch.logo_url=await imageFileToDataUrl(logo,420,420,0.9);
     }else if(manualLogoUrl){
       patch.logo_url=manualLogoUrl;
     }
 
-    if(hero)patch.hero_image_url=await imageFileToDataUrl(hero,1400,900,0.86);
+    if(window.removeWebsiteHero){
+      patch.hero_image_url=null;
+    }else if(hero){
+      patch.hero_image_url=await imageFileToDataUrl(hero,1400,900,0.86);
+    }
 
     // school_settings has a boolean primary key: id=true.
     const {data:existing,error:readError}=await db.from('school_settings')
