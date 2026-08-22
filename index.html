@@ -878,9 +878,55 @@ async function sendConnectRequest(){
  try{const t=await getSessionToken();const r=await fetch(FN+"parent-connect-v3",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+t,apikey:SUPABASE_KEY},body:JSON.stringify({message:"Parent wants to confirm/connect with the child."})});let d={};try{d=await r.json()}catch{}if(!r.ok)throw Error(d.error||"Could not send request.");showMsg("connectMsg","✅ Request sent to Owner successfully.");}catch(e){showMsg("connectMsg",e.message,true)}
 }
 
+async function updateOwnerAccount(){
+ try{
+  const username=$("ownerLoginId").value.trim();
+  const fullName=$("ownerFullName").value.trim();
+  const password=$("ownerNewPassword").value;
+  const confirmPassword=$("ownerConfirmPassword").value;
+  if(!username)return showMsg("ownerAccountMsg","Login ID is required.",true);
+  if(password && password.length<8)return showMsg("ownerAccountMsg","New password must be at least 8 characters.",true);
+  if(password!==confirmPassword)return showMsg("ownerAccountMsg","New password and confirmation do not match.",true);
+  if(!password && confirmPassword)return showMsg("ownerAccountMsg","Enter the new password in both fields.",true);
+  const btn=$("saveOwnerAccount");btn.disabled=true;btn.textContent="Saving...";
+  const token=await getSessionToken();
+  if(!token)throw Error("Owner session expired. Please login again.");
+  const r=await fetch(FN+"school-user-admin",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+token,apikey:SUPABASE_KEY},body:JSON.stringify({action:"update_owner",username,full_name:fullName,password})});
+  let d={};try{d=await r.json()}catch{}
+  if(!r.ok)throw Error(d.error||"Could not update Owner account.");
+  $("ownerNewPassword").value="";$("ownerConfirmPassword").value="";
+  showMsg("ownerAccountMsg","✅ Owner account updated. New Login ID: "+username+(password?" • Password changed successfully.":""));
+ }catch(e){showMsg("ownerAccountMsg",e.message,true)}
+ finally{const btn=$("saveOwnerAccount");if(btn){btn.disabled=false;btn.textContent="💾 Save Owner Account"}}
+}
+
+async function loadOwnerAccount(){
+ try{
+  const r=await db.from("profiles").select("username,full_name").eq("id",currentUser.id).maybeSingle();
+  if(r.error)throw r.error;
+  $("ownerLoginId").value=r.data?.username||currentUser.username||"";
+  $("ownerFullName").value=r.data?.full_name||currentUser.full_name||"";
+ }catch(e){showMsg("ownerAccountMsg","Could not load Owner account details: "+e.message,true)}
+}
+
 function superPower(){
  $("view").innerHTML=`<div class="card">
   <h3>👑 Owner Super Power</h3>
+  <p class="muted">👑 Only Owner can grant or remove permissions. Admin/Teacher can never grant permissions to themselves.</p>
+  <div class="card" style="border:2px solid #e8d9ff;background:#fcf9ff;margin-bottom:18px">
+   <div class="sectionTitle"><h3>🔐 Owner Account</h3><span class="badge">Owner Only</span></div>
+   <p class="muted">Change your Owner Login ID and/or password. Leave the password fields empty if you only want to change the Login ID/name.</p>
+   <div class="row">
+    <div><label>Owner Login ID</label><input id="ownerLoginId" autocomplete="username" placeholder="Owner Login ID"></div>
+    <div><label>Owner Name</label><input id="ownerFullName" placeholder="Owner name"></div>
+   </div>
+   <div class="row">
+    <div><label>New Password</label><input id="ownerNewPassword" type="password" autocomplete="new-password" placeholder="Leave empty to keep current password"></div>
+    <div><label>Confirm New Password</label><input id="ownerConfirmPassword" type="password" autocomplete="new-password" placeholder="Confirm new password"></div>
+   </div>
+   <button class="btn green" id="saveOwnerAccount" onclick="updateOwnerAccount()">💾 Save Owner Account</button>
+   <div id="ownerAccountMsg"></div>
+  </div>
   <p class="muted">👑 Only Owner can grant or remove permissions. Admin/Teacher can never grant permissions to themselves.</p>
   <div class="card"><h3>🔐 Give Permission</h3>
    <div class="row">
@@ -902,6 +948,7 @@ function superPower(){
    <div class="card"><h3>📩 Enquiries</h3><p>Visitor enquiries are visible to authorized staff selected by Owner.</p><button class="btn" onclick="showTab('enquiries')">Open Enquiries</button></div>
   </div>
  </div>`;
+ loadOwnerAccount();
  loadPermissionMatrix();
 }
 
