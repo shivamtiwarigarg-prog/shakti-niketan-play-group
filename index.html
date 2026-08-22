@@ -9,11 +9,13 @@
 :root{--p:#6535a8;--p2:#8d55cf;--soft:#f2eaff;--bg:#faf8ff;--ink:#29232f;--muted:#777;--line:#e7deef;--green:#25864e;--red:#a42e2e;--gold:#9a7000}
 *{box-sizing:border-box}
 body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:var(--ink)}
-header{background:#fff;padding:14px 6%;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 14px #0001;position:sticky;top:0;z-index:20}
-.logo{font-size:22px;font-weight:900;color:var(--p)}.logo small{display:block;font-size:9px;letter-spacing:3px;color:#e9766b}
-nav a{margin-left:15px;text-decoration:none;color:#333;font-weight:bold;font-size:13px}
-section{padding:40px 7%}.hero{padding:55px 7%;display:grid;grid-template-columns:1fr 1fr;gap:25px;align-items:center;background:linear-gradient(135deg,#eee2ff,#fff0dc,#def8ef)}
-.hero h1{font-size:45px;color:#3d2364;margin:8px 0}.hero-art{height:240px;border-radius:28px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:70px;box-shadow:0 20px 50px #6535a822}
+header{background:#fff;padding:12px 4.5%;display:flex;justify-content:space-between;align-items:center;gap:18px;box-shadow:0 2px 14px #0001;position:sticky;top:0;z-index:20}
+.logo{display:flex;align-items:center;gap:10px;min-width:230px;font-size:22px;font-weight:900;color:var(--p);line-height:1.05}.logo img{width:54px;height:54px;object-fit:contain;border-radius:12px;background:#fff}.logoText{display:flex;flex-direction:column}.logo small{display:block;font-size:10px;letter-spacing:3px;color:#e9766b;margin-top:5px}
+nav{display:flex;align-items:center;gap:4px}nav a{margin-left:8px;text-decoration:none;color:#29232f;font-weight:800;font-size:14px;padding:10px 11px;border-radius:9px}nav a:hover{background:var(--soft);color:var(--p)}nav .portalLink{background:var(--p);color:#fff;padding:11px 15px}
+section{padding:44px 5%}.hero{padding:58px 5% 40px;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;background:linear-gradient(135deg,#eee2ff,#fff0dc 52%,#def8ef);min-height:520px}.hero h1{font-size:52px;line-height:1.05;color:#3d2364;margin:8px 0 20px;max-width:650px}.hero p{font-size:21px;line-height:1.45;margin:0 0 26px;max-width:590px}.hero-actions{display:flex;gap:12px;flex-wrap:wrap}.btn.outline{background:#fff;color:var(--p);border:1px solid #b99bdc}.hero-art{height:420px;border-radius:28px;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 20px 50px #6535a822;overflow:hidden;position:relative}.hero-art img{width:100%;height:100%;object-fit:cover}.hero-art .classroom{width:100%;height:100%;padding:28px;background:linear-gradient(145deg,#fff,#f8f0ff);position:relative}.board{height:125px;border-radius:18px;background:linear-gradient(135deg,#9ddbd1,#d8f4df);display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;color:#2d6e65;letter-spacing:2px;box-shadow:inset 0 -6px #0000000b}.shelf{position:absolute;left:28px;right:28px;bottom:34px;height:120px;border-radius:18px;background:linear-gradient(#e9b57c,#d89555);box-shadow:0 10px 20px #0002}.toy{position:absolute;width:56px;height:56px;border-radius:14px;background:#f7b3c9;bottom:76px}.toy.t1{left:65px}.toy.t2{left:140px;background:#a8c8ff}.toy.t3{right:145px;background:#ffd37e}.toy.t4{right:70px;background:#b7e5a0}.tableToy{position:absolute;bottom:42px;left:50%;transform:translateX(-50%);width:220px;height:82px;border-radius:50%;background:#f4a4bd;box-shadow:0 14px 0 #d77f9a}.chair{position:absolute;bottom:18px;width:44px;height:75px;border-radius:12px;background:#7fc3e8}.chair.c1{left:24%}.chair.c2{right:24%;background:#f3b76d}
+.landingFeatures{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;max-width:1200px;margin:-10px auto 0;position:relative}.miniFeature{background:#fff;border-radius:16px;padding:16px;text-align:center;box-shadow:0 7px 25px #0000000d}.miniIcon{width:52px;height:52px;border-radius:15px;margin:0 auto 9px;display:flex;align-items:center;justify-content:center;font-size:25px}.miniFeature:nth-child(1) .miniIcon{background:#ffe0e8}.miniFeature:nth-child(2) .miniIcon{background:#fff0c8}.miniFeature:nth-child(3) .miniIcon{background:#e7ddff}.miniFeature:nth-child(4) .miniIcon{background:#dff5d9}.miniFeature b{display:block;color:#302143}.miniFeature span{font-size:13px;color:#666}
+.featurePanel{max-width:1200px;margin:0 auto;background:#fff;border-radius:24px;padding:28px;box-shadow:0 8px 35px #0000000d}.featureCards{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}.featureCard{text-align:center;border:1px solid #eee7f4;border-radius:17px;padding:24px 16px;background:#fff;box-shadow:0 6px 18px #00000008}.featureCard .bigIcon{width:58px;height:58px;margin:0 auto 12px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:27px;background:#f0e9ff}.featureCard:nth-child(2) .bigIcon{background:#ffe7ef}.featureCard:nth-child(3) .bigIcon{background:#e6edff}.featureCard:nth-child(4) .bigIcon{background:#fff4d6}.featureCard h3{margin:6px 0;color:#34466b}.featureCard p{margin:0;color:#666;font-size:13px;line-height:1.5}
+.publicBottom{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1.1fr 1fr;gap:18px}.publicCard{background:#fff;border:1px solid #eee7f4;border-radius:18px;padding:20px;box-shadow:0 6px 20px #00000008}.publicCard h3{margin:0 0 8px;color:#56328e}.publicGalleryGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.publicGalleryGrid img{width:100%;height:90px;object-fit:cover;border-radius:9px}
 .title{text-align:center}.title h2{color:#3d2364}
 .panel,.card{background:#fff;border-radius:18px;padding:20px;box-shadow:0 7px 25px #0000000d}
 .roles{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.role,.tab{border:0;border-radius:10px;padding:12px;background:var(--soft);font-weight:800;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;position:relative;z-index:2}.role.active,.tab.active{background:var(--p);color:#fff}
@@ -37,18 +39,40 @@ input,select,textarea{width:100%;padding:12px;border:1px solid #ddd;border-radiu
 .siteGrid{display:grid;grid-template-columns:1fr 1fr;gap:15px}.galleryGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.galleryGrid img{width:100%;height:150px;object-fit:cover;border-radius:12px}.stat{background:var(--soft);padding:15px;border-radius:12px;text-align:center}.stat b{display:block;color:var(--p);font-size:23px;margin-bottom:5px}
 .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
 footer{background:#241534;color:#fff;text-align:center;padding:25px}
-@media(max-width:800px){nav{display:none}.hero{grid-template-columns:1fr}.hero h1{font-size:35px}.roles,.stats,.cards,.parentGrid,.siteGrid,.galleryGrid{grid-template-columns:1fr}.row>*{min-width:100%}.childHead{align-items:flex-start}}
+@media(max-width:800px){header{padding:10px 16px}.logo{min-width:0;font-size:18px}.logo img{width:45px;height:45px}.logo small{font-size:8px}nav{display:none}.hero{grid-template-columns:1fr;padding:42px 20px 28px;min-height:auto}.hero h1{font-size:38px}.hero p{font-size:17px}.hero-art{height:270px}.landingFeatures{grid-template-columns:repeat(2,1fr);margin:0 14px;gap:10px}.featurePanel{margin:0 14px;padding:16px}.featureCards{grid-template-columns:1fr 1fr}.publicBottom{grid-template-columns:1fr}.publicGalleryGrid{grid-template-columns:repeat(3,1fr)}.roles,.stats,.cards,.parentGrid,.siteGrid,.galleryGrid{grid-template-columns:1fr}.row>*{min-width:100%}.childHead{align-items:flex-start}}
 </style>
 </head>
 <body>
 <header>
-  <div class="logo">Shakti Niketan<small>PLAY GROUP</small></div>
-  <nav><a href="#home">Home</a><a href="#portal">🔐 Portal</a><a href="#enquiry">📩 Enquiry</a><a href="#gallery">🖼️ Gallery</a><a href="#contact">📞 Contact</a><a href="#about">About</a></nav>
+  <div class="logo" id="siteLogo"><div class="logoText"><span>Shakti Niketan</span><small>PLAY GROUP</small></div></div>
+  <nav><a href="#home">Home</a><a href="#about">About</a><a href="#gallery">Gallery</a><a href="#enquiry">Admission</a><a href="#contact">Contact</a><a href="#portal" class="portalLink">🔐 School Portal</a></nav>
 </header>
 
 <section class="hero" id="home">
-  <div><h1>A Happy Place for Little Minds 💜</h1><p>Learn • Play • Grow — a joyful beginning for every child.</p><button class="btn" onclick="location.hash='portal'">Open School Portal</button></div>
-  <div class="hero-art">🧒🎨📚🌱</div>
+  <div>
+    <h1>A Happy Place for Little Minds 💜</h1>
+    <p>Learn • Play • Grow — a joyful beginning for every child.</p>
+    <div class="hero-actions"><button class="btn" onclick="location.hash='portal'">🔐 Open School Portal</button><button class="btn outline" onclick="location.hash='enquiry'">📩 Admission Enquiry</button></div>
+  </div>
+  <div class="hero-art" id="heroArt"><div class="classroom"><div class="board">LEARN &nbsp; PLAY &nbsp; GROW</div><div class="shelf"></div><div class="toy t1"></div><div class="toy t2"></div><div class="toy t3"></div><div class="toy t4"></div><div class="tableToy"></div><div class="chair c1"></div><div class="chair c2"></div></div></div>
+</section>
+
+<div class="landingFeatures">
+  <div class="miniFeature"><div class="miniIcon">🧒</div><b>Happy Environment</b><span>Warm and welcoming</span></div>
+  <div class="miniFeature"><div class="miniIcon">🎨</div><b>Creative Learning</b><span>Learn through play</span></div>
+  <div class="miniFeature"><div class="miniIcon">📚</div><b>Quality Education</b><span>Strong foundations</span></div>
+  <div class="miniFeature"><div class="miniIcon">🌱</div><b>Overall Growth</b><span>Confidence & creativity</span></div>
+</div>
+
+<section id="highlights">
+  <div class="featurePanel">
+    <div class="featureCards">
+      <div class="featureCard"><div class="bigIcon">🛡️</div><h3>Care & Safety</h3><p>A safe, secure and caring environment for every child.</p></div>
+      <div class="featureCard"><div class="bigIcon">🎨</div><h3>Fun Activities</h3><p>Stories, art, games and hands-on learning activities.</p></div>
+      <div class="featureCard"><div class="bigIcon">👥</div><h3>Skilled Teachers</h3><p>Experienced and loving teachers for your child's growth.</p></div>
+      <div class="featureCard"><div class="bigIcon">⭐</div><h3>Bright Future</h3><p>Building confidence, creativity and strong values.</p></div>
+    </div>
+  </div>
 </section>
 
 <section id="portal">
@@ -81,33 +105,36 @@ footer{background:#241534;color:#fff;text-align:center;padding:25px}
 </div>
 </section>
 
-<section id="enquiry">
-<div class="title"><h2 id="enquiryTitle">📩 Admission Enquiry</h2><p id="enquiryText">Want to know more? Send us your details.</p></div>
-<div class="panel" style="max-width:900px;margin:auto">
-<div class="row"><input id="publicParentName" placeholder="Parent name"><input id="publicPhone" placeholder="Mobile number"></div>
-<div class="row"><input id="publicChildName" placeholder="Child name"><input id="publicClass" placeholder="Class / Play Group"></div>
-<textarea id="publicMessage" placeholder="Your enquiry / message"></textarea>
-<button class="btn green" onclick="submitPublicEnquiry()">📩 Send Enquiry</button>
-<div id="publicEnquiryMsg"></div>
-</div>
+<section id="publicInfo">
+  <div class="publicBottom">
+    <div class="publicCard" id="enquiry">
+      <h3 id="enquiryTitle">📩 Admission Enquiry</h3><p id="enquiryText">Want to know more? Send us your details.</p>
+      <input id="publicParentName" placeholder="Parent Name"><input id="publicPhone" placeholder="Mobile Number">
+      <input id="publicChildName" placeholder="Child Name"><input id="publicClass" placeholder="Class / Play Group">
+      <textarea id="publicMessage" placeholder="Your enquiry / message"></textarea>
+      <button class="btn green" onclick="submitPublicEnquiry()">Send Enquiry</button><div id="publicEnquiryMsg"></div>
+    </div>
+    <div class="publicCard" id="gallery">
+      <h3>🖼️ Gallery</h3><p>Moments of joy and learning.</p>
+      <div id="publicGallery" class="publicGalleryGrid"><div class="empty">Loading gallery...</div></div>
+      <button class="btn outline" style="margin-top:12px" onclick="location.hash='gallery'">View All Photos</button>
+    </div>
+    <div class="publicCard" id="contact">
+      <h3>📞 Contact Us</h3><p>We are here to help you!</p><div id="publicContact">Loading contact details...</div>
+      <hr style="border:0;border-top:1px solid var(--line);margin:18px 0">
+      <div id="publicSocial"></div>
+    </div>
+  </div>
 </section>
-<section id="gallery">
-<div class="title"><h2>🖼️ School Gallery</h2></div>
-<div id="publicGallery" class="galleryGrid"><div class="empty">Loading gallery...</div></div>
+<section id="about" style="padding-top:10px">
+  <div class="title"><h2>About Our School</h2></div>
+  <div id="publicAbout" class="cards">
+    <div class="card">🛡️<h3>Care & Safety</h3><p>A warm and child-friendly learning environment.</p></div>
+    <div class="card">🎨<h3>Fun Learning</h3><p>Stories, art, games and hands-on activities.</p></div>
+    <div class="card">🌱<h3>Overall Growth</h3><p>Creativity, confidence and communication.</p></div>
+  </div>
 </section>
-<section id="contact">
-<div class="title"><h2>📞 Contact Us</h2></div>
-<div id="publicContact" class="card" style="max-width:900px;margin:auto;text-align:center">Loading contact details...</div>
-</section>
-<section id="about">
-<div class="title"><h2>About Our School</h2></div>
-<div id="publicAbout" class="cards">
-<div class="card">❤️<h3>Care & Safety</h3><p>A warm and child-friendly learning environment.</p></div>
-<div class="card">🎨<h3>Fun Learning</h3><p>Stories, art, games and hands-on activities.</p></div>
-<div class="card">🌱<h3>Overall Growth</h3><p>Creativity, confidence and communication.</p></div>
-</div>
-</section>
-<div id="publicSocial" style="text-align:center;margin:20px"></div><footer>Shakti Niketan Play Group • Secure School Portal</footer>
+<footer>© 2026 Shakti Niketan Play Group. All Rights Reserved. ❤️</footer>
 
 <script>
 "use strict";
@@ -153,19 +180,22 @@ async function loadPublicSite(){
     if(settings){
       const title=document.querySelector(".hero h1");
       const heroText=document.querySelector(".hero p");
-      const logo=document.querySelector(".logo");
+      const logo=document.querySelector("#siteLogo");
       if(title && settings.hero_title)title.textContent=settings.hero_title;
       if(heroText && settings.hero_text)heroText.textContent=settings.hero_text;
-      if(logo && settings.school_name){
-        logo.childNodes[0].nodeValue=settings.school_name+" ";
+      if(logo){
+        const name=esc(settings.school_name||"Shakti Niketan");
+        const logoUrl=String(settings.logo_url||"").trim();
+        logo.innerHTML=(logoUrl?'<img id="schoolLogoImg" src="'+esc(logoUrl)+'" alt="School Logo">':"")+
+          '<div class="logoText"><span>'+name+'</span><small>PLAY GROUP</small></div>';
+        const logoImg=document.querySelector("#schoolLogoImg");
+        if(logoImg) logoImg.onerror=()=>{logoImg.remove();};
       }
-      if(logo && settings.logo_url){
-        logo.innerHTML='<img src="'+esc(settings.logo_url)+'" alt="School Logo" style="width:42px;height:42px;object-fit:cover;border-radius:10px;vertical-align:middle;margin-right:8px">'+esc(settings.school_name||"Shakti Niketan")+'<small>PLAY GROUP</small>';
-      }
-      const hero=document.querySelector(".hero");
-      if(hero && settings.hero_image_url){
-        hero.style.backgroundImage='linear-gradient(135deg,#eee2ffcc,#fff0dccc,#def8efcc),url("'+String(settings.hero_image_url).replace(/"/g,'&quot;')+'")';
-        hero.style.backgroundSize="cover"; hero.style.backgroundPosition="center";
+      const heroArt=document.querySelector("#heroArt");
+      if(heroArt && settings.hero_image_url){
+        heroArt.innerHTML='<img src="'+esc(settings.hero_image_url)+'" alt="Shakti Niketan classroom">';
+        const heroImg=heroArt.querySelector("img");
+        if(heroImg) heroImg.onerror=()=>{heroArt.innerHTML='<div class="classroom"><div class="board">LEARN &nbsp; PLAY &nbsp; GROW</div><div class="shelf"></div><div class="toy t1"></div><div class="toy t2"></div><div class="toy t3"></div><div class="toy t4"></div><div class="tableToy"></div><div class="chair c1"></div><div class="chair c2"></div></div>';};
       }
       const admissionTitle=document.querySelector("#enquiryTitle");
       const admissionText=document.querySelector("#enquiryText");
@@ -522,7 +552,7 @@ async function addNotice(){
 function websiteSettings(){
  $("view").innerHTML=`<div class="card">
  <div class="sectionTitle"><h3>🌐 Website Manager</h3><span class="badge">👑 Owner Controlled</span></div>
- <p class="muted">यहाँ से पूरी public website की information manage होगी — school name, logo, photos, home page, contact, email, address, social links और admission enquiry.</p>
+ <p class="muted">यहाँ से पूरी public website manage होगी — school name, logo, photos, home page, contact, email, address, social links और admission enquiry. Logo/photo phone से सीधे upload कर सकते हो या public image URL paste कर सकते हो.</p>
  <div id="websiteForm">Loading...</div>
  </div>`;
  loadWebsiteSettings();
@@ -546,11 +576,12 @@ async function loadWebsiteSettings(){
 
   <hr style="border:0;border-top:1px solid var(--line);margin:20px 0">
   <h3>🖼️ Website Photos & Branding</h3>
-  <label>School Logo</label>
-  <input id="wsLogoFile" type="file" accept="image/*">
-  ${x.logo_url?'<img src="'+esc(x.logo_url)+'" style="width:100px;height:100px;object-fit:cover;border-radius:16px;margin:8px 0">':""}
-  <label>Home/Hero Photo</label>
-  <input id="wsHeroFile" type="file" accept="image/*">
+  <label>School Logo — upload from phone</label>
+  <input id="wsLogoFile" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml">
+  <input id="wsLogoUrl" placeholder="Or paste a public logo image URL" value="${esc(x.logo_url||"")}">
+  <div id="wsLogoPreview" style="margin:10px 0">${x.logo_url?'<img src="'+esc(x.logo_url)+'" style="width:110px;height:80px;object-fit:contain;border:1px solid var(--line);border-radius:14px;padding:6px;background:#fff">':"No logo selected yet."}</div>
+  <label>Home/Hero Photo — upload from phone</label>
+  <input id="wsHeroFile" type="file" accept="image/png,image/jpeg,image/webp">
   ${x.hero_image_url?'<img src="'+esc(x.hero_image_url)+'" style="width:100%;max-height:220px;object-fit:cover;border-radius:16px;margin:8px 0">':""}
 
   <hr style="border:0;border-top:1px solid var(--line);margin:20px 0">
@@ -582,18 +613,24 @@ async function loadWebsiteSettings(){
   <p class="muted">Website की सारी gallery photos भी यहीं से manage होंगी.</p>
   <button class="btn" onclick="gallery()">Open Gallery Manager</button>
   </div>`;
+  const lf=$("wsLogoFile");
+  if(lf) lf.onchange=()=>{const f=lf.files?.[0],box=$("wsLogoPreview");if(!f||!box)return; if(!f.type.startsWith("image/"))return alert("Please select an image."); if(f.size>5*1024*1024)return alert("Image must be 5 MB or smaller."); box.innerHTML='<img src="'+URL.createObjectURL(f)+'" style="width:110px;height:80px;object-fit:contain;border:1px solid var(--line);border-radius:14px;padding:6px;background:#fff"><div class="muted" style="margin-top:5px">New logo selected. Click Save Website Changes.</div>';};
  }
  catch(e){$("websiteForm").innerHTML='<div class="msg err">'+esc(e.message)+"</div>"}
 }
 
 async function uploadWebsiteImage(file,prefix){
  if(!file)return null;
+ if(!file.type || !file.type.startsWith("image/"))throw Error("Please select a valid image file.");
  if(file.size>5*1024*1024)throw Error("Image must be 5 MB or smaller.");
- const ext=(file.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"");
+ if(!db)throw Error("School service is not loaded. Please refresh once.");
+ const ext=(file.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"")||"jpg";
  const path="website/"+prefix+"-"+Date.now()+"-"+Math.random().toString(36).slice(2)+"."+ext;
- const r=await db.storage.from("school-gallery").upload(path,file,{upsert:false,contentType:file.type||"image/jpeg"});
- if(r.error)throw r.error;
- return db.storage.from("school-gallery").getPublicUrl(path).data.publicUrl;
+ const r=await db.storage.from("school-gallery").upload(path,file,{upsert:false,contentType:file.type,cacheControl:"3600"});
+ if(r.error)throw Error("Logo/photo upload failed: "+r.error.message);
+ const publicUrl=db.storage.from("school-gallery").getPublicUrl(path).data.publicUrl;
+ if(!publicUrl)throw Error("Could not create public image URL.");
+ return publicUrl;
 }
 
 async function saveWebsiteSettings(){
@@ -608,8 +645,10 @@ async function saveWebsiteSettings(){
    admission_text:$("wsAdmissionText").value.trim(), facebook_url:$("wsFacebook").value.trim(),
    instagram_url:$("wsInstagram").value.trim()
   };
-  const logo=$("wsLogoFile").files[0],hero=$("wsHeroFile").files[0];
-  if(logo)patch.logo_url=await uploadWebsiteImage(logo,"logo");
+  const logo=$("wsLogoFile")?.files?.[0],hero=$("wsHeroFile")?.files?.[0];
+  const manualLogoUrl=$("wsLogoUrl")?.value.trim();
+  if(logo) patch.logo_url=await uploadWebsiteImage(logo,"logo");
+  else if(manualLogoUrl) patch.logo_url=manualLogoUrl;
   if(hero)patch.hero_image_url=await uploadWebsiteImage(hero,"hero");
   if(x) await ownerCrudUpdate("school_settings",x.id,patch);
   else await ownerCrudInsert("school_settings",Object.assign({id:true},patch));
