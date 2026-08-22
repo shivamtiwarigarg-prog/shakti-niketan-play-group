@@ -33,7 +33,7 @@ input,select,textarea{width:100%;padding:12px;border:1px solid #ddd;border-radiu
 .hw{border:1px solid var(--line);border-left:5px solid var(--p);padding:13px;border-radius:12px;margin:9px 0}.hw h4{margin:0 0 6px}
 .item,.notice,.request{border:1px solid var(--line);border-radius:12px;padding:12px;margin:8px 0}.notice b{color:#3d2364}.request{border-left:5px solid #e0a400}
 .connect{background:#fff7df;border:1px solid #efd58c;border-radius:15px;padding:17px;margin-top:16px}.connect h3{margin:0;color:var(--gold)}
-.empty{text-align:center;padding:25px;color:var(--muted)}
+.empty{text-align:center;padding:25px;color:var(--muted)}.parentGrid{align-items:start}.parentOnlyNote{font-size:13px;color:var(--muted);margin-top:8px}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.stat{background:var(--soft);padding:15px;border-radius:12px;text-align:center}.stat b{display:block;color:var(--p);font-size:23px;margin-bottom:5px}
 .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
 footer{background:#241534;color:#fff;text-align:center;padding:25px}
@@ -117,7 +117,7 @@ function initSupabase(){
 }
 initSupabase();
 const FN=SUPABASE_URL+"/functions/v1/";
-let selectedRole="owner",currentUser=null,demo=false;
+let selectedRole="owner",currentUser=null,demo=false,parentPortalData=null,parentActiveTab="dashboard";
 
 const $=id=>document.getElementById(id);
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -173,7 +173,7 @@ function buildTabs(role){
 
 function showTab(tab){
  document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));
- if(currentUser.role==="parent"){loadStudentPortal(tab);return}
+ if(currentUser.role==="parent"){parentActiveTab=tab;loadStudentPortal(tab);return}
  if(tab==="dashboard")dashboard();
  else if(tab==="students")students();
  else if(tab==="attendance")attendance();
@@ -422,24 +422,90 @@ async function loadStudentPortal(){
 }
 
 function renderParent(d){
- const s=d.student||{},a=d.attendance||[],h=d.homework||[],f=d.fees||[],n=d.notices||[];
- const photo=s.photo_url?'<img src="'+esc(s.photo_url)+'" alt="Child photo">':"👦";
+ parentPortalData=d; const s=d.student||{},a=d.attendance||[],h=d.homework||[],f=d.fees||[],n=d.notices||[];
  const present=a.filter(x=>String(x.status).toLowerCase()==="present").length;
  const pending=f.filter(x=>String(x.status).toLowerCase()!=="paid");
- $("view").innerHTML=
- '<div class="childHead"><div class="childPhoto">'+photo+'</div><div><h2>'+esc(s.name||"Child")+' 👋</h2><p><b>Class:</b> '+esc(s.class_name||"—")+'</p><p><b>Parent:</b> '+esc(s.parent_name||"—")+'</p><p>Shakti Niketan Play Group</p></div></div>'+
- '<div class="stats"><div class="stat"><b>'+present+'</b>Present</div><div class="stat"><b>'+a.length+'</b>Attendance Records</div><div class="stat"><b>'+h.length+'</b>Homework</div><div class="stat"><b>'+pending.length+'</b>Pending Fees</div></div><br>'+
- '<div class="parentGrid">'+
- '<div class="card"><div class="sectionTitle"><h3>📅 Attendance</h3>'+badge(a.length+" records")+'</div><table class="dataTable"><tr><th>Date</th><th>Status</th></tr>'+(a.length?a.map(x=>'<tr><td>'+date(x.attendance_date||x.date)+'</td><td>'+badge(x.status)+'</td></tr>').join(""):'<tr><td colspan="2">No attendance records.</td></tr>')+'</table></div>'+
- '<div class="card"><div class="sectionTitle"><h3>📚 Homework</h3>'+badge(h.length+" items")+'</div>'+(h.length?h.map(x=>'<div class="hw"><h4>'+esc(x.title)+'</h4>'+badge(x.class_name||s.class_name||"Class")+'<div style="margin:7px 0">'+esc(x.description||x.details||"No details.")+'</div><small>Assigned: '+date(x.created_at)+' • Due: '+date(x.due_date)+'</small></div>').join(""):'<div class="empty">No homework.</div>')+'</div>'+
- '<div class="card"><div class="sectionTitle"><h3>💰 Fees</h3>'+badge(pending.length+" pending")+'</div>'+(f.length?f.map(x=>'<div class="item"><b>₹'+esc(x.amount)+'</b> '+badge(x.status)+'<br><small>Due: '+date(x.due_date)+'</small></div>').join(""):'<div class="empty">No fee records.</div>')+'</div>'+
- '<div class="card"><div class="sectionTitle"><h3>📢 Notices</h3></div>'+(n.length?n.map(x=>'<div class="notice"><b>'+esc(x.title)+'</b> '+badge(x.audience||"All")+'<br>'+esc(x.message||x.body||"")+'<br><small>'+date(x.published_at||x.created_at)+'</small></div>').join(""):'<div class="empty">No notices.</div>')+'</div>'+
+ const photo=s.photo_url?'<img src="'+esc(s.photo_url)+'" alt="Child photo">':"👦";
+
+ const head='<div class="childHead"><div class="childPhoto">'+photo+'</div><div><h2>'+esc(s.name||"Child")+' 👋</h2><p><b>Class:</b> '+esc(s.class_name||"—")+'</p><p><b>Parent:</b> '+esc(s.parent_name||"—")+'</p><p>Shakti Niketan Play Group</p></div></div>';
+
+ if(parentActiveTab==="attendance"){
+   $("view").innerHTML=head+
+   '<div class="card"><div class="sectionTitle"><h3>📅 Attendance</h3>'+badge(a.length+" records")+'</div>'+
+   (a.length?'<table class="dataTable"><tr><th>Date</th><th>Status</th></tr>'+
+   a.map(x=>'<tr><td>'+date(x.attendance_date||x.date)+'</td><td>'+badge(x.status)+'</td></tr>').join("")+
+   '</table>':'<div class="empty">No attendance records have been published for your child yet.</div>')+
+   '</div>';
+   return;
+ }
+
+ if(parentActiveTab==="homework"){
+   $("view").innerHTML=head+
+   '<div class="card"><div class="sectionTitle"><h3>📚 Homework</h3>'+badge(h.length+" items")+'</div>'+
+   (h.length?h.map(x=>'<div class="hw"><h4>'+esc(x.title)+'</h4>'+badge(x.class_name||s.class_name||"Class")+
+   '<div style="margin:7px 0">'+esc(x.description||x.details||"No details.")+'</div>'+
+   '<small>Assigned: '+date(x.created_at)+' • Due: '+date(x.due_date)+'</small></div>').join(""):
+   '<div class="empty">No homework has been assigned to your child yet.</div>')+
+   '</div>';
+   return;
+ }
+
+ if(parentActiveTab==="fees"){
+   $("view").innerHTML=head+
+   '<div class="card"><div class="sectionTitle"><h3>💰 Fees</h3>'+badge(pending.length+" pending")+'</div>'+
+   (f.length?f.map(x=>'<div class="item"><b>₹'+esc(x.amount)+'</b> '+badge(x.status)+
+   '<br><small>Due: '+date(x.due_date)+'</small></div>').join(""):
+   '<div class="empty">No fee information has been published for your child yet.</div>')+
+   '</div>';
+   return;
+ }
+
+ if(parentActiveTab==="notices"){
+   $("view").innerHTML=head+
+   '<div class="card"><div class="sectionTitle"><h3>📢 Notices</h3>'+badge(n.length+" notices")+'</div>'+
+   (n.length?n.map(x=>'<div class="notice"><b>'+esc(x.title)+'</b> '+badge(x.audience||"All")+
+   '<br>'+esc(x.message||x.body||"")+'<br><small>'+date(x.published_at||x.created_at)+'</small></div>').join(""):
+   '<div class="empty">No notices for your child yet.</div>')+
+   '</div>';
+   return;
+ }
+
+ if(parentActiveTab==="profile"){
+   $("view").innerHTML=head+
+   '<div class="card"><h3>👦 Child Profile</h3>'+
+   '<table class="dataTable">'+
+   '<tr><th>Name</th><td>'+esc(s.name||"—")+'</td></tr>'+
+   '<tr><th>Class</th><td>'+esc(s.class_name||"—")+'</td></tr>'+
+   '<tr><th>Parent</th><td>'+esc(s.parent_name||"—")+'</td></tr>'+
+   '<tr><th>Parent Phone</th><td>'+esc(s.parent_phone||"—")+'</td></tr>'+
+   '</table></div>'+
+   '<div class="connect"><h3>🔔 Parent–Child Connection</h3><p>Need the school to confirm or update your connection with your child?</p><button class="btn green" onclick="sendConnectRequest()">🔔 Notify Owner / Request Connection</button><div id="connectMsg"></div></div>';
+   return;
+ }
+
+ // Parent Home/Dashboard: summary only. Do not repeat full attendance/homework/fees/notices.
+ $("view").innerHTML=head+
+ '<div class="stats">'+
+ '<div class="stat"><b>'+present+'</b>Present</div>'+
+ '<div class="stat"><b>'+a.length+'</b>Attendance Records</div>'+
+ '<div class="stat"><b>'+h.length+'</b>Homework</div>'+
+ '<div class="stat"><b>'+pending.length+'</b>Pending Fees</div>'+
  '</div>'+
- '<div class="connect"><h3>🔔 Parent–Child Connection</h3><p>Want the school to confirm or update your connection with your child? Touch the button below. A request will go to the Owner.</p><button class="btn green" onclick="sendConnectRequest()">🔔 Notify Owner / Request Connection</button><div id="connectMsg"></div></div>';
+ '<div class="card" style="margin-top:16px"><h3>📌 Quick Summary</h3>'+
+ '<p>Use the buttons above to open only the section you want.</p>'+
+ '<p class="muted">Attendance, Homework, Fees and Notices are shown separately and only for your linked child.</p></div>';
 }
 function demoParent(){
- renderParent({student:{name:"Shivamji",class_name:"Class 6",parent_name:"Demo Parent"},attendance:[{date:"2026-08-22",status:"Present"}],homework:[{title:"English — Learn A to Z",description:"Write A to Z two times.",created_at:"2026-08-22",due_date:"2026-08-24",class_name:"Class 6"},{title:"Drawing — Flower",description:"Draw and colour one flower.",created_at:"2026-08-22",due_date:"2026-08-25",class_name:"Class 6"}],fees:[{amount:2500,status:"Pending",due_date:"2026-08-30"}],notices:[{title:"Welcome",message:"School portal is active.",created_at:"2026-08-22"}]});
+ renderParent({
+   student:{name:"Shivamji",class_name:"Class 6",parent_name:"Demo Parent"},
+   attendance:[{date:"2026-08-22",status:"Present"}],
+   homework:[{title:"English — Learn A to Z",description:"Write A to Z two times.",created_at:"2026-08-22",due_date:"2026-08-24",class_name:"Class 6"}],
+   fees:[{amount:2500,status:"Pending",due_date:"2026-08-30"}],
+   notices:[{title:"Welcome",message:"School portal is active.",created_at:"2026-08-22"}]
+ });
 }
+
+
 async function sendConnectRequest(){
  if(demo)return showMsg("connectMsg","Demo: Owner would receive the connection notification.");
  try{const t=await getSessionToken();const r=await fetch(FN+"parent-connect-v3",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+t,apikey:SUPABASE_KEY},body:JSON.stringify({message:"Parent wants to confirm/connect with the child."})});let d={};try{d=await r.json()}catch{}if(!r.ok)throw Error(d.error||"Could not send request.");showMsg("connectMsg","✅ Request sent to Owner successfully.");}catch(e){showMsg("connectMsg",e.message,true)}
@@ -534,6 +600,7 @@ async function logout(){
 </script>
 </body>
 </html>
+
 
 
 
