@@ -33,7 +33,7 @@ input,select,textarea{width:100%;padding:12px;border:1px solid #ddd;border-radiu
 .hw{border:1px solid var(--line);border-left:5px solid var(--p);padding:13px;border-radius:12px;margin:9px 0}.hw h4{margin:0 0 6px}
 .item,.notice,.request{border:1px solid var(--line);border-radius:12px;padding:12px;margin:8px 0}.notice b{color:#3d2364}.request{border-left:5px solid #e0a400}
 .connect{background:#fff7df;border:1px solid #efd58c;border-radius:15px;padding:17px;margin-top:16px}.connect h3{margin:0;color:var(--gold)}
-.empty{text-align:center;padding:25px;color:var(--muted)}.parentGrid{align-items:start}.parentOnlyNote{font-size:13px;color:var(--muted);margin-top:8px}
+.empty{text-align:center;padding:25px;color:var(--muted)}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.stat{background:var(--soft);padding:15px;border-radius:12px;text-align:center}.stat b{display:block;color:var(--p);font-size:23px;margin-bottom:5px}
 .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
 footer{background:#241534;color:#fff;text-align:center;padding:25px}
@@ -117,7 +117,7 @@ function initSupabase(){
 }
 initSupabase();
 const FN=SUPABASE_URL+"/functions/v1/";
-let selectedRole="owner",currentUser=null,demo=false,parentPortalData=null,parentActiveTab="dashboard";
+let selectedRole="owner",currentUser=null,demo=false,parentPortalData=null,parentActiveTab="dashboard",myPermissions=new Set();
 
 const $=id=>document.getElementById(id);
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -151,12 +151,28 @@ async function login(){
  finally{$("loginBtn").disabled=false;$("loginBtn").textContent="Login"}
 }
 
-function openApp(){
+async function openApp(){
  $("loginBox").classList.add("hidden");$("app").classList.remove("hidden");
  $("welcome").textContent="Welcome, "+(currentUser.full_name||currentUser.username||"User")+" 👋";
  $("roleBadge").textContent=(currentUser.role||selectedRole).toUpperCase();
- buildTabs(currentUser.role);showTab("dashboard"); setupNotificationUI();
+ await loadMyPermissions();
+ buildTabs(currentUser.role);
+ document.querySelectorAll(".tab").forEach(b=>{
+   const map={students:"students",attendance:"attendance",homework:"homework",fees:"fees",notices:"notices",enquiries:"enquiries"};
+   const r=map[b.dataset.tab]; if(r && currentUser.role!=="owner" && currentUser.role!=="parent") b.classList.toggle("hidden",!canView(r));
+ });
+ showTab("dashboard"); setupNotificationUI();
 }
+
+async function loadMyPermissions(){
+ myPermissions=new Set();
+ if(!currentUser || currentUser.role==="owner" || currentUser.role==="parent")return;
+ try{
+  const r=await db.from("role_permissions").select("permission").eq("role",currentUser.role);
+  (r.data||[]).forEach(x=>myPermissions.add(x.permission));
+ }catch(e){}
+}
+function canView(resource){return currentUser?.role==="owner" || currentUser?.role==="parent" || myPermissions.has(resource+":view") || myPermissions.has(resource);}
 
 function buildTabs(role){
  let tabs;
@@ -307,12 +323,23 @@ async function addAttendance(){
 
 
 function homework(){
- $("view").innerHTML='<div class="card"><div class="sectionTitle"><h3>📚 Homework</h3><button class="btn" id="refreshHw">↻ Refresh</button></div><div class="row"><input id="htitle" placeholder="Subject / Homework title"><select id="hclass"><option value="">Select Class</option></select><select id="hstudent"><option value="">Select student</option></select><input id="hdue" type="date"></div><textarea id="hdesc" placeholder="Homework details"></textarea><button class="btn green" id="addHw">➕ Add Homework</button><div id="hwList"></div></div>';
- $("addHw").onclick=addHomework;$("refreshHw").onclick=loadHomework;fillStudentPicker("hstudent",true);fillClassPicker("hclass");loadHomework();
+ $("view").innerHTML=`<div class="card"><div class="sectionTitle"><h3>📚 Homework</h3><button class="btn" id="refreshHw">↻ Refresh</button></div>
+ <div class="row"><input id="htitle" placeholder="Subject / Homework title">
+ <select id="htarget"><option value="class">🏫 Entire Class</option><option value="student">👦 Specific Student</option></select>
+ <select id="hclass"><option value="">Select Class</option></select>
+ <select id="hstudent" class="hidden"><option value="">Select student</option></select>
+ <input id="hdue" type="date"></div>
+ <div class="parentOnlyNote">Choose <b>Entire Class</b> for every student in the selected class, or <b>Specific Student</b> for only one child.</div>
+ <textarea id="hdesc" placeholder="Homework details"></textarea><button class="btn green" id="addHw">➕ Add Homework</button><div id="hwList"></div></div>`;
+ $("addHw").onclick=addHomework;$("refreshHw").onclick=loadHomework;
+ fillStudentPicker("hstudent",true);fillClassPicker("hclass");
+ $("htarget").onchange=()=>{const t=$("htarget").value;$("hclass").classList.toggle("hidden",t!=="class");$("hstudent").classList.toggle("hidden",t!=="student");};
+ loadHomework();
 }
+
 async function loadHomework(){
  if(currentUser?.role==="owner"&&!demo){try{const rows=await ownerCrudList("homework"),box=$("hwList");box.innerHTML="";if(!rows.length){box.innerHTML='<div class="empty">No homework.</div>';return}
- rows.forEach(x=>{const el=document.createElement("div");el.className="hw";el.innerHTML='<h4>'+esc(x.title)+'</h4>'+badge(x.class_name||"All Classes")+'<div style="margin:7px 0">'+esc(x.description||x.details||"No details.")+'</div><small>Assigned: '+date(x.created_at)+' • Due: '+date(x.due_date)+'</small><br>';
+ rows.forEach(x=>{const el=document.createElement("div");el.className="hw";el.innerHTML='<h4>'+esc(x.title)+'</h4>'+badge(x.target_type==="student"?(x.student_name||"Specific Student"):(x.class_name||"Class"))+'<div style="margin:7px 0">'+esc(x.description||x.details||"No details.")+'</div><small>Assigned: '+date(x.created_at)+' • Due: '+date(x.due_date)+'</small><br>';
  const edit=()=>editHomework(x),b=ownerActionButtons("homework",x.id,edit);b.lastChild.onclick=async()=>{try{await ownerCrudDelete("homework",x.id);loadHomework()}catch(e){alert(e.message)}};el.appendChild(b);box.appendChild(el)})}catch(e){$("hwList").innerHTML='<div class="msg err">'+esc(e.message)+"</div>"};return}
  if(demo){$("hwList").innerHTML='<div class="hw"><h4>English — Learn A to Z</h4><div>Write A to Z two times.</div><small>Assigned: 22 Aug 2026 • Due: 24 Aug 2026</small></div>';return}
  const r=await db.from("homework").select("*").order("created_at",{ascending:false});if(r.error)return $("hwList").innerHTML='<div class="msg err">'+esc(r.error.message)+"</div>";$("hwList").innerHTML=(r.data||[]).map(x=>'<div class="hw"><h4>'+esc(x.title)+"</h4>"+badge(x.class_name||"All Classes")+'<div style="margin:7px 0">'+esc(x.description||x.details||"No details.")+'</div><small>Assigned: '+date(x.created_at)+" • Due: "+date(x.due_date)+"</small></div>").join("")||'<div class="empty">No homework.</div>';
@@ -320,12 +347,22 @@ async function loadHomework(){
 async function editHomework(x){
  const title=prompt("Subject / Homework title:",x.title||"");if(title===null)return;
  const desc=prompt("Homework details:",x.description||x.details||"");if(desc===null)return;
- const cls=prompt("Class:",x.class_name||"");if(cls===null)return;
- const due=prompt("Due date (YYYY-MM-DD):",x.due_date||"");if(due===null)return; const sid=prompt("Student ID (optional; blank = class homework):",x.student_id||"");
- try{await ownerCrudUpdate("homework",x.id,{title,description:desc,details:desc,class_name:cls,due_date:due||null,student_id:sid||null});loadHomework()}catch(e){alert(e.message)}
+ const target=prompt("Target: class OR student",x.target_type||"class");if(target===null)return;
+ const cls=target==="class"?prompt("Class:",x.class_name||""):null;
+ const sid=target==="student"?prompt("Student ID:",x.student_id||""):null;
+ if(target==="class"&&!cls)return alert("Class is required.");
+ if(target==="student"&&!sid)return alert("Student ID is required.");
+ const due=prompt("Due date (YYYY-MM-DD):",x.due_date||"");if(due===null)return;
+ try{await ownerCrudUpdate("homework",x.id,{title,description:desc,details:desc,class_name:target==="class"?cls:null,due_date:due||null,student_id:target==="student"?sid:null,target_type:target});loadHomework()}catch(e){alert(e.message)}
 }
 async function addHomework(){
- const sid=$("hstudent").value, sname=selectedStudentName("hstudent"); const cls=$("hclass").value || (studentOptionsCache.find(x=>x.id===sid)?.class_name||""); const row={title:$("htitle").value.trim(),class_name:cls,due_date:$("hdue").value||null,description:$("hdesc").value.trim(),details:$("hdesc").value.trim(),student_id:sid||null};
+ const target=$("htarget").value;
+ const sid=target==="student"?$("hstudent").value:"";
+ const sname=target==="student"?selectedStudentName("hstudent"):"";
+ const cls=target==="class"?$("hclass").value:"";
+ if(!cls && target==="class")return alert("Please select a class.");
+ if(!sid && target==="student")return alert("Please select a student.");
+ const row={title:$("htitle").value.trim(),class_name:cls,due_date:$("hdue").value||null,description:$("hdesc").value.trim(),details:$("hdesc").value.trim(),student_id:sid||null,student_name:sname||null,target_type:target};
  if(!row.title)return alert("Homework title required.");if(demo)return;
  try{if(currentUser?.role==="owner")await ownerCrudInsert("homework",row);else{const r=await db.from("homework").insert(row);if(r.error)throw r.error}homework()}catch(e){alert(e.message)}
 }
@@ -422,87 +459,45 @@ async function loadStudentPortal(){
 }
 
 function renderParent(d){
- parentPortalData=d; const s=d.student||{},a=d.attendance||[],h=d.homework||[],f=d.fees||[],n=d.notices||[];
+ parentPortalData=d;
+ const s=d.student||{},a=d.attendance||[],h=d.homework||[],f=d.fees||[],n=d.notices||[];
  const present=a.filter(x=>String(x.status).toLowerCase()==="present").length;
  const pending=f.filter(x=>String(x.status).toLowerCase()!=="paid");
  const photo=s.photo_url?'<img src="'+esc(s.photo_url)+'" alt="Child photo">':"👦";
-
  const head='<div class="childHead"><div class="childPhoto">'+photo+'</div><div><h2>'+esc(s.name||"Child")+' 👋</h2><p><b>Class:</b> '+esc(s.class_name||"—")+'</p><p><b>Parent:</b> '+esc(s.parent_name||"—")+'</p><p>Shakti Niketan Play Group</p></div></div>';
 
  if(parentActiveTab==="attendance"){
-   $("view").innerHTML=head+
-   '<div class="card"><div class="sectionTitle"><h3>📅 Attendance</h3>'+badge(a.length+" records")+'</div>'+
-   (a.length?'<table class="dataTable"><tr><th>Date</th><th>Status</th></tr>'+
-   a.map(x=>'<tr><td>'+date(x.attendance_date||x.date)+'</td><td>'+badge(x.status)+'</td></tr>').join("")+
-   '</table>':'<div class="empty">No attendance records have been published for your child yet.</div>')+
-   '</div>';
-   return;
+  $("view").innerHTML=head+'<div class="card"><div class="sectionTitle"><h3>📅 Attendance</h3>'+badge(a.length+" records")+'</div>'+
+  (a.length?'<table class="dataTable"><tr><th>Date</th><th>Status</th></tr>'+a.map(x=>'<tr><td>'+date(x.attendance_date||x.date)+'</td><td>'+badge(x.status)+'</td></tr>').join("")+'</table>':
+  '<div class="empty">No attendance records have been published for your child yet.</div>')+'</div>'; return;
  }
-
  if(parentActiveTab==="homework"){
-   $("view").innerHTML=head+
-   '<div class="card"><div class="sectionTitle"><h3>📚 Homework</h3>'+badge(h.length+" items")+'</div>'+
-   (h.length?h.map(x=>'<div class="hw"><h4>'+esc(x.title)+'</h4>'+badge(x.class_name||s.class_name||"Class")+
-   '<div style="margin:7px 0">'+esc(x.description||x.details||"No details.")+'</div>'+
-   '<small>Assigned: '+date(x.created_at)+' • Due: '+date(x.due_date)+'</small></div>').join(""):
-   '<div class="empty">No homework has been assigned to your child yet.</div>')+
-   '</div>';
-   return;
+  $("view").innerHTML=head+'<div class="card"><div class="sectionTitle"><h3>📚 Homework</h3>'+badge(h.length+" items")+'</div>'+
+  (h.length?h.map(x=>'<div class="hw"><h4>'+esc(x.title)+'</h4>'+badge(x.class_name||s.class_name||"Class")+'<div style="margin:7px 0">'+esc(x.description||x.details||"No details.")+'</div><small>Assigned: '+date(x.created_at)+' • Due: '+date(x.due_date)+'</small></div>').join(""):
+  '<div class="empty">No homework has been assigned to your child yet.</div>')+'</div>'; return;
  }
-
  if(parentActiveTab==="fees"){
-   $("view").innerHTML=head+
-   '<div class="card"><div class="sectionTitle"><h3>💰 Fees</h3>'+badge(pending.length+" pending")+'</div>'+
-   (f.length?f.map(x=>'<div class="item"><b>₹'+esc(x.amount)+'</b> '+badge(x.status)+
-   '<br><small>Due: '+date(x.due_date)+'</small></div>').join(""):
-   '<div class="empty">No fee information has been published for your child yet.</div>')+
-   '</div>';
-   return;
+  $("view").innerHTML=head+'<div class="card"><div class="sectionTitle"><h3>💰 Fees</h3>'+badge(pending.length+" pending")+'</div>'+
+  (f.length?f.map(x=>'<div class="item"><b>₹'+esc(x.amount)+'</b> '+badge(x.status)+'<br><small>Due: '+date(x.due_date)+'</small></div>').join(""):
+  '<div class="empty">No fee information has been published for your child yet.</div>')+'</div>'; return;
  }
-
  if(parentActiveTab==="notices"){
-   $("view").innerHTML=head+
-   '<div class="card"><div class="sectionTitle"><h3>📢 Notices</h3>'+badge(n.length+" notices")+'</div>'+
-   (n.length?n.map(x=>'<div class="notice"><b>'+esc(x.title)+'</b> '+badge(x.audience||"All")+
-   '<br>'+esc(x.message||x.body||"")+'<br><small>'+date(x.published_at||x.created_at)+'</small></div>').join(""):
-   '<div class="empty">No notices for your child yet.</div>')+
-   '</div>';
-   return;
+  $("view").innerHTML=head+'<div class="card"><div class="sectionTitle"><h3>📢 Notices</h3>'+badge(n.length+" notices")+'</div>'+
+  (n.length?n.map(x=>'<div class="notice"><b>'+esc(x.title)+'</b> '+badge(x.audience||"All")+'<br>'+esc(x.message||x.body||"")+'<br><small>'+date(x.published_at||x.created_at)+'</small></div>').join(""):
+  '<div class="empty">No notices for your child yet.</div>')+'</div>'; return;
  }
-
  if(parentActiveTab==="profile"){
-   $("view").innerHTML=head+
-   '<div class="card"><h3>👦 Child Profile</h3>'+
-   '<table class="dataTable">'+
-   '<tr><th>Name</th><td>'+esc(s.name||"—")+'</td></tr>'+
-   '<tr><th>Class</th><td>'+esc(s.class_name||"—")+'</td></tr>'+
-   '<tr><th>Parent</th><td>'+esc(s.parent_name||"—")+'</td></tr>'+
-   '<tr><th>Parent Phone</th><td>'+esc(s.parent_phone||"—")+'</td></tr>'+
-   '</table></div>'+
-   '<div class="connect"><h3>🔔 Parent–Child Connection</h3><p>Need the school to confirm or update your connection with your child?</p><button class="btn green" onclick="sendConnectRequest()">🔔 Notify Owner / Request Connection</button><div id="connectMsg"></div></div>';
-   return;
+  $("view").innerHTML=head+'<div class="card"><h3>👦 Child Profile</h3><table class="dataTable">'+
+  '<tr><th>Name</th><td>'+esc(s.name||"—")+'</td></tr><tr><th>Class</th><td>'+esc(s.class_name||"—")+'</td></tr>'+
+  '<tr><th>Parent</th><td>'+esc(s.parent_name||"—")+'</td></tr><tr><th>Parent Phone</th><td>'+esc(s.parent_phone||"—")+'</td></tr>'+
+  '</table></div><div class="connect"><h3>🔔 Parent–Child Connection</h3><p>Need the school to confirm or update your connection with your child?</p>'+
+  '<button class="btn green" onclick="sendConnectRequest()">🔔 Notify Owner / Request Connection</button><div id="connectMsg"></div></div>'; return;
  }
-
- // Parent Home/Dashboard: summary only. Do not repeat full attendance/homework/fees/notices.
- $("view").innerHTML=head+
- '<div class="stats">'+
- '<div class="stat"><b>'+present+'</b>Present</div>'+
- '<div class="stat"><b>'+a.length+'</b>Attendance Records</div>'+
- '<div class="stat"><b>'+h.length+'</b>Homework</div>'+
- '<div class="stat"><b>'+pending.length+'</b>Pending Fees</div>'+
- '</div>'+
- '<div class="card" style="margin-top:16px"><h3>📌 Quick Summary</h3>'+
- '<p>Use the buttons above to open only the section you want.</p>'+
- '<p class="muted">Attendance, Homework, Fees and Notices are shown separately and only for your linked child.</p></div>';
+ $("view").innerHTML=head+'<div class="stats"><div class="stat"><b>'+present+'</b>Present</div><div class="stat"><b>'+a.length+'</b>Attendance Records</div><div class="stat"><b>'+h.length+'</b>Homework</div><div class="stat"><b>'+pending.length+'</b>Pending Fees</div></div>'+
+ '<div class="card" style="margin-top:16px"><h3>📌 Quick Summary</h3><p>Use the buttons above to open only the section you want.</p><p class="muted">Attendance, Homework, Fees and Notices are shown separately and only for your linked child.</p></div>';
 }
 function demoParent(){
- renderParent({
-   student:{name:"Shivamji",class_name:"Class 6",parent_name:"Demo Parent"},
-   attendance:[{date:"2026-08-22",status:"Present"}],
-   homework:[{title:"English — Learn A to Z",description:"Write A to Z two times.",created_at:"2026-08-22",due_date:"2026-08-24",class_name:"Class 6"}],
-   fees:[{amount:2500,status:"Pending",due_date:"2026-08-30"}],
-   notices:[{title:"Welcome",message:"School portal is active.",created_at:"2026-08-22"}]
- });
+ renderParent({student:{name:"Shivamji",class_name:"Class 6",parent_name:"Demo Parent"},attendance:[{date:"2026-08-22",status:"Present"}],homework:[{title:"English — Learn A to Z",description:"Write A to Z two times.",created_at:"2026-08-22",due_date:"2026-08-24",class_name:"Class 6"}],fees:[{amount:2500,status:"Pending",due_date:"2026-08-30"}],notices:[{title:"Welcome",message:"School portal is active.",created_at:"2026-08-22"}]});
 }
 
 
@@ -523,13 +518,38 @@ function superPower(){
     <button class="btn light" onclick="showTab('users')">👥 Manage Users</button>
    </div>
    <div class="card"><h3>🔐 Permissions</h3>
-    <p>Set what each role can view, add, edit or delete.</p>
+    <p class="muted">Owner controls <b>View, Add, Edit and Delete</b> separately for every role and section.</p>
     <div class="row">
-      <select id="permRole"><option>admin</option><option>teacher</option><option>parent</option></select>
-      <select id="permAction"><option>view</option><option>add</option><option>edit</option><option>delete</option></select>
+      <select id="permRole">
+        <option value="admin">🛡️ Admin</option>
+        <option value="teacher">👩‍🏫 Teacher</option>
+        <option value="parent">👨‍👩‍👧 Parent</option>
+      </select>
+      <select id="permResource">
+        <option value="students">👧 Students</option>
+        <option value="attendance">📅 Attendance</option>
+        <option value="homework">📚 Homework</option>
+        <option value="fees">💰 Fees</option>
+        <option value="notices">📢 Notices</option>
+        <option value="enquiries">📩 Enquiries</option>
+        <option value="gallery">🖼️ Gallery</option>
+        <option value="settings">⚙️ School Settings</option>
+      </select>
+      <select id="permAction">
+        <option value="view">👁️ View</option>
+        <option value="add">➕ Add</option>
+        <option value="edit">✏️ Edit</option>
+        <option value="delete">🗑️ Delete</option>
+      </select>
+      <select id="permEnabled">
+        <option value="true">✅ Allow</option>
+        <option value="false">🚫 Deny</option>
+      </select>
     </div>
-    <button class="btn green" onclick="savePermission()">Save Permission</button>
+    <button class="btn green" onclick="savePermission()">💾 Save Permission</button>
+    <button class="btn light" onclick="loadPermissionMatrix()">↻ Refresh Permissions</button>
     <div id="permMsg"></div>
+    <div id="permMatrix" class="item">Loading permissions...</div>
    </div>
    <div class="card"><h3>📚 Academic Control</h3>
     <p>Owner can manage students, attendance, homework, fees and notices.</p>
@@ -545,18 +565,28 @@ function superPower(){
    </div>
   </div>
  </div>`;
+ loadPermissionMatrix();
 }
 async function savePermission(){
  try{
-  const role=$("permRole").value,action=$("permAction").value;
-  const token=await getSessionToken();
-  const r=await fetch(FN+"owner-control",{method:"POST",headers:{
-    "Content-Type":"application/json",Authorization:"Bearer "+token,apikey:SUPABASE_KEY
-  },body:JSON.stringify({action:"set_permission",role,permission:action,enabled:true})});
-  let d={};try{d=await r.json()}catch{}
-  if(!r.ok)throw Error(d.error||"Permission update failed.");
-  showMsg("permMsg","✅ "+role+" permission saved: "+action);
+  const role=$("permRole").value,resource=$("permResource").value,permission_action=$("permAction").value,enabled=$("permEnabled").value==="true";
+  const d=await ownerCall({action:"set_role_permission",role,resource,permission_action,enabled});
+  showMsg("permMsg","✅ "+role.toUpperCase()+" → "+resource+" → "+permission_action+" is now "+(enabled?"ALLOWED":"DENIED")+".");
+  loadPermissionMatrix();
  }catch(e){showMsg("permMsg",e.message,true)}
+}
+async function loadPermissionMatrix(){
+ const el=$("permMatrix"); if(!el)return;
+ try{
+  const d=await ownerCall({action:"get_role_permissions"}),rows=d.permissions||[];
+  const roles=["admin","teacher","parent"],resources=["students","attendance","homework","fees","notices","enquiries","gallery","settings"],actions=["view","add","edit","delete"];
+  let out='<div style="overflow:auto"><table class="dataTable"><tr><th>Role</th><th>Section</th><th>View</th><th>Add</th><th>Edit</th><th>Delete</th></tr>';
+  for(const role of roles)for(const res of resources){
+   const cells=actions.map(a=>rows.some(x=>x.role===role&&x.permission===res+":"+a)?'✅':'—');
+   out+='<tr><td>'+esc(role)+'</td><td>'+esc(res)+'</td>'+cells.map(x=>'<td>'+x+'</td>').join('')+'</tr>';
+  }
+  el.innerHTML=out+'</table></div>';
+ }catch(e){el.innerHTML='<div class="msg err">'+esc(e.message)+'</div>'}
 }
 async function parentRequests(){
  $("view").innerHTML='<div class="card"><h3>🔔 Parent–Child Connection Requests</h3><p class="muted">Review requests sent by parents.</p><div id="requestList">Loading...</div></div>';
@@ -600,12 +630,4 @@ async function logout(){
 </script>
 </body>
 </html>
-
-
-
-
-
-  
-
-
 
