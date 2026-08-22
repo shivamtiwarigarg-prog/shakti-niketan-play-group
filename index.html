@@ -135,7 +135,8 @@ function initSupabase(){
 }
 initSupabase();
 window.addEventListener("DOMContentLoaded",()=>{if(db)loadPublicSite()});
-const FN=SUPABASE_URL+"/functions/v1/school-control-v2";
+const FN=SUPABASE_URL+"/functions/v1/";
+const CONTROL_FN=SUPABASE_URL+"/functions/v1/school-control-v2";
 let selectedRole="owner",currentUser=null,demo=false,parentPortalData=null,parentActiveTab="dashboard",myPermissions=new Set();
 
 const $=id=>document.getElementById(id);
@@ -235,7 +236,7 @@ async function getSessionToken(){
 }
 async function ownerCall(body){
  const token=await getSessionToken();if(!token)throw Error("Owner session expired.");
- const r=await fetch(FN+"owner-control",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+token,apikey:SUPABASE_KEY},body:JSON.stringify(body)});
+ const r=await fetch(CONTROL_FN,{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+token,apikey:SUPABASE_KEY},body:JSON.stringify(body)});
  let d={};try{d=await r.json()}catch{}
  if(!r.ok)throw Error(d.error||"Owner action failed.");return d;
 }
@@ -700,4 +701,3 @@ async function logout(){
 </script>
 </body>
 </html>
-
