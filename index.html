@@ -16,9 +16,9 @@ section{padding:40px 7%}.hero{padding:55px 7%;display:grid;grid-template-columns
 .hero h1{font-size:45px;color:#3d2364;margin:8px 0}.hero-art{height:240px;border-radius:28px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:70px;box-shadow:0 20px 50px #6535a822}
 .title{text-align:center}.title h2{color:#3d2364}
 .panel,.card{background:#fff;border-radius:18px;padding:20px;box-shadow:0 7px 25px #0000000d}
-.roles{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.role,.tab{border:0;border-radius:10px;padding:12px;background:var(--soft);font-weight:800;cursor:pointer}.role.active,.tab.active{background:var(--p);color:#fff}
+.roles{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.role,.tab{border:0;border-radius:10px;padding:12px;background:var(--soft);font-weight:800;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;position:relative;z-index:2}.role.active,.tab.active{background:var(--p);color:#fff}
 input,select,textarea{width:100%;padding:12px;border:1px solid #ddd;border-radius:9px;margin:5px 0 12px;font:inherit;background:#fff}textarea{min-height:90px;resize:vertical}
-.btn{border:0;border-radius:10px;padding:12px 16px;background:var(--p);color:#fff;font-weight:800;cursor:pointer}.btn.green{background:var(--green)}.btn.red{background:var(--red)}.btn.gray{background:#777}.btn.light{background:#eee;color:#43266b}
+.btn{border:0;border-radius:10px;padding:12px 16px;background:var(--p);color:#fff;font-weight:800;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;position:relative;z-index:2}.btn.green{background:var(--green)}.btn.red{background:var(--red)}.btn.gray{background:#777}.btn.light{background:#eee;color:#43266b}
 .row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1;min-width:180px}
 .msg{padding:10px;border-radius:9px;background:#eef8f1;margin:10px 0}.err{background:#fff0f0;color:#8b2424}
 .hidden{display:none!important}.muted{color:var(--muted)}
@@ -93,9 +93,29 @@ footer{background:#241534;color:#fff;text-align:center;padding:25px}
 
 <script>
 "use strict";
+window.addEventListener("error",function(e){
+  console.error(e.error||e.message);
+});
+window.addEventListener("unhandledrejection",function(e){
+  console.error(e.reason||e);
+});
 const SUPABASE_URL="https://fmyuhiohjyvetzbrbayk.supabase.co";
 const SUPABASE_KEY="sb_publishable_5zXKwEf_v9RcLOxGbSuAog_O7WU_hKQ";
-const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+let db=null;
+function initSupabase(){
+  try{
+    if(!window.supabase || typeof window.supabase.createClient!=="function"){
+      console.warn("Supabase library did not load.");
+      return false;
+    }
+    db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+    return true;
+  }catch(e){
+    console.error("Supabase initialization failed:",e);
+    return false;
+  }
+}
+initSupabase();
 const FN=SUPABASE_URL+"/functions/v1/";
 let selectedRole="owner",currentUser=null,demo=false;
 
@@ -123,6 +143,7 @@ async function login(){
   let d={};try{d=await r.json()}catch{}
   if(!r.ok)throw Error(d.error||"Login failed.");
   if(d.user?.role!==selectedRole)throw Error("Please select the correct portal.");
+  if(!db) throw Error("School service did not load. Please refresh the page once.");
   const s=await db.auth.setSession({access_token:d.session.access_token,refresh_token:d.session.refresh_token||""});
   if(s.error)throw s.error;
   currentUser=d.user;demo=false;openApp();
@@ -170,7 +191,9 @@ function dashboard(){
 }
 
 async function getSessionToken(){
- const s=await db.auth.getSession();return s.data.session?.access_token;
+ if(!db) throw Error("School service is not loaded. Please refresh the page once.");
+ const s=await db.auth.getSession();
+ return s.data.session?.access_token;
 }
 async function ownerCall(body){
  const token=await getSessionToken();if(!token)throw Error("Owner session expired.");
@@ -277,7 +300,7 @@ async function loadUsers(){
 
 async function loadStudentPortal(){
  if(demo)return demoParent();
- $("view").innerHTML='<div class="empty">Loading your child's complete portal...</div>';
+ $("view").innerHTML='<div class="empty">Loading your child portal...</div>';
  try{
   const t=await getSessionToken();if(!t)throw Error("Session expired. Login again.");
   const r=await fetch(FN+"student-profile",{headers:{Authorization:"Bearer "+t,apikey:SUPABASE_KEY}});
@@ -319,7 +342,11 @@ async function parentRequests(){
  }catch(e){$("requestList").innerHTML='<div class="msg err">'+esc(e.message)+"</div>"}
 }
 
-async function logout(){if(!demo)await db.auth.signOut();demo=false;currentUser=null;$("app").classList.add("hidden");$("loginBox").classList.remove("hidden");$("password").value=""}
+async function logout(){
+ if(!demo && db) await db.auth.signOut();
+ demo=false;currentUser=null;
+ $("app").classList.add("hidden");$("loginBox").classList.remove("hidden");$("password").value="";
+}
 </script>
 </body>
 </html>
