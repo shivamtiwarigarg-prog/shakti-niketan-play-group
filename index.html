@@ -72,7 +72,7 @@ footer{background:#241534;color:#fff;text-align:center;padding:25px}
 <div id="app" class="hidden">
   <div class="row" style="align-items:center">
     <div><h2 id="welcome" style="margin:0 0 5px"></h2><span id="roleBadge" class="badge"></span></div>
-    <button class="btn red" id="logoutBtn" style="flex:0 0 auto">Logout</button>
+    <button class="btn light hidden" id="notifyBtn" style="flex:0 0 auto">🔔 Enable Notifications</button><button class="btn red" id="logoutBtn" style="flex:0 0 auto">Logout</button>
   </div>
   <div class="appbar" id="tabs"></div>
   <div id="view"></div>
@@ -155,7 +155,7 @@ function openApp(){
  $("loginBox").classList.add("hidden");$("app").classList.remove("hidden");
  $("welcome").textContent="Welcome, "+(currentUser.full_name||currentUser.username||"User")+" 👋";
  $("roleBadge").textContent=(currentUser.role||selectedRole).toUpperCase();
- buildTabs(currentUser.role);showTab("dashboard");
+ buildTabs(currentUser.role);showTab("dashboard"); setupNotificationUI();
 }
 
 function buildTabs(role){
@@ -166,7 +166,7 @@ function buildTabs(role){
  ];
  else tabs=[["dashboard","🏠 Dashboard"],["students","👧 Students"],["attendance","📅 Attendance"],["homework","📚 Homework"],["notices","📢 Notices"],["fees","💰 Fees"]];
  if(role==="owner"||role==="admin")tabs.push(["enquiries","📩 Enquiries"]);
- if(role==="owner")tabs.push(["accounts","🔑 Create Login"],["users","👥 Users"],["parentRequests","🔔 Parent Requests"]);
+ if(role==="owner")tabs.push(["accounts","🔑 Create Login"],["users","👥 Users"],["parentRequests","🔔 Parent Requests"],["superPower","👑 Super Power"]);
  $("tabs").innerHTML=tabs.map(t=>'<button class="tab" data-tab="'+t[0]+'">'+t[1]+"</button>").join("");
  document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
 }
@@ -184,10 +184,11 @@ function showTab(tab){
  else if(tab==="accounts")accounts();
  else if(tab==="users")users();
  else if(tab==="parentRequests")parentRequests();
+ else if(tab==="superPower")superPower();
 }
 
 function dashboard(){
- $("view").innerHTML='<div class="stats"><div class="stat"><b>👧</b>Students</div><div class="stat"><b>👩‍🏫</b>Teachers</div><div class="stat"><b>📅</b>Attendance</div><div class="stat"><b>📢</b>Notices</div></div><br><div class="cards"><div class="card"><h3>Welcome</h3><p>Use the tabs above to manage school work.</p></div><div class="card"><h3>🔒 Secure</h3><p>Parent accounts see only their linked child.</p></div><div class="card"><h3>🔔 Parent Requests</h3><p>Owner can approve or reject connection requests.</p></div></div>';
+ $("view").innerHTML='<div class="stats"><div class="stat"><b>👧</b>Students</div><div class="stat"><b>👩‍🏫</b>Teachers</div><div class="stat"><b>📅</b>Attendance</div><div class="stat"><b>📢</b>Notices</div></div><br><div class="cards"><div class="card"><h3>Welcome</h3><p>Use the tabs above to manage school work.</p></div><div class="card"><h3>🔒 Secure</h3><p>Parent accounts see only their linked child.</p></div><div class="card"><h3>🔔 Parent Requests</h3><p>Owner can approve or reject connection requests.</p></div><div class="card"><h3>👑 Super Power</h3><p>Full control over users, permissions and school records.</p></div></div>';
 }
 
 async function getSessionToken(){
@@ -330,7 +331,55 @@ function demoParent(){
 }
 async function sendConnectRequest(){
  if(demo)return showMsg("connectMsg","Demo: Owner would receive the connection notification.");
- try{const t=await getSessionToken();const r=await fetch(FN+"parent-connect",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+t,apikey:SUPABASE_KEY},body:JSON.stringify({message:"Parent wants to confirm/connect with the child."})});let d={};try{d=await r.json()}catch{}if(!r.ok)throw Error(d.error||"Could not send request.");showMsg("connectMsg","✅ Request sent to Owner successfully.");}catch(e){showMsg("connectMsg",e.message,true)}
+ try{const t=await getSessionToken();const r=await fetch(FN+"parent-connect-v3",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+t,apikey:SUPABASE_KEY},body:JSON.stringify({message:"Parent wants to confirm/connect with the child."})});let d={};try{d=await r.json()}catch{}if(!r.ok)throw Error(d.error||"Could not send request.");showMsg("connectMsg","✅ Request sent to Owner successfully.");}catch(e){showMsg("connectMsg",e.message,true)}
+}
+
+function superPower(){
+ $("view").innerHTML=`
+ <div class="card">
+  <h3>👑 Owner Super Power</h3>
+  <p class="muted">Owner has full control over school users, permissions and records.</p>
+  <div class="cards">
+   <div class="card"><h3>👥 User Control</h3>
+    <p>Create, edit, disable and manage Admin, Teacher and Parent accounts.</p>
+    <button class="btn" onclick="showTab('accounts')">🔑 Manage Accounts</button>
+    <button class="btn light" onclick="showTab('users')">👥 Manage Users</button>
+   </div>
+   <div class="card"><h3>🔐 Permissions</h3>
+    <p>Set what each role can view, add, edit or delete.</p>
+    <div class="row">
+      <select id="permRole"><option>admin</option><option>teacher</option><option>parent</option></select>
+      <select id="permAction"><option>view</option><option>add</option><option>edit</option><option>delete</option></select>
+    </div>
+    <button class="btn green" onclick="savePermission()">Save Permission</button>
+    <div id="permMsg"></div>
+   </div>
+   <div class="card"><h3>📚 Academic Control</h3>
+    <p>Owner can manage students, attendance, homework, fees and notices.</p>
+    <button class="btn light" onclick="showTab('students')">👧 Students</button>
+    <button class="btn light" onclick="showTab('attendance')">📅 Attendance</button>
+    <button class="btn light" onclick="showTab('homework')">📚 Homework</button>
+    <button class="btn light" onclick="showTab('fees')">💰 Fees</button>
+    <button class="btn light" onclick="showTab('notices')">📢 Notices</button>
+   </div>
+   <div class="card"><h3>🔔 Parent Connections</h3>
+    <p>Review every parent-child connection request.</p>
+    <button class="btn green" onclick="showTab('parentRequests')">Open Requests</button>
+   </div>
+  </div>
+ </div>`;
+}
+async function savePermission(){
+ try{
+  const role=$("permRole").value,action=$("permAction").value;
+  const token=await getSessionToken();
+  const r=await fetch(FN+"owner-control",{method:"POST",headers:{
+    "Content-Type":"application/json",Authorization:"Bearer "+token,apikey:SUPABASE_KEY
+  },body:JSON.stringify({action:"set_permission",role,permission:action,enabled:true})});
+  let d={};try{d=await r.json()}catch{}
+  if(!r.ok)throw Error(d.error||"Permission update failed.");
+  showMsg("permMsg","✅ "+role+" permission saved: "+action);
+ }catch(e){showMsg("permMsg",e.message,true)}
 }
 async function parentRequests(){
  $("view").innerHTML='<div class="card"><h3>🔔 Parent–Child Connection Requests</h3><p class="muted">Review requests sent by parents.</p><div id="requestList">Loading...</div></div>';
@@ -342,6 +391,30 @@ async function parentRequests(){
  }catch(e){$("requestList").innerHTML='<div class="msg err">'+esc(e.message)+"</div>"}
 }
 
+
+const VAPID_PUBLIC_KEY="BP4zPAOvliLIUovgB1Ah7pWcdkm67sOResRzrDUnjDhH29emJj2hXZZ9wC6TGpge5z8Vv5h49451dSlFclcBHuM";
+function urlBase64ToUint8Array(base64String){const padding='='.repeat((4-base64String.length%4)%4),base64=(base64String+padding).replace(/-/g,'+').replace(/_/g,'/');const raw=atob(base64);return Uint8Array.from([...raw].map(c=>c.charCodeAt(0)))}
+async function setupNotificationUI(){
+ const b=$("notifyBtn");
+ if(currentUser?.role!=="owner" || !("Notification" in window) || !("serviceWorker" in navigator) || !("PushManager" in window)){b.classList.add("hidden");return}
+ b.classList.remove("hidden");b.onclick=enableOwnerNotifications;
+}
+async function enableOwnerNotifications(){
+ const b=$("notifyBtn");b.disabled=true;b.textContent="🔔 Setting up...";
+ try{
+  if(!window.isSecureContext)throw Error("Notifications require HTTPS. Open the GitHub Pages website.");
+  const permission=await Notification.requestPermission();
+  if(permission!=="granted")throw Error("Notification permission was not allowed.");
+  const reg=await navigator.serviceWorker.register("./sw.js",{scope:"./"});
+  let sub=await reg.pushManager.getSubscription();
+  if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlBase64ToUint8Array(VAPID_PUBLIC_KEY)});
+  const token=await getSessionToken();
+  const r=await fetch(FN+"push-subscribe-v2",{method:"POST",headers:{Authorization:"Bearer "+token,apikey:SUPABASE_KEY,"Content-Type":"application/json"},body:JSON.stringify({subscription:sub.toJSON()})});
+  let d={};try{d=await r.json()}catch{}if(!r.ok)throw Error(d.error||"Could not register this phone.");
+  b.textContent="🔔 Notifications ON";b.classList.remove("light");b.classList.add("green");
+  alert("✅ Owner notifications are ON on this phone.");
+ }catch(e){b.disabled=false;b.textContent="🔔 Enable Notifications";alert(e.message)}
+}
 async function logout(){
  if(!demo && db) await db.auth.signOut();
  demo=false;currentUser=null;
