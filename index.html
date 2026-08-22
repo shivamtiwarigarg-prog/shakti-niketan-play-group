@@ -82,7 +82,7 @@ footer{background:#241534;color:#fff;text-align:center;padding:25px}
 </section>
 
 <section id="enquiry">
-<div class="title"><h2>📩 Admission Enquiry</h2><p>Want to know more? Send us your details.</p></div>
+<div class="title"><h2 id="enquiryTitle">📩 Admission Enquiry</h2><p id="enquiryText">Want to know more? Send us your details.</p></div>
 <div class="panel" style="max-width:900px;margin:auto">
 <div class="row"><input id="publicParentName" placeholder="Parent name"><input id="publicPhone" placeholder="Mobile number"></div>
 <div class="row"><input id="publicChildName" placeholder="Child name"><input id="publicClass" placeholder="Class / Play Group"></div>
@@ -107,7 +107,7 @@ footer{background:#241534;color:#fff;text-align:center;padding:25px}
 <div class="card">🌱<h3>Overall Growth</h3><p>Creativity, confidence and communication.</p></div>
 </div>
 </section>
-<footer>Shakti Niketan Play Group • Secure School Portal</footer>
+<div id="publicSocial" style="text-align:center;margin:20px"></div><footer>Shakti Niketan Play Group • Secure School Portal</footer>
 
 <script>
 "use strict";
@@ -149,7 +149,7 @@ function showMsg(id,text,error=false){$(id).innerHTML='<div class="msg '+(error?
 async function loadPublicSite(){
   if(!db)return;
   try{
-    const {data:settings}=await db.from("school_settings").select("*").eq("id",true).maybeSingle();
+    const {data:settings}=await db.from("school_settings").select("*").order("created_at",{ascending:true}).limit(1).maybeSingle();
     if(settings){
       const title=document.querySelector(".hero h1");
       const heroText=document.querySelector(".hero p");
@@ -159,11 +159,35 @@ async function loadPublicSite(){
       if(logo && settings.school_name){
         logo.childNodes[0].nodeValue=settings.school_name+" ";
       }
+      if(logo && settings.logo_url){
+        logo.innerHTML='<img src="'+esc(settings.logo_url)+'" alt="School Logo" style="width:42px;height:42px;object-fit:cover;border-radius:10px;vertical-align:middle;margin-right:8px">'+esc(settings.school_name||"Shakti Niketan")+'<small>PLAY GROUP</small>';
+      }
+      const hero=document.querySelector(".hero");
+      if(hero && settings.hero_image_url){
+        hero.style.backgroundImage='linear-gradient(135deg,#eee2ffcc,#fff0dccc,#def8efcc),url("'+String(settings.hero_image_url).replace(/"/g,'&quot;')+'")';
+        hero.style.backgroundSize="cover"; hero.style.backgroundPosition="center";
+      }
+      const admissionTitle=document.querySelector("#enquiryTitle");
+      const admissionText=document.querySelector("#enquiryText");
+      if(admissionTitle && settings.admission_title)admissionTitle.textContent=settings.admission_title;
+      if(admissionText && settings.admission_text)admissionText.textContent=settings.admission_text;
+      const social=$("publicSocial");
+      if(social){
+        const links=[];
+        if(settings.facebook_url)links.push('<a href="'+esc(settings.facebook_url)+'" target="_blank" rel="noopener">📘 Facebook</a>');
+        if(settings.instagram_url)links.push('<a href="'+esc(settings.instagram_url)+'" target="_blank" rel="noopener">📸 Instagram</a>');
+        if(settings.whatsapp){
+          const wa=String(settings.whatsapp).trim();
+          const waHref=/^https?:\/\//i.test(wa)?wa:'https://wa.me/'+wa.replace(/\D/g,"");
+          if(waHref!=='https://wa.me/')links.push('<a href="'+esc(waHref)+'" target="_blank" rel="noopener">💬 WhatsApp</a>');
+        }
+        social.innerHTML=links.join(" &nbsp; ")||"";
+      }
       const contact=$("publicContact");
       if(contact){
         const parts=[];
-        if(settings.phone)parts.push("📞 <b>"+esc(settings.phone)+"</b>");
-        if(settings.contact_email)parts.push("✉️ <b>"+esc(settings.contact_email)+"</b>");
+        if(settings.phone)parts.push('📞 <a href="tel:'+esc(settings.phone)+'"><b>'+esc(settings.phone)+'</b></a>');
+        if(settings.contact_email)parts.push('✉️ <a href="mailto:'+esc(settings.contact_email)+'"><b>'+esc(settings.contact_email)+'</b></a>');
         if(settings.address)parts.push("📍 "+esc(settings.address));
         if(settings.hours)parts.push("🕘 "+esc(settings.hours));
         contact.innerHTML=parts.length?parts.join("<br><br>"):"Contact details will be updated soon.";
@@ -186,13 +210,13 @@ async function loadPublicSite(){
 }
 
 async function submitPublicEnquiry(){
-  const parent_name=$("eqParent")?.value.trim(),phone=$("eqPhone")?.value.trim(),child_name=$("eqChild")?.value.trim(),class_name=$("eqClass")?.value.trim(),message=$("eqMessage")?.value.trim();
+  const parent_name=$("publicParentName")?.value.trim(),phone=$("publicPhone")?.value.trim(),child_name=$("publicChildName")?.value.trim(),class_name=$("publicClass")?.value.trim(),message=$("publicMessage")?.value.trim();
   if(!parent_name||!phone)return showMsg("publicEnquiryMsg","Parent name and phone are required.",true);
   try{
     const {error}=await db.from("enquiries").insert({parent_name,phone,child_name,class_name,message});
     if(error)throw error;
     showMsg("publicEnquiryMsg","✅ Enquiry sent successfully. School will contact you.");
-    ["eqParent","eqPhone","eqChild","eqClass","eqMessage"].forEach(id=>{if($(id))$(id).value=""});
+    ["publicParentName","publicPhone","publicChildName","publicClass","publicMessage"].forEach(id=>{if($(id))$(id).value=""});
   }catch(e){showMsg("publicEnquiryMsg",e.message,true)}
 }
 
@@ -253,7 +277,7 @@ function buildTabs(role){
  ];
  else tabs=[["dashboard","🏠 Dashboard"],["students","👧 Students"],["attendance","📅 Attendance"],["homework","📚 Homework"],["notices","📢 Notices"],["fees","💰 Fees"],["enquiries","📩 Enquiries"],["gallery","🖼️ Gallery"],["website","🌐 Website"]];
  if(role==="admin")tabs.push(["enquiries","📩 Enquiries"]);
- if(role==="owner")tabs.push(["accounts","🔑 Create Login"],["users","👥 Users"],["enquiries","📩 Enquiries"],["website","🌐 Website"],["parentRequests","🔔 Parent Requests"],["superPower","👑 Super Power"]);
+ if(role==="owner")tabs.push(["accounts","🔑 Create Login"],["users","👥 Users"],["parentRequests","🔔 Parent Requests"],["superPower","👑 Super Power"]);
  $("tabs").innerHTML=tabs.map(t=>'<button class="tab" data-tab="'+t[0]+'">'+t[1]+"</button>").join("");
  document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
 }
@@ -267,7 +291,7 @@ function showTab(tab){
  else if(tab==="homework")homework();
  else if(tab==="notices")notices();
  else if(tab==="fees")fees();
- else if(tab==="enquiries")enquiries(); else if(tab==="website")websiteContent();
+ else if(tab==="enquiries")enquiries();
  else if(tab==="accounts")accounts();
  else if(tab==="users")users();
  else if(tab==="parentRequests")parentRequests();
@@ -496,34 +520,101 @@ async function addNotice(){
 
 
 function websiteSettings(){
- $("view").innerHTML=`<div class="card"><h3>🌐 Website Settings</h3>
- <p class="muted">Only users with Owner-granted Website permission can edit these settings.</p>
- <div id="websiteForm">Loading...</div></div>`;
+ $("view").innerHTML=`<div class="card">
+ <div class="sectionTitle"><h3>🌐 Website Manager</h3><span class="badge">👑 Owner Controlled</span></div>
+ <p class="muted">यहाँ से पूरी public website की information manage होगी — school name, logo, photos, home page, contact, email, address, social links और admission enquiry.</p>
+ <div id="websiteForm">Loading...</div>
+ </div>`;
  loadWebsiteSettings();
 }
+
 async function loadWebsiteSettings(){
  try{
   const d=await ownerCall({action:"crud_list",table:"school_settings"}),x=(d.rows||[])[0]||{};
-  $("websiteForm").innerHTML=`<div class="row">
+  $("websiteForm").innerHTML=`
+  <h3>🏫 Basic School Information</h3>
+  <div class="row">
    <input id="wsName" placeholder="School name" value="${esc(x.school_name||"Shakti Niketan Play Group")}">
-   <input id="wsPhone" placeholder="Phone" value="${esc(x.phone||"")}">
-   <input id="wsEmail" placeholder="Email" value="${esc(x.contact_email||"")}">
-   <input id="wsAddress" placeholder="Address" value="${esc(x.address||"")}">
-   <input id="wsHours" placeholder="School hours" value="${esc(x.hours||"")}">
+   <input id="wsPhone" placeholder="Phone number" value="${esc(x.phone||"")}">
   </div>
-  <input id="wsHeroTitle" placeholder="Hero title" value="${esc(x.hero_title||"")}">
-  <textarea id="wsHeroText" placeholder="Hero text">${esc(x.hero_text||"")}</textarea>
-  <textarea id="wsAbout" placeholder="About school">${esc(x.about||"")}</textarea>
-  <button class="btn green" onclick="saveWebsiteSettings()">💾 Save Website</button><div id="websiteMsg"></div>`;
+  <div class="row">
+   <input id="wsEmail" type="email" placeholder="Contact email" value="${esc(x.contact_email||"")}">
+   <input id="wsWhatsapp" placeholder="WhatsApp number / link" value="${esc(x.whatsapp||"")}">
+  </div>
+  <input id="wsAddress" placeholder="Full school address" value="${esc(x.address||"")}">
+  <input id="wsHours" placeholder="School timings" value="${esc(x.hours||"")}">
+
+  <hr style="border:0;border-top:1px solid var(--line);margin:20px 0">
+  <h3>🖼️ Website Photos & Branding</h3>
+  <label>School Logo</label>
+  <input id="wsLogoFile" type="file" accept="image/*">
+  ${x.logo_url?'<img src="'+esc(x.logo_url)+'" style="width:100px;height:100px;object-fit:cover;border-radius:16px;margin:8px 0">':""}
+  <label>Home/Hero Photo</label>
+  <input id="wsHeroFile" type="file" accept="image/*">
+  ${x.hero_image_url?'<img src="'+esc(x.hero_image_url)+'" style="width:100%;max-height:220px;object-fit:cover;border-radius:16px;margin:8px 0">':""}
+
+  <hr style="border:0;border-top:1px solid var(--line);margin:20px 0">
+  <h3>🏠 Home Page</h3>
+  <input id="wsHeroTitle" placeholder="Home page main heading" value="${esc(x.hero_title||"A Happy Place for Little Minds 💜")}">
+  <textarea id="wsHeroText" placeholder="Home page description">${esc(x.hero_text||"")}</textarea>
+
+  <h3>❤️ About School</h3>
+  <textarea id="wsAbout" placeholder="About your school">${esc(x.about||"")}</textarea>
+
+  <h3>📩 Admission Enquiry</h3>
+  <input id="wsAdmissionTitle" placeholder="Admission section title" value="${esc(x.admission_title||"Admission Enquiry")}">
+  <textarea id="wsAdmissionText" placeholder="Admission section message">${esc(x.admission_text||"Want to know more? Send your details and the school will contact you.")}</textarea>
+
+  <h3>📱 Social Links</h3>
+  <div class="row">
+   <input id="wsFacebook" placeholder="Facebook URL" value="${esc(x.facebook_url||"")}">
+   <input id="wsInstagram" placeholder="Instagram URL" value="${esc(x.instagram_url||"")}">
+  </div>
+
+  <div class="row">
+   <button class="btn green" onclick="saveWebsiteSettings()">💾 Save Website Changes</button>
+   <button class="btn light" onclick="loadWebsiteSettings()">↻ Reload</button><button class="btn light" onclick="document.getElementById('home').scrollIntoView({behavior:'smooth'})">🌐 Preview Website</button>
+  </div>
+  <div id="websiteMsg"></div>
+
+  <hr style="border:0;border-top:1px solid var(--line);margin:24px 0">
+  <h3>🖼️ Gallery</h3>
+  <p class="muted">Website की सारी gallery photos भी यहीं से manage होंगी.</p>
+  <button class="btn" onclick="gallery()">Open Gallery Manager</button>
+  </div>`;
  }
  catch(e){$("websiteForm").innerHTML='<div class="msg err">'+esc(e.message)+"</div>"}
 }
+
+async function uploadWebsiteImage(file,prefix){
+ if(!file)return null;
+ if(file.size>5*1024*1024)throw Error("Image must be 5 MB or smaller.");
+ const ext=(file.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"");
+ const path="website/"+prefix+"-"+Date.now()+"-"+Math.random().toString(36).slice(2)+"."+ext;
+ const r=await db.storage.from("school-gallery").upload(path,file,{upsert:false,contentType:file.type||"image/jpeg"});
+ if(r.error)throw r.error;
+ return db.storage.from("school-gallery").getPublicUrl(path).data.publicUrl;
+}
+
 async function saveWebsiteSettings(){
  try{
-  const d=await ownerCall({action:"crud_list",table:"school_settings"}),x=(d.rows||[])[0];
-  if(!x)throw Error("School settings record not found.");
-  await ownerCrudUpdate("school_settings",x.id,{school_name:$("wsName").value.trim(),phone:$("wsPhone").value.trim(),contact_email:$("wsEmail").value.trim(),address:$("wsAddress").value.trim(),hours:$("wsHours").value.trim(),hero_title:$("wsHeroTitle").value.trim(),hero_text:$("wsHeroText").value.trim(),about:$("wsAbout").value.trim()});
-  showMsg("websiteMsg","✅ Website settings saved.");
+  const d=await ownerCall({action:"crud_list",table:"school_settings"}),x=(d.rows||[])[0]||null;
+  const patch={
+   school_name:$("wsName").value.trim(), phone:$("wsPhone").value.trim(),
+   contact_email:$("wsEmail").value.trim(), whatsapp:$("wsWhatsapp").value.trim(),
+   address:$("wsAddress").value.trim(), hours:$("wsHours").value.trim(),
+   hero_title:$("wsHeroTitle").value.trim(), hero_text:$("wsHeroText").value.trim(),
+   about:$("wsAbout").value.trim(), admission_title:$("wsAdmissionTitle").value.trim(),
+   admission_text:$("wsAdmissionText").value.trim(), facebook_url:$("wsFacebook").value.trim(),
+   instagram_url:$("wsInstagram").value.trim()
+  };
+  const logo=$("wsLogoFile").files[0],hero=$("wsHeroFile").files[0];
+  if(logo)patch.logo_url=await uploadWebsiteImage(logo,"logo");
+  if(hero)patch.hero_image_url=await uploadWebsiteImage(hero,"hero");
+  if(x) await ownerCrudUpdate("school_settings",x.id,patch);
+  else await ownerCrudInsert("school_settings",Object.assign({id:true},patch));
+  showMsg("websiteMsg","✅ Website updated successfully.");
+  await loadPublicSite();
  }catch(e){showMsg("websiteMsg",e.message,true)}
 }
 
@@ -759,4 +850,3 @@ async function logout(){
 </script>
 </body>
 </html>
-
